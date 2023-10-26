@@ -2,3 +2,7 @@
 *.iml
 *.xml
 /.idea
+/out
+/bin
+.project
+.classpath
