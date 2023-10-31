@@ -2,11 +2,11 @@ package view_controller;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -25,6 +25,7 @@ public class gameScreen extends Application {
     private VBox livesBox;
     private GamePane gamePane;
     private int MAX_LIVES = 4;
+    private Scene scene;
 
     public static void main(String[] args) {
         launch(args);
@@ -34,7 +35,7 @@ public class gameScreen extends Application {
     public void start(Stage stage) {
         root = new BorderPane();
         System.out.println("space invaders!!");
-        Scene scene = new Scene(root, 500, 700);
+        scene = new Scene(root, 500, 700);
 
         setBackground();
         setupTopBar();
@@ -149,6 +150,15 @@ public class gameScreen extends Application {
     private void setupGameScreen() {
         gamePane = new GamePane();
         root.setCenter(gamePane.getCanvas());
+        scene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.SPACE) {
+                gamePane.shoot();
+            } else if (keyEvent.getCode() == KeyCode.LEFT) {
+                gamePane.moveLeft();
+            } else if (keyEvent.getCode() == KeyCode.RIGHT) {
+                gamePane.moveRight();
+            }
+        });
     }
 
 }
