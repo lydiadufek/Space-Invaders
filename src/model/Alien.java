@@ -4,10 +4,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
 public class Alien extends Sprite {
-    private int width;
-    private int height;
-    private int x;
-    private int y;
+    private int width, height;
+    private int x, y;
+
+    private int startingPositionX, startingPositionY;
+
     private double xVelocity;
     private double yVelocity;
 
@@ -19,6 +20,8 @@ public class Alien extends Sprite {
         super(image, x, y);
 
         this.health = health;
+        this.startingPositionX = x;
+        this.startingPositionY = y;
     }
 
     @Override
