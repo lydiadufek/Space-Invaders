@@ -2,6 +2,7 @@ package view_controller;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -18,10 +19,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class gameScreen extends Application {
-    BorderPane root;
-    Label scoreNum;
-    BorderPane topBar;
-    VBox livesBox;
+    private BorderPane root;
+    private Label scoreNum;
+    private BorderPane topBar;
+    private VBox livesBox;
+    private GamePane gamePane;
+    private int MAX_LIVES = 4;
 
     public static void main(String[] args) {
         launch(args);
@@ -32,7 +35,10 @@ public class gameScreen extends Application {
         root = new BorderPane();
         System.out.println("space invaders!!");
         Scene scene = new Scene(root, 500, 700);
-        setupGUI();
+
+        setBackground();
+        setupTopBar();
+        setupGameScreen();
 
         stage.setScene(scene);
         stage.show();
@@ -55,11 +61,6 @@ public class gameScreen extends Application {
             Background bg = new Background(new BackgroundFill(c, null, null));
             root.setBackground(bg);
         }
-    }
-
-    private void setupGUI() {
-        setBackground();
-        setupTopBar();
     }
 
     private Font getFont() {
@@ -96,16 +97,25 @@ public class gameScreen extends Application {
         topBar.setLeft(scoreBox);
         topBar.setPadding(new Insets(10, 10, 10, 10));
 
-        setLivesDisplay(10);
+        setLivesDisplay(MAX_LIVES);
 
         root.setTop(topBar);
     }
 
     private void setLivesDisplay(int num) {
         ArrayList<HBox> paneList = new ArrayList<>();
-        HBox firstRow = new HBox();
-        firstRow.setSpacing(5);
-        paneList.add(firstRow);
+        for (int i = 0; i < MAX_LIVES; i += 3) {
+            HBox row = new HBox();
+            row.setSpacing(5);
+            paneList.add(row);
+            // lining up second row of ships
+            // TODO on ships <3, the score label shifts. want it to be stationary
+            if (i != 0) {
+                row.getChildren().add(new Label("\t\t\t"));
+            }
+            livesBox.getChildren().add(row);
+        }
+        System.out.println(paneList);
         ArrayList<ImageView> extraShips = new ArrayList<>();
 
         Font font = getFont();
@@ -113,7 +123,8 @@ public class gameScreen extends Application {
         Label livesLabel = new Label("LIVES ");
         livesLabel.setFont(font);
         livesLabel.setTextFill(Color.WHITE);
-        livesBox.getChildren().add(paneList.get(0));
+
+        // Thinking I might remove this line and add the label some other way
         paneList.get(0).getChildren().add(livesLabel);
 
         FileInputStream shipImagePath;
@@ -129,17 +140,15 @@ public class gameScreen extends Application {
         }
 
         for (int i = 0; i < extraShips.size(); i++) {
-            if (i != 0 && i % 3 == 0) {
-                HBox temp = new HBox();
-                paneList.add(temp);
-                temp.setSpacing(5);
-                temp.getChildren().add(new Label("\t\t\t"));
-                livesBox.getChildren().add(temp);
-
-            }
             paneList.get(i/3).getChildren().add(extraShips.get(i));
         }
 
         topBar.setRight(livesBox);
     }
+
+    private void setupGameScreen() {
+        gamePane = new GamePane();
+        root.setCenter(gamePane.getCanvas());
+    }
+
 }
