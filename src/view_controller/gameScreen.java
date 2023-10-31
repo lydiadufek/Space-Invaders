@@ -130,7 +130,7 @@ public class gameScreen extends Application {
 
         FileInputStream shipImagePath;
         try {
-            shipImagePath = new FileInputStream("lib/ship.png");
+            shipImagePath = new FileInputStream("lib/heart.png");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
