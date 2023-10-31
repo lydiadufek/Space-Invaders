@@ -1,6 +1,6 @@
 package model;
 
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
 public class Barrier extends Sprite {
@@ -11,17 +11,17 @@ public class Barrier extends Sprite {
     private double xVelocity;
     private double yVelocity;
 
-    private ImageView image;
+    private Image image;
     private int health;
 
-    public Barrier(ImageView image, double x, double y) {
+    public Barrier(Image image, double x, double y) {
         super(image, x, y);
         //add the barrier images for decay
     }
 
     @Override
     public Rectangle getBoundingBox() {
-        return new Rectangle(x, y, image.getFitWidth(), image.getFitHeight());
+        return new Rectangle(x, y, image.getWidth(), image.getHeight());
     }
 
     public void updateHealth(int damage) {

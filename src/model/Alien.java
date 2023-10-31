@@ -1,6 +1,6 @@
 package model;
 
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
 public class Alien extends Sprite {
@@ -12,11 +12,11 @@ public class Alien extends Sprite {
     private double xVelocity;
     private double yVelocity;
 
-    private ImageView image;
+    private Image image;
     private int health;
     private int scoreAmount;
 
-    public Alien(ImageView image, int x, int y, int health) {
+    public Alien(Image image, int x, int y, int health) {
         super(image, x, y);
 
         this.health = health;
@@ -26,7 +26,7 @@ public class Alien extends Sprite {
 
     @Override
     public Rectangle getBoundingBox() {
-        return new Rectangle(x, y, image.getFitWidth(), image.getFitHeight());
+        return new Rectangle(x, y, image.getWidth(), image.getHeight());
     }
 
     @Override

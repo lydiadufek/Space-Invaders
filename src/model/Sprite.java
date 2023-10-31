@@ -1,16 +1,16 @@
 package model;
 
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
 class Sprite {
-    private ImageView image;
+    private Image image;
     private double x, y;
     private double xVelocity, yVelocity;
     private Rectangle boundingBox;
     private int health;
 
-    public Sprite(ImageView image, double x, double y) {
+    public Sprite(Image image, double x, double y) {
         this.image = image;
         this.x = x;
         this.y = y;
@@ -19,7 +19,7 @@ class Sprite {
         this.health = 0; //maybe i should not have this
     }
 
-    public ImageView getImageView() {
+    public Image getImage() {
         return image;
     }
 
@@ -32,7 +32,7 @@ class Sprite {
     }
 
     public Rectangle getBoundingBox() {
-        return new Rectangle(x, y, image.getFitWidth(), image.getFitHeight());
+        return new Rectangle(x, y, image.getWidth(), image.getHeight());
     }
 
     public void changeVelocity(double velocityX, double velocityY) {
@@ -48,7 +48,7 @@ class Sprite {
         //update collider
     }
 
-    public void updateSprite(ImageView newImage) {
+    public void updateSprite(Image newImage) {
         image = newImage;
         //actually update the sprite eventually
     }
