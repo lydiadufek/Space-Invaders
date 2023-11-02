@@ -3,6 +3,7 @@ package view_controller;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.sql.SQLOutput;
 import java.util.Optional;
 
 import javafx.application.Application;
@@ -30,11 +31,11 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class startScreen extends Application {
-	
+
     public static void main(String[] args) {
         launch(args);
     }
-    
+
     private GridPane pane;
     private Font font;
     private Hyperlink start;
@@ -42,58 +43,49 @@ public class startScreen extends Application {
     private Label score;
     private Scene scene;
     private gameScreen game;
+    private helpScreen helpPane;
     private Stage stage;
 
     @Override
     public void start(Stage stage) {
         System.out.println("space invaders!!");
         pane = new GridPane();
-        layoutGUI();
         game = new gameScreen();
-        
+        helpPane = new helpScreen(this);
+
+        layoutGUI();
+        registerHandlers();
+
         scene = new Scene(pane, 500, 700);
         this.stage = stage;
         stage.setScene(scene);
         stage.show();
     }
-    
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
     private void registerHandlers() {
-    	start.setOnAction(event -> {
-    		System.out.println("Started!");
-    		stage.setScene(game.scene);
-    		stage.show();
-    	});
-    	
-  	  help.setOnAction((event) -> {
-  			Alert alert = new Alert(AlertType.CONFIRMATION);
-  			Image image = null;
-  			try {
-  	            InputStream inStream = new FileInputStream("lib/game-background.jpg");
-  	            image = new Image(inStream, 480, 350, true, false);
-  	        } catch (FileNotFoundException e) {
-  	            System.out.println("Background image not found.");
-  	        }
-  			ImageView imageView = new ImageView(image);  			
-  			Label label = new Label("Move Ship Left - Left Arrow Key\n\nMove Ship Right - Right"
-  					+ " Arrow Key\n\nShoot Bullet - SPACE BAR\n\nPause Game - ESC Key");
-  			Font font = getFont();
-  			label.setFont(font);
-  		    label.setTextFill(Color.web("#FFFFFF"));
-  			StackPane alertContext = new StackPane(imageView, label);
-  			alert.setGraphic(alertContext);
-  			alert.getDialogPane().setMaxWidth(0);
-  			alert.setHeaderText("S.I.");
-    		Optional<ButtonType> result = alert.showAndWait();
-    		 if (result.get() == ButtonType.OK) {
-     			  return;
-     		  } else {
-     			  return;
-     		  }
-  	  	});
-   }
+        start.setOnAction(event -> {
+            System.out.println("Started!");
+            stage.setScene(game.getScene());
+            stage.show();
+        });
+
+        help.setOnAction((event) -> {
+            System.out.println("help screen!");
+            stage.setScene(helpPane.getScene());
+            stage.show();
+        });
+    }
 
     private void layoutGUI() {
-    	try {
+        try {
             InputStream inStream = new FileInputStream("lib/game-background.jpg");
             Image image = new Image(inStream);
             BackgroundImage bgImage = new BackgroundImage(image,
@@ -109,31 +101,30 @@ public class startScreen extends Application {
             Background bg = new Background(new BackgroundFill(c, null, null));
             pane.setBackground(bg);
         }
-    	font = getFont();
-    	
-    	start = new Hyperlink("Start game");
-    	start.setFont(font);
-    	start.setTextFill(Color.color(0, 0, 1));
-    	help = new Hyperlink("How to Play");
-    	help.setFont(font);
-    	help.setTextFill(Color.color(1, 0, 0));
-    	registerHandlers();
-    	
-    	score = new Label("High Score: 000"); //Temporary
-    	score.setFont(font);
-    	score.setTextFill(Color.color(1, 1, 1));
-    	pane.add(score, 0, 1);
-    	Label label = new Label("Space Invaders!!");
-    	label.setFont(font);
-    	label.setTextFill(Color.color(1, 0, 1));
-    	pane.add(label, 0, 3);
-    	pane.add(start, 0, 5);
-    	pane.add(help, 0, 6);
-    	pane.add(new ImageView(getImage()), 0, 8);
-    	pane.setAlignment(Pos.BASELINE_CENTER);
-    	pane.setVgap(50);
+        font = getFont();
+
+        start = new Hyperlink("Start game");
+        start.setFont(font);
+        start.setTextFill(Color.color(0, 0, 1));
+        help = new Hyperlink("How to Play");
+        help.setFont(font);
+        help.setTextFill(Color.color(1, 0, 0));
+
+        score = new Label("High Score: 000"); //Temporary
+        score.setFont(font);
+        score.setTextFill(Color.color(1, 1, 1));
+        pane.add(score, 0, 1);
+        Label label = new Label("Space Invaders!!");
+        label.setFont(font);
+        label.setTextFill(Color.color(1, 0, 1));
+        pane.add(label, 0, 3);
+        pane.add(start, 0, 5);
+        pane.add(help, 0, 6);
+        pane.add(new ImageView(getImage()), 0, 8);
+        pane.setAlignment(Pos.BASELINE_CENTER);
+        pane.setVgap(50);
     }
-    
+
     private Font getFont() {
         FileInputStream fontInputStream;
         try {
@@ -143,13 +134,13 @@ public class startScreen extends Application {
         }
         return Font.loadFont(fontInputStream, 50);
     }
-    
+
     private Image getImage() {
-    	try {
-    		Image img = new Image(new FileInputStream("lib/ship.png"), 20, 40, true, false);
-    		return img;
-    	} catch (FileNotFoundException e) {
-    		return null;
-    	}
+        try {
+            Image img = new Image(new FileInputStream("lib/ship.png"), 20, 40, true, false);
+            return img;
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 }

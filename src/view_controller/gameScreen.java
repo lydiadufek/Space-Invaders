@@ -4,8 +4,6 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,12 +11,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import model.Bullet;
-import model.Player;
-import model.Sprite;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +28,7 @@ public class gameScreen extends Application {
     private VBox livesBox;
     private GamePane gamePane;
     private int MAX_LIVES = 4;
-    public Scene scene;
+    private Scene scene;
 
     public static void main(String[] args) {
         launch(args);
@@ -57,8 +51,7 @@ public class gameScreen extends Application {
     public gameScreen() {
         root = new BorderPane();
         System.out.println("space invaders!!");
-        Scene scene = new Scene(root, 500, 700);
-        this.scene = scene;
+        scene = new Scene(root, 500, 700);
 
         setBackground();
         setupTopBar();
@@ -73,6 +66,10 @@ public class gameScreen extends Application {
         ArrayList<Sprite> objects = gamePane.getObjects();
 
         gamePane.gameLoop();
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 
     private void setBackground() {

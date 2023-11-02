@@ -8,11 +8,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import model.Alien;
 import model.Bullet;
 import model.Player;
 import model.Sprite;
 
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -32,8 +32,12 @@ public class GamePane {
         Image image = readImage("realShip.png");
         player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() * 2.8);
         objects.add(player);
+        drawAliens();
         gc = canvas.getGraphicsContext2D();
         player.drawFrame(gc);
+        for (int i = 1; i < 56; i++) {
+        	objects.get(i).drawFrame(gc);
+        }
     }
 
     public Canvas getCanvas() {
@@ -46,6 +50,16 @@ public class GamePane {
 
     public ArrayList<Sprite> getObjects() {
         return objects;
+    }
+
+    private void drawAliens() {
+    	for (int i = 0; i < 5; i++) {
+    		for (int j = 0; j < 11; j++) {
+    			Image image = readImage("bullet.png");
+    			Alien alien = new Alien(image, 25 + 40*j, 100 + 50*i, 1);
+    			objects.add(alien);
+    		}
+    	}
     }
 
     public void shoot() {
