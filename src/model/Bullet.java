@@ -9,8 +9,8 @@ public class Bullet extends Sprite {
     //moves forward, player, or downward, alien
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
-        xVelocity = 10;
-        yVelocity = 0;
+        xVelocity = 0;
+        yVelocity = 10;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -19,7 +19,6 @@ public class Bullet extends Sprite {
 
     public void moveUp(GraphicsContext gc) {
         y-= yVelocity;
-        drawFrame(gc);
     }
 
     public void moveDown(GraphicsContext gc) {

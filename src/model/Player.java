@@ -17,12 +17,10 @@ public class Player extends Sprite {
 
     public void drawFrame(GraphicsContext gc) {
         gc.drawImage(image, x, y);
-        this.gc = gc;
+//        this.gc = gc;
     }
 
     public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {
-        System.out.println(pane.isCollided(player.getAABB(), bullet.getAABB()));
-
         bullet.moveUp(gc);
         System.out.println("PEW PEW PEW!!");
     }

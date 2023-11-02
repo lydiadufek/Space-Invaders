@@ -1,5 +1,6 @@
 package view_controller;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -23,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class gameScreen extends Application {
     private BorderPane root;
@@ -45,21 +48,31 @@ public class gameScreen extends Application {
 
         setBackground();
         setupTopBar();
-        setupGameScreen();
+//        setupGameScreen();
 
         stage.setScene(scene);
         stage.show();
     }
-    
+
     public gameScreen() {
-    	root = new BorderPane();
+        root = new BorderPane();
         System.out.println("space invaders!!");
         Scene scene = new Scene(root, 500, 700);
         this.scene = scene;
 
         setBackground();
         setupTopBar();
-        setupGameScreen();
+
+        gamePane = new GamePane(scene);
+        root.setCenter(gamePane.getCanvas());
+
+        Canvas canvas = gamePane.getCanvas();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        Player player = gamePane.getPlayer();
+        ArrayList<Sprite> objects = gamePane.getObjects();
+
+        gamePane.gameLoop();
     }
 
     private void setBackground() {
@@ -165,8 +178,8 @@ public class gameScreen extends Application {
     }
 
     private void setupGameScreen() {
-        gamePane = new GamePane();
-        root.setCenter(gamePane.getCanvas());
+//        gamePane = new GamePane();
+//        root.setCenter(gamePane.getCanvas());
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.SPACE) {
                 gamePane.shoot();
@@ -177,5 +190,4 @@ public class gameScreen extends Application {
             }
         });
     }
-
 }

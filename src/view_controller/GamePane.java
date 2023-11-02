@@ -1,5 +1,7 @@
 package view_controller;
 
+import javafx.animation.AnimationTimer;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -17,19 +19,20 @@ import java.util.ArrayList;
 
 public class GamePane {
     private Player player;
+    private ArrayList<Sprite> objects;
     private Canvas canvas;
     private GraphicsContext gc;
-    private ArrayList<Sprite> objects; //this could be fine for now, if not lets use a r tree
+    private boolean isShooting = false; // Flag to track if the spacebar is pressed
+    private Scene scene; // Reference to the scene
 
-    public GamePane() {
+    public GamePane(Scene scene) {
+        this.scene = scene; // Store a reference to the scene
         canvas = new Canvas(500, 650);
         objects = new ArrayList<>();
-
         Image image = readImage("realShip.png");
-        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()*2.5);
+        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() * 2.8);
         objects.add(player);
         gc = canvas.getGraphicsContext2D();
-
         player.drawFrame(gc);
     }
 
@@ -37,21 +40,19 @@ public class GamePane {
         return canvas;
     }
 
-    public Player getPlayer() { return player;}
+    public Player getPlayer() {
+        return player;
+    }
+
+    public ArrayList<Sprite> getObjects() {
+        return objects;
+    }
 
     public void shoot() {
+        isShooting = true;
         Image image = readImage("bullet.png");
-        Bullet bullet = new Bullet(image, player.getX()+player.getWidth()/2 - (image.getWidth() / 2), player.getY()-image.getHeight());
+        Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-20);
         objects.add(bullet);
-        
-        player.shoot(bullet, gc, player, this);
-
-        //testing image/aabb
-        gc.setStroke(Color.WHITE);
-        gc.setFill(Color.TRANSPARENT);
-        gc.setLineWidth(2.0);
-//        gc.strokeRect((int) bullet.getX(), (int) bullet.getY(), (int) bullet.getWidth(), (int) bullet.getHeight());
-//        gc.strokeRect((int) player.getX(), (int) player.getY(), (int) player.getWidth(), (int) player.getHeight());
     }
 
     public void moveLeft() {
@@ -60,6 +61,45 @@ public class GamePane {
 
     public void moveRight() {
         player.moveRight(gc);
+    }
+
+    public void gameLoop() {
+        new AnimationTimer() {
+            long lastNanoTime = System.nanoTime();
+
+            @Override
+            public void handle(long currentNanoTime) {
+                double elapsedTime = (currentNanoTime - lastNanoTime) / 1e9;
+
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+                scene.setOnKeyPressed(keyEvent -> {
+                    if (keyEvent.getCode() == KeyCode.SPACE) {
+                        // The user pressed the spacebar, handle shooting
+                        shoot();
+                    } else if (keyEvent.getCode() == KeyCode.LEFT) {
+                        moveLeft();
+                    } else if (keyEvent.getCode() == KeyCode.RIGHT) {
+                        moveRight();
+                    }
+                });
+
+                if (isShooting) {
+                    for (Sprite object : objects) {
+                        if (object instanceof Bullet) {
+                            ((Bullet) object).moveUp(gc);
+                        }
+                    }
+                }
+
+                //Rendering
+                for (Sprite object : objects) {
+                    object.drawFrame(gc);
+                }
+
+                lastNanoTime = currentNanoTime;
+            }
+        }.start();
     }
 
     public Image readImage(String filePath) {
@@ -71,6 +111,7 @@ public class GamePane {
         }
         return new Image(imagePath);
     }
+
 
     public boolean isCollided(Rectangle obj1, Rectangle obj2) {
         double obj1Top = obj1.getY();
