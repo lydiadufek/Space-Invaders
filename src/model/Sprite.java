@@ -1,14 +1,15 @@
 package model;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
-abstract class Sprite {
+public abstract class Sprite {
     protected Image image;
     protected double x, y;
     protected double xVelocity, yVelocity;
     protected double width, height;
-    protected Rectangle boundingBox;
+    protected Rectangle AABB;
     protected int health;
 
     public Sprite(Image image, double x, double y) {
@@ -19,8 +20,10 @@ abstract class Sprite {
         this.yVelocity = 1;
         this.health = 0; //maybe i should not have this
         this.width = image.getWidth();
+        System.out.println(width);
         this.height = image.getHeight();
-        this.boundingBox = new Rectangle(x, y, this.width, this.height);
+        System.out.println(height);
+        this.AABB = new Rectangle(x, y, this.width, this.height);
     }
 
     public Image getImage() {
@@ -35,18 +38,29 @@ abstract class Sprite {
         return y;
     }
 
-    // does it make more sense to do it this way?? idk
-    public void updateBoundingBox() {
-        this.boundingBox = new Rectangle(x, y, this.width, this.height);
+    public double getWidth() {
+        return width;
     }
 
-    public Rectangle getBoundingBox() {
-        return boundingBox;
+    public double getHeight() {
+        return height;
+    }
+    // does it make more sense to do it this way?? idk
+    public void updateAABB() {
+        this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
+    public Rectangle getAABB() {
+        return AABB;
     }
 
     public void changeVelocity(double velocityX, double velocityY) {
         this.xVelocity = velocityX;
         this.yVelocity = velocityY;
+    }
+
+    public void drawFrame(GraphicsContext gc) {
+        gc.drawImage(image, x, y);
     }
 
     public void update() {
@@ -61,6 +75,7 @@ abstract class Sprite {
         image = newImage;
         //actually update the sprite eventually
     }
+
 //
 //    public void updateHealth(int damage) {
 //        health -= damage;

@@ -3,6 +3,8 @@ package view_controller;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,8 +12,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import model.Bullet;
+import model.Player;
+import model.Sprite;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +32,6 @@ public class gameScreen extends Application {
     private GamePane gamePane;
     private int MAX_LIVES = 4;
     private Scene scene;
-
     public static void main(String[] args) {
         launch(args);
     }
