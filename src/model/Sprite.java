@@ -20,9 +20,7 @@ public abstract class Sprite {
         this.yVelocity = 1;
         this.health = 0; //maybe i should not have this
         this.width = image.getWidth();
-        System.out.println(width);
         this.height = image.getHeight();
-        System.out.println(height);
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
 

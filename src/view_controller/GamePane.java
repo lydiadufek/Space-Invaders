@@ -16,28 +16,24 @@ import model.Sprite;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GamePane {
     private Player player;
     private ArrayList<Sprite> objects;
     private Canvas canvas;
     private GraphicsContext gc;
-    private boolean isShooting = false; // Flag to track if the spacebar is pressed
-    private Scene scene; // Reference to the scene
+    private boolean isShooting = false;
+    private Scene scene;
 
     public GamePane(Scene scene) {
         this.scene = scene; // Store a reference to the scene
         canvas = new Canvas(500, 650);
-        objects = new ArrayList<>();
-        Image image = readImage("realShip.png");
-        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() * 2.8);
-        objects.add(player);
-        drawAliens();
         gc = canvas.getGraphicsContext2D();
-        player.drawFrame(gc);
-        for (int i = 1; i < 56; i++) {
-        	objects.get(i).drawFrame(gc);
-        }
+        objects = new ArrayList<Sprite>();
+
+        drawPlayer();
+        drawAliens();
     }
 
     public Canvas getCanvas() {
@@ -52,20 +48,28 @@ public class GamePane {
         return objects;
     }
 
+    private void drawPlayer() {
+        Image image = readImage("realShip.png");
+        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() * 2.8);
+        objects.add(player);
+        player.drawFrame(gc);
+    }
+
     private void drawAliens() {
-    	for (int i = 0; i < 5; i++) {
-    		for (int j = 0; j < 11; j++) {
-    			Image image = readImage("bullet.png");
-    			Alien alien = new Alien(image, 25 + 40*j, 100 + 50*i, 1);
-    			objects.add(alien);
-    		}
-    	}
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 11; j++) {
+                Image image = readImage("bullet.png");
+                Alien alien = new Alien(image, 25 + 40*j, 100 + 50*i, 1);
+                objects.add(alien);
+                alien.drawFrame(gc);
+            }
+        }
     }
 
     public void shoot() {
         isShooting = true;
         Image image = readImage("bullet.png");
-        Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-20);
+        Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-50);
         objects.add(bullet);
     }
 
@@ -106,14 +110,55 @@ public class GamePane {
                     }
                 }
 
-                //Rendering
-                for (Sprite object : objects) {
-                    object.drawFrame(gc);
+                for (int i = objects.size() - 1; i >= 0; i--) {
+                    Sprite object = objects.get(i);
+                    if (object instanceof Bullet) {
+                        if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
+                            objects.remove(i);
+                        }
+                    }
                 }
+
+                detectAndHandleCollisions();
+
+                //Rendering
+                drawFrame();
 
                 lastNanoTime = currentNanoTime;
             }
         }.start();
+    }
+
+    public void drawAABB(Sprite object) {
+        gc.setStroke(Color.WHITE);
+        gc.strokeRect(object.getAABB().getX(), object.getAABB().getY(), object.getAABB().getWidth(), object.getAABB().getHeight());
+    }
+
+    public void drawFrame() {
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        for (Sprite object : objects) {
+            object.drawFrame(gc);
+            drawAABB(object); //draw aabb
+        }
+    }
+
+    private void detectAndHandleCollisions() {
+        List<Sprite> objectsToRemove = new ArrayList<>();
+
+        for (int i = 0; i < objects.size(); i++) {
+            for (int j = i + 1; j < objects.size(); j++) {
+                Sprite object1 = objects.get(i);
+                Sprite object2 = objects.get(j);
+
+                if (isCollided(object1.getAABB(), object2.getAABB())) {
+                    if(object1 instanceof Alien && object2 instanceof Bullet) {
+                        objects.remove(object1);
+                        objects.remove(object2);
+                    }
+                }
+            }
+        }
     }
 
     public Image readImage(String filePath) {
@@ -145,5 +190,4 @@ public class GamePane {
 
         return comp1 && comp2 && comp3 && comp4;
     }
-
 }

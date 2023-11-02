@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,6 +15,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import model.Player;
+import model.Sprite;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +41,6 @@ public class gameScreen extends Application {
     @Override
     public void start(Stage stage) {
         root = new BorderPane();
-        System.out.println("space invaders!!");
         scene = new Scene(root, 500, 700);
 
         setBackground();
@@ -50,7 +53,6 @@ public class gameScreen extends Application {
 
     public gameScreen() {
         root = new BorderPane();
-        System.out.println("space invaders!!");
         scene = new Scene(root, 500, 700);
 
         setBackground();
@@ -63,7 +65,7 @@ public class gameScreen extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         Player player = gamePane.getPlayer();
-        ArrayList<Sprite> objects = gamePane.getObjects();
+//        ArrayList<Sprite> objects = gamePane.getObjects();
 
         gamePane.gameLoop();
     }

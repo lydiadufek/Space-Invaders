@@ -2,6 +2,7 @@ package model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import view_controller.GamePane;
 
 public class Player extends Sprite {
@@ -22,20 +23,27 @@ public class Player extends Sprite {
 
     public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {
         bullet.moveUp(gc);
-        System.out.println("PEW PEW PEW!!");
+//        System.out.println("PEW PEW PEW!!");
     }
 
     public void moveLeft(GraphicsContext gc) {
         x -= xVelocity;
         drawFrame(gc);
+        updateAABB();
     }
 
     public void moveRight(GraphicsContext gc) {
         x += xVelocity;
         drawFrame(gc);
+        updateAABB();
     }
 
     public void updateLives() {
         lifeAmount--;
     }
+
+    public void updateAABB() {
+        this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
 }

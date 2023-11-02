@@ -28,4 +28,9 @@ public class Alien extends Sprite {
     public boolean stillAlive() {
         return health != 0;
     }
+
+    public void updateAABB() {
+        this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
 }

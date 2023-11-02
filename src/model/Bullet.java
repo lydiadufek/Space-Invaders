@@ -2,6 +2,7 @@ package model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 
 public class Bullet extends Sprite {
     private int damage;
@@ -15,6 +16,7 @@ public class Bullet extends Sprite {
 
     public void drawFrame(GraphicsContext gc) {
         gc.drawImage(image, x, y);
+        updateAABB();
     }
 
     public void moveUp(GraphicsContext gc) {
@@ -25,5 +27,10 @@ public class Bullet extends Sprite {
         y += yVelocity;
         drawFrame(gc);
     }
+
+    public void updateAABB() {
+        this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
 }
 
