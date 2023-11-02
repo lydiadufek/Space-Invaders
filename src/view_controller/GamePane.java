@@ -10,7 +10,6 @@ import model.Bullet;
 import model.Player;
 import model.Sprite;
 
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

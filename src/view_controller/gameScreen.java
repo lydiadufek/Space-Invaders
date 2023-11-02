@@ -31,7 +31,7 @@ public class gameScreen extends Application {
     private VBox livesBox;
     private GamePane gamePane;
     private int MAX_LIVES = 4;
-    public Scene scene;
+    private Scene scene;
 
     public static void main(String[] args) {
         launch(args);
@@ -54,12 +54,15 @@ public class gameScreen extends Application {
     public gameScreen() {
     	root = new BorderPane();
         System.out.println("space invaders!!");
-        Scene scene = new Scene(root, 500, 700);
-        this.scene = scene;
+        scene = new Scene(root, 500, 700);
 
         setBackground();
         setupTopBar();
         setupGameScreen();
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 
     private void setBackground() {
