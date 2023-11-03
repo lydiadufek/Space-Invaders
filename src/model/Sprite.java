@@ -46,7 +46,7 @@ public abstract class Sprite {
     public double getHeight() {
         return height;
     }
-    // does it make more sense to do it this way?? idk
+
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
@@ -67,14 +67,10 @@ public abstract class Sprite {
     public void update() {
         x += xVelocity;
         y += yVelocity;
-
-        //getBoundingBox();
-        //update collider
     }
 
     public void updateSprite(Image newImage) {
         image = newImage;
-        //actually update the sprite eventually
     }
 
 //

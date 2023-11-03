@@ -31,7 +31,7 @@ public class gameScreen extends Application {
     private BorderPane topBar;
     private VBox livesBox;
     private GamePane gamePane;
-    private int MAX_LIVES = 4;
+    private int MAX_LIVES = 2;
     private Scene scene;
 
     public static void main(String[] args) {
@@ -57,7 +57,7 @@ public class gameScreen extends Application {
         setBackground();
         setupTopBar();
 
-        gamePane = new GamePane(scene);
+        gamePane = new GamePane(scene, this);
         root.setCenter(gamePane.getCanvas());
 
         Canvas canvas = gamePane.getCanvas();
@@ -130,9 +130,14 @@ public class gameScreen extends Application {
         root.setTop(topBar);
     }
 
+    public void updateScore(int score) {
+        int originalScore = Integer.parseInt(scoreNum.getText());
+        scoreNum.setText(String.valueOf(originalScore + score));
+    }
+
     private void setLivesDisplay(int num) {
         ArrayList<HBox> paneList = new ArrayList<>();
-        for (int i = 0; i < MAX_LIVES; i += 3) {
+        for (int i = 0; i < MAX_LIVES; i += 4) {
             HBox row = new HBox();
             row.setSpacing(5);
             paneList.add(row);
@@ -149,6 +154,8 @@ public class gameScreen extends Application {
         Font font = getFont();
 
         Label livesLabel = new Label("LIVES ");
+        //TODO: KATIE FIX IT       label.setLayoutX(100); // Set the X coordinate
+        //        label.setLayoutY(50);  // Set the Y coordinate
         livesLabel.setFont(font);
         livesLabel.setTextFill(Color.WHITE);
 
@@ -157,18 +164,18 @@ public class gameScreen extends Application {
 
         FileInputStream shipImagePath;
         try {
-            shipImagePath = new FileInputStream("lib/heart.png");
+            shipImagePath = new FileInputStream("lib/heart2.png");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        Image shipImageObj = new Image(shipImagePath, 40, 40, true, false);
+        Image shipImageObj = new Image(shipImagePath);
         for (int i = 0; i < num; i++) {
             extraShips.add(new ImageView(shipImageObj));
         }
 
         for (int i = 0; i < extraShips.size(); i++) {
-            paneList.get(i/3).getChildren().add(extraShips.get(i));
+            paneList.get(i/4).getChildren().add(extraShips.get(i));
         }
 
         topBar.setRight(livesBox);

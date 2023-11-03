@@ -8,13 +8,13 @@ public class Alien extends Sprite {
     private int health;
     private int scoreAmount;
 
-    public Alien(Image image, int x, int y, int health) {
+    public Alien(Image image, int x, int y, int health, int scoreAmount) {
         super(image, x, y);
 
         this.health = health;
         this.startingPositionX = x;
         this.startingPositionY = y;
-        scoreAmount = 20;
+        this.scoreAmount = scoreAmount;
     }
 
     public void updateHealth(int damage) {
@@ -22,7 +22,7 @@ public class Alien extends Sprite {
     }
 
     public int updateScore(int score) {
-        return score += scoreAmount;
+        return scoreAmount += score;
     }
 
     public boolean stillAlive() {
@@ -31,6 +31,10 @@ public class Alien extends Sprite {
 
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
+    public int getScore() {
+        return scoreAmount;
     }
 
 }

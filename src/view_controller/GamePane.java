@@ -5,8 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -27,10 +25,15 @@ public class GamePane {
     private Canvas canvas;
     private GraphicsContext gc;
     private boolean isShooting = false;
+    private boolean notAlien = false;
     private Scene scene;
+    private gameScreen gameScreen;
+    private boolean playerShot;
 
-    public GamePane(Scene scene) {
+    public GamePane(Scene scene, gameScreen gameScreen) {
         this.scene = scene;
+        this.gameScreen = gameScreen;
+
         canvas = new Canvas(500, 650);
         gc = canvas.getGraphicsContext2D();
         objects = new ArrayList<Sprite>();
@@ -53,16 +56,45 @@ public class GamePane {
 
     private void drawPlayer() {
         Image image = readImage("ship.png");
-        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() * 2.8);
+        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
         objects.add(player);
         player.drawFrame(gc);
     }
 
     private void drawAliens() {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 11; j++) {
-                Image image = readImage("bullet.png");
-                Alien alien = new Alien(image, 25 + 40*j, 100 + 50*i, 1);
+        int numRows = 5; // Number of rows of aliens
+        int spacingX = 20; // Spacing between aliens in the X-direction
+        int spacingY = 20; // Spacing between aliens in the Y-direction
+
+        for (int i = 0; i < numRows; i++) {
+            Image image;
+            int scoreAmount;
+
+            // Determine the image and score amount based on the row index (i)
+            if (i == 0) {
+                image = readImage("alien3.png");
+                scoreAmount = 50;
+            } else if (i == 1 || i == 2) {
+                image = readImage("alien2.png");
+                scoreAmount = 25;
+            } else {
+                image = readImage("alien.png");
+                scoreAmount = 10;
+            }
+
+            int numAliensInRow = 7; // Number of aliens in each row
+            double totalWidth = numAliensInRow * image.getWidth();
+
+            // Calculate the starting X-coordinate for the current row
+            double startX = (canvas.getWidth() - totalWidth - (numAliensInRow - 1) * spacingX) / 2;
+
+            // Create aliens for the current row
+            for (int j = 0; j < numAliensInRow; j++) {
+                // Calculate the X-coordinate for the current alien
+                double x = startX + j * (image.getWidth() + spacingX);
+                double y = i * (image.getHeight() + spacingY);
+
+                Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount);
                 objects.add(alien);
                 alien.drawFrame(gc);
             }
@@ -73,6 +105,13 @@ public class GamePane {
         isShooting = true;
         Image image = readImage("bullet.png");
         Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-10);
+        bullet.setPlayerShot();
+        objects.add(bullet);
+    }
+
+    public void alienShoot(Sprite object) {
+        Image image = readImage("bullet.png");
+        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY()-10);
         objects.add(bullet);
     }
 
@@ -141,22 +180,23 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-            drawAABB(object); //draw aabb
+//            drawAABB(object); //draw aabb
         }
     }
 
     private void detectAndHandleCollisions() {
-        List<Sprite> objectsToRemove = new ArrayList<>();
-
         for (int i = 0; i < objects.size(); i++) {
             for (int j = i + 1; j < objects.size(); j++) {
                 Sprite object1 = objects.get(i);
                 Sprite object2 = objects.get(j);
 
                 if (isCollided(object1.getAABB(), object2.getAABB())) {
-                    if(object1 instanceof Alien && object2 instanceof Bullet) {
+                    if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+                            || (object1 instanceof Bullet && object2 instanceof Alien && ((Bullet) object1).getPlayerShot()) ) {
+                        //add bool for who shot
                         objects.remove(object1);
                         objects.remove(object2);
+                        gameScreen.updateScore(((Alien) object1).getScore());
                     }
                 }
             }
