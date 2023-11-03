@@ -18,7 +18,6 @@ public class Player extends Sprite {
 
     public void drawFrame(GraphicsContext gc) {
         gc.drawImage(image, x, y);
-//        this.gc = gc;
     }
 
     public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {

@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -27,7 +30,7 @@ public class GamePane {
     private Scene scene;
 
     public GamePane(Scene scene) {
-        this.scene = scene; // Store a reference to the scene
+        this.scene = scene;
         canvas = new Canvas(500, 650);
         gc = canvas.getGraphicsContext2D();
         objects = new ArrayList<Sprite>();
@@ -49,7 +52,7 @@ public class GamePane {
     }
 
     private void drawPlayer() {
-        Image image = readImage("realShip.png");
+        Image image = readImage("ship.png");
         player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() * 2.8);
         objects.add(player);
         player.drawFrame(gc);
@@ -69,7 +72,7 @@ public class GamePane {
     public void shoot() {
         isShooting = true;
         Image image = readImage("bullet.png");
-        Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-50);
+        Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-10);
         objects.add(bullet);
     }
 
@@ -93,7 +96,6 @@ public class GamePane {
 
                 scene.setOnKeyPressed(keyEvent -> {
                     if (keyEvent.getCode() == KeyCode.SPACE) {
-                        // The user pressed the spacebar, handle shooting
                         shoot();
                     } else if (keyEvent.getCode() == KeyCode.LEFT) {
                         moveLeft();
@@ -170,7 +172,6 @@ public class GamePane {
         }
         return new Image(imagePath);
     }
-
 
     public boolean isCollided(Rectangle obj1, Rectangle obj2) {
         double obj1Top = obj1.getY();

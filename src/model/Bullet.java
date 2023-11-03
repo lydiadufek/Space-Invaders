@@ -25,7 +25,6 @@ public class Bullet extends Sprite {
 
     public void moveDown(GraphicsContext gc) {
         y += yVelocity;
-        drawFrame(gc);
     }
 
     public void updateAABB() {

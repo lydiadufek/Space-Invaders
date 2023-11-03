@@ -4,6 +4,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+
 public abstract class Sprite {
     protected Image image;
     protected double x, y;

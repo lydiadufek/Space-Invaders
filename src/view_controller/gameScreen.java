@@ -45,7 +45,6 @@ public class gameScreen extends Application {
 
         setBackground();
         setupTopBar();
-//        setupGameScreen();
 
         stage.setScene(scene);
         stage.show();
@@ -65,7 +64,6 @@ public class gameScreen extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         Player player = gamePane.getPlayer();
-//        ArrayList<Sprite> objects = gamePane.getObjects();
 
         gamePane.gameLoop();
     }
