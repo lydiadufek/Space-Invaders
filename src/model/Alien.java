@@ -7,14 +7,18 @@ public class Alien extends Sprite {
     private int startingPositionX, startingPositionY;
     private int health;
     private int scoreAmount;
+    private boolean isShooting;
+    private int type;
 
-    public Alien(Image image, int x, int y, int health, int scoreAmount) {
+    public Alien(Image image, int x, int y, int health, int scoreAmount, int type) {
         super(image, x, y);
 
         this.health = health;
         this.startingPositionX = x;
         this.startingPositionY = y;
         this.scoreAmount = scoreAmount;
+        this.isShooting = false;
+        this.type = type;
     }
 
     public void updateHealth(int damage) {
@@ -37,4 +41,11 @@ public class Alien extends Sprite {
         return scoreAmount;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void isShooting(boolean status) {
+        isShooting = status;
+    }
 }

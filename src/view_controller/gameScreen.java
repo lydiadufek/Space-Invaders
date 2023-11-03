@@ -136,6 +136,7 @@ public class gameScreen extends Application {
     }
 
     private void setLivesDisplay(int num) {
+        //TODO: make method that updates the save lives
         ArrayList<HBox> paneList = new ArrayList<>();
         for (int i = 0; i < MAX_LIVES; i += 4) {
             HBox row = new HBox();
