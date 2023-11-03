@@ -7,12 +7,14 @@ import view_controller.GamePane;
 
 public class Player extends Sprite {
     private int lifeAmount;
+    private int score;
     private GraphicsContext gc;
     
     public Player(Image image, double x, double y) {
         super(image, x, y);
         lifeAmount = 3; //3 total
-        xVelocity = 10;
+        score = 0;
+        xVelocity = 20;
         yVelocity = 0;
     }
 
@@ -21,7 +23,7 @@ public class Player extends Sprite {
     }
 
     public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {
-        bullet.moveUp(gc);
+        bullet.move(gc);
 //        System.out.println("PEW PEW PEW!!");
     }
 
@@ -45,4 +47,20 @@ public class Player extends Sprite {
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
 
+    public boolean isDead() {
+        return lifeAmount==0;
+    }
+
+    public void updateScore(int amount) {
+        score += amount;
+    }
+
+    public boolean newLife() {
+        if(score == 1500) {
+            lifeAmount++;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

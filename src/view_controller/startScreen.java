@@ -72,13 +72,13 @@ public class startScreen extends Application {
 
     private void registerHandlers() {
         start.setOnAction(event -> {
-            System.out.println("Started!");
+//            System.out.println("Started!");
             stage.setScene(game.getScene());
             stage.show();
         });
 
         help.setOnAction((event) -> {
-            System.out.println("help screen!");
+//            System.out.println("help screen!");
             stage.setScene(helpPane.getScene());
             stage.show();
         });

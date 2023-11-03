@@ -148,7 +148,6 @@ public class gameScreen extends Application {
             }
             livesBox.getChildren().add(row);
         }
-        System.out.println(paneList);
         ArrayList<ImageView> extraShips = new ArrayList<>();
 
         Font font = getFont();

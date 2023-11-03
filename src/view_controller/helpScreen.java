@@ -34,7 +34,7 @@ public class helpScreen extends Application {
     @Override
     public void start(Stage stage) {
         root = new BorderPane();
-        System.out.println("space invaders!!");
+//        System.out.println("space invaders!!");
         scene = new Scene(root, 500, 700);
 
         setBackground();
@@ -47,7 +47,7 @@ public class helpScreen extends Application {
     public helpScreen(startScreen home) {
         this.home = home;
         root = new BorderPane();
-        System.out.println("space invaders!!");
+//        System.out.println("space invaders!!");
         scene = new Scene(root, 500, 700);
 
         setBackground();
@@ -106,7 +106,7 @@ public class helpScreen extends Application {
 
     private void registerHandlers() {
         backButton.setOnAction(event -> {
-            System.out.println("back!");
+//            System.out.println("back!");
             home.getStage().setScene(home.getScene());
             home.getStage().show();
         });

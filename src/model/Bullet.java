@@ -8,12 +8,9 @@ public class Bullet extends Sprite {
     private int damage;
     private boolean playerShot;
 
-    //moves forward, player, or downward, alien
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
-        xVelocity = 0;
-        yVelocity = 10;
-        this.playerShot = false;
+        this.playerShot = playerShot;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -29,17 +26,16 @@ public class Bullet extends Sprite {
         return playerShot;
     }
 
-    public void moveUp(GraphicsContext gc) {
-        y-= yVelocity;
-    }
-
-    public void moveDown(GraphicsContext gc) {
+    public void move(GraphicsContext gc) {
+        if (playerShot) {
+            yVelocity = -10;  // Player's bullets move upward
+        } else {
+            yVelocity = 10;   // Alien's bullets move downward
+        }
         y += yVelocity;
     }
 
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
-
 }
-
