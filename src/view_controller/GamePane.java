@@ -1,6 +1,7 @@
 package view_controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -141,24 +142,25 @@ public class GamePane {
             }
         }
     }
-
     private class RandomAlienShots extends TimerTask {
-        //TODO: adjust which aliens can shoot the player
         @Override
         public void run() {
             Random random = new Random();
-            List<Alien> aliensToShoot = new ArrayList<>(); //to prevent a weird error i kept getting
+            List<Alien> aliensToShoot = new ArrayList<>();
 
             for (Sprite object : objects) {
-                if (object instanceof Alien && random.nextDouble() < 0.2) { //change this number to adjust frequency of shots
+                if (object instanceof Alien && random.nextDouble() < 0.2) {
                     aliensToShoot.add((Alien) object);
                 }
             }
 
-            for (Alien alien : aliensToShoot) {
-                alienShoot(alien);
-                updateAlienSprites(alien);
-            }
+            // Use Platform.runLater to update the UI from a background thread
+            Platform.runLater(() -> {
+                for (Alien alien : aliensToShoot) {
+                    alienShoot(alien);
+                    updateAlienSprites(alien);
+                }
+            });
         }
     }
 
@@ -245,6 +247,7 @@ public class GamePane {
         }
     }
 
+
     public void updateAlienSprites(Sprite object) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -253,19 +256,24 @@ public class GamePane {
             Image oldImage = alien.getImage();
             Image newImage = null;
 
-            //different image depending on the type of alien
-            if(alien.getType() == 1) {
+            // Different image depending on the type of alien
+            if (alien.getType() == 1) {
                 newImage = readImage("alien1-2.png");
-            } else if(alien.getType() == 2) {
+            } else if (alien.getType() == 2) {
                 newImage = readImage("alien2-2.png");
-            } else if(alien.getType() == 3) {
+            } else if (alien.getType() == 3) {
                 newImage = readImage("alien3-2.png");
             }
 
             alien.updateSprite(newImage);
             alien.updateAABB();
-            alien.drawFrame(gc);
 
+            // Use Platform.runLater to update the UI from a background thread
+            Platform.runLater(() -> {
+                alien.drawFrame(gc);
+            });
+
+            // Schedule a task to revert the sprite and update the UI
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -273,9 +281,12 @@ public class GamePane {
                     alien.isShooting(false);
                     alien.updateSprite(oldImage);
                     alien.updateAABB();
-                    alien.drawFrame(gc);
+
+                    Platform.runLater(() -> {
+                        alien.drawFrame(gc);
+                    });
                 }
-            }, 400);
+            }, 1000);
         }
     }
 
