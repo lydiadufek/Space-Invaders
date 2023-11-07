@@ -27,6 +27,10 @@ public class GamePane {
     private boolean playerShot;
     private Timer alienShootingTimer;
     private Timer invincibilityTimer;
+    private Alien[][] aliens;
+    private Random random;
+    private int shotInterval;
+    private int levelNum;
 
     private Scene scene;
     private gameScreen gameScreen;
@@ -36,16 +40,23 @@ public class GamePane {
     public GamePane(Scene scene, gameScreen gameScreen) {
         this.scene = scene;
         this.gameScreen = gameScreen;
+        random = new Random();
+        levelNum = 1;
 
         canvas = new Canvas(500, 650);
         gc = canvas.getGraphicsContext2D();
-        objects = new ArrayList<Sprite>();
+        objects = new ArrayList<>();
+        aliens = new Alien[5][7];
 
         drawPlayer();
         drawAliens();
+//        for (Alien alien: aliens[0]) {
+//            System.out.println(alien);
+//        }
 
         alienShootingTimer = new Timer();
-        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, 3000); //delay: 5 sec interval: 3 sec
+        generateShotInterval();
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval); //delay: 5 sec interval: 3 sec
     }
 
     public void gameLoop() {
@@ -97,6 +108,38 @@ public class GamePane {
                 Sprite object1 = objects.get(i);
                 Sprite object2 = objects.get(j);
 
+// ^^^^^^^^^^^^^EXPERIMENTAL CLEANUP, DOESN'T WORK^^^^^^^^^^^^^^^^^^^
+//                if (isCollided(object1.getAABB(), object2.getAABB())) {
+//                    Sprite[] orderedObjs = bulletFirst(object1, object2);
+//                    Bullet bullet = (Bullet) orderedObjs[0];
+//                    Sprite otherObj = orderedObjs[1];
+//
+//                    if (bullet != null && otherObj instanceof Alien && bullet.getPlayerShot()) {
+//                        objects.remove(object1);
+//                        objects.remove(object2);
+//                        gameScreen.updateScore(((Alien) otherObj).getScore());
+//                        player.updateScore(((Alien) otherObj).getScore());
+//                        if (player.newLife()) {
+//                            //TODO: update life label
+//                            System.out.println("new life");
+//                        }
+//                    }
+//
+//                    //Bullet hitting the Player
+//                    if (!playerIsInvincible) {
+//                        if (bullet != null && otherObj instanceof Player && !bullet.getPlayerShot()) {
+//                            handlePlayerBeingShot((Player) otherObj, bullet);
+//                        }
+//                    }
+//
+//                    //Bullets hitting each other
+//                    if (bullet != null && object2 instanceof Bullet) {
+//                        System.out.println("bullets collided");
+//                        objects.remove(object1);
+//                        objects.remove(object2);
+//                    }
+//                }
+
                 if (isCollided(object1.getAABB(), object2.getAABB())) {
                     //Player hitting the Alien
                     if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
@@ -110,6 +153,7 @@ public class GamePane {
                                 //TODO: update life label
                                 System.out.println("new life");
                             }
+                            ((Alien) object1).kill();
                         }
                         if(object2 instanceof Alien) {
                             gameScreen.updateScore(((Alien) object2).getScore());
@@ -117,6 +161,7 @@ public class GamePane {
                             if(player.newLife()) {
                                 System.out.println("new life");
                             }
+                            ((Alien) object2).kill();
                         }
                     }
 
@@ -124,39 +169,11 @@ public class GamePane {
                     if (!playerIsInvincible) {
                         if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
                                 || (object1 instanceof Player && object2 instanceof Bullet && ! ((Bullet) object2).getPlayerShot())) {
-                            if(object1 instanceof Bullet) {
-                                objects.remove(object1);
-
-                                ((Player) object2).updateLives();
-                                double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
-                                ((Player) object2).setX(middleX);
-                                player.drawFrame(gc);
-
-                                startInvincibilityTimer();
-                                playerIsInvincible = true;
-
-                                if (player.isDead()) {
-                                    objects.remove(player);
-                                    System.out.println("dead");
-                                }
+                            if (object1 instanceof Bullet) {
+                                handlePlayerBeingShot((Player) object2, (Bullet) object1);
                             }
-
-                            if(object2 instanceof Bullet) {
-                                //TODO: Make into a method
-                                objects.remove(object2);
-
-                                ((Player) object1).updateLives();
-                                double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
-                                ((Player) object1).setX(middleX);
-                                player.drawFrame(gc);
-
-                                startInvincibilityTimer();
-                                playerIsInvincible = true;
-
-                                if (player.isDead()) {
-                                    objects.remove(player);
-                                    System.out.println("dead");
-                                }
+                            if (object2 instanceof Bullet) {
+                                handlePlayerBeingShot((Player) object1, (Bullet) object2);
                             }
                         }
                     }
@@ -171,20 +188,77 @@ public class GamePane {
             }
         }
     }
+    private Sprite[] bulletFirst(Sprite object1, Sprite object2) {
+        Sprite[] retVal = new Sprite[2];
+        if (object1 instanceof Bullet) {
+            retVal[0] = object1;
+            retVal[1] = object2;
+        } else if (object2 instanceof Bullet) {
+            retVal[0] = object2;
+            retVal[1] = object1;
+        } else {
+            retVal[0] = null;
+            retVal[1] = null;
+        }
+        System.out.print(retVal[0] + " ");
+        System.out.println(retVal[1]);
+        return retVal;
+    }
+
+    private void handlePlayerBeingShot(Player player, Bullet bullet) {
+        objects.remove(bullet);
+
+        player.updateLives();
+        double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
+        player.setX(middleX);
+        player.drawFrame(gc);
+
+        startInvincibilityTimer();
+        playerIsInvincible = true;
+
+        if (player.isDead()) {
+            objects.remove(player);
+            System.out.println("dead");
+        }
+    }
+
+    private void generateShotInterval() {
+        if (levelNum < 10) {
+            int maxTime = (-110*levelNum) + 2100;
+            shotInterval = random.nextInt(300, maxTime);
+        } else {
+            shotInterval = random.nextInt(300, 1000);
+        }
+    }
 
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
-            //TODO: Make this a 2d list
-            Random random = new Random();
-            List<Alien> aliensToShoot = new ArrayList<>();
+            generateShotInterval();
 
-            for (Sprite object : objects) {
-                if (object instanceof Alien && random.nextDouble() < 0.2) {
-                    aliensToShoot.add((Alien) object);
+            // getting the bottom row of aliens (the ones that can shoot)
+            ArrayList<Alien> bottomRowAliens = new ArrayList<>();
+            for (int i = 0; i < aliens[0].length; i++) {
+                int j;
+                for (j = aliens.length-1; j >= 0; j--) {
+                    if (aliens[j][i].stillAlive()) {
+                        bottomRowAliens.add(aliens[j][i]);
+                        break;
+                    }
                 }
             }
 
+            // randomly getting which aliens will shoot in the next frame
+            ArrayList<Alien> aliensToShoot = new ArrayList<>();
+            for (Alien object : bottomRowAliens) {
+                System.out.println(object.getX() + " " + object.getY());
+                if (random.nextDouble() < 0.15) {
+                    aliensToShoot.add(object);
+                }
+            }
+            System.out.println();
+
+            // have them shoot later
             Platform.runLater(() -> {
                 for (Alien alien : aliensToShoot) {
                     alienShoot(alien);
@@ -273,6 +347,7 @@ public class GamePane {
 
                 Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
                 objects.add(alien);
+                aliens[i][j] = alien;
                 alien.drawFrame(gc);
             }
         }

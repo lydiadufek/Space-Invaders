@@ -48,4 +48,8 @@ public class Alien extends Sprite {
     public void isShooting(boolean status) {
         isShooting = status;
     }
+
+    public void kill() {
+        health = 0;
+    }
 }
