@@ -7,12 +7,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import model.Alien;
-import model.Bullet;
-import model.Player;
-import model.Sprite;
+import model.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,9 +49,6 @@ public class GamePane {
 
         drawPlayer();
         drawAliens();
-//        for (Alien alien: aliens[0]) {
-//            System.out.println(alien);
-//        }
 
         alienShootingTimer = new Timer();
         generateShotInterval();
@@ -222,6 +217,7 @@ public class GamePane {
             objects.remove(player);
             System.out.println("dead");
         }
+        gameScreen.removeLifeIcon();
     }
 
     private void generateShotInterval() {
@@ -253,12 +249,10 @@ public class GamePane {
             // randomly getting which aliens will shoot in the next frame
             ArrayList<Alien> aliensToShoot = new ArrayList<>();
             for (Alien object : bottomRowAliens) {
-                System.out.println(object.getX() + " " + object.getY());
                 if (random.nextDouble() < 0.15) {
                     aliensToShoot.add(object);
                 }
             }
-            System.out.println();
 
             // have them shoot later
             Platform.runLater(() -> {
