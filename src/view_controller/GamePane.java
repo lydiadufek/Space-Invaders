@@ -125,6 +125,7 @@ public class GamePane {
                             if(((Player) object2).isDead()) {
                                 objects.remove(object2);
                                 System.out.println("dead");
+                                alienShootingTimer.cancel();
                             }
                         }
                         if(object2 instanceof Bullet) {
@@ -134,6 +135,7 @@ public class GamePane {
                             if(((Player) object1).isDead()) {
                                 objects.remove(object1);
                                 System.out.println("dead");
+                                alienShootingTimer.cancel();
                             }
                         }
                     }
@@ -276,6 +278,7 @@ public class GamePane {
                     alien.drawFrame(gc);
                 }
             }, 400);
+            timer.cancel();
         }
     }
 
