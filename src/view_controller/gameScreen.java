@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import model.Player;
+import model.Utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -74,16 +75,6 @@ public class gameScreen {
         }
     }
 
-    private Font getFont() {
-        FileInputStream fontInputStream;
-        try {
-            fontInputStream = new FileInputStream("lib/pixeboy-font.ttf");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return Font.loadFont(fontInputStream, 25);
-    }
-
     private void setupTopBar() {
         topBar = new BorderPane();
         HBox scoreBox = new HBox();
@@ -92,7 +83,7 @@ public class gameScreen {
         livesBox = new HBox();
         livesBox.setSpacing(5);
 
-        Font font = getFont();
+        Font font = Utils.getFont(25);
 
         // initialize score label
         Label scoreLabel = new Label("  SCORE");
@@ -114,7 +105,7 @@ public class gameScreen {
     }
 
     private void setLivesDisplay() {
-        Font font = getFont();
+        Font font = Utils.getFont(25);
         Label livesLabel = new Label("LIVES ");
         livesLabel.setFont(font);
         livesLabel.setTextFill(Color.WHITE);
@@ -144,27 +135,9 @@ public class gameScreen {
     	return gamePane.getTimers();
     }
 
-    public HBox getLivesBox() {
-        return livesBox;
-    }
-
     protected void removeLifeIcon() {
         livesBox.getChildren().get(currentLives+1).setVisible(false);
         currentLives--;
     }
 
-
-//    private void setupGameScreen() {
-//        gamePane = new GamePane();
-//        root.setCenter(gamePane.getCanvas());
-//        scene.setOnKeyPressed(keyEvent -> {
-//            if (keyEvent.getCode() == KeyCode.SPACE) {
-//                gamePane.shoot();
-//            } else if (keyEvent.getCode() == KeyCode.LEFT) {
-//                gamePane.moveLeft();
-//            } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-//                gamePane.moveRight();
-//            }
-//        });
-//    }
 }

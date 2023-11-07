@@ -7,14 +7,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.*;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.*;
+
+import static model.Utils.readImage;
 
 public class GamePane {
     private Player player;
@@ -29,7 +28,7 @@ public class GamePane {
     private Random random;
     private int shotInterval;
     private int levelNum;
-    private ArrayList<Timer> timers = new ArrayList<>();
+    private ArrayList<Timer> timers;
 
     private Scene scene;
     private gameScreen gameScreen;
@@ -46,6 +45,7 @@ public class GamePane {
         gc = canvas.getGraphicsContext2D();
         objects = new ArrayList<>();
         aliens = new Alien[5][7];
+        timers = new ArrayList<>();
 
         drawPlayer();
         drawAliens();
@@ -424,16 +424,6 @@ public class GamePane {
         boolean comp4 = obj1Left < obj2Right;
 
         return comp1 && comp2 && comp3 && comp4;
-    }
-
-    public Image readImage(String filePath) {
-        FileInputStream imagePath;
-        try {
-            imagePath = new FileInputStream("lib/" + filePath);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return new Image(imagePath);
     }
 
     public Canvas getCanvas() {

@@ -31,6 +31,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import model.Utils;
 
 public class startScreen extends Application {
 
@@ -110,7 +111,7 @@ public class startScreen extends Application {
             Background bg = new Background(new BackgroundFill(c, null, null));
             pane.setBackground(bg);
         }
-        font = getFont();
+        font = Utils.getFont(50);
 
         start = new Hyperlink("Start game");
         start.setFont(font);
@@ -129,27 +130,8 @@ public class startScreen extends Application {
         pane.add(label, 0, 3);
         pane.add(start, 0, 5);
         pane.add(help, 0, 6);
-        pane.add(new ImageView(getImage()), 0, 8);
+        pane.add(new ImageView(Utils.readImage("ship.png")), 0, 8);
         pane.setAlignment(Pos.BASELINE_CENTER);
         pane.setVgap(50);
-    }
-
-    private Font getFont() {
-        FileInputStream fontInputStream;
-        try {
-            fontInputStream = new FileInputStream("lib/pixeboy-font.ttf");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return Font.loadFont(fontInputStream, 50);
-    }
-
-    private Image getImage() {
-        try {
-            Image img = new Image(new FileInputStream("lib/ship.png"), 20, 40, true, false);
-            return img;
-        } catch (FileNotFoundException e) {
-            return null;
-        }
     }
 }
