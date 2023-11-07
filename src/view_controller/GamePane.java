@@ -29,6 +29,10 @@ public class GamePane {
     private gameScreen gameScreen;
     private boolean playerShot;
     private Timer alienShootingTimer;
+    private Timer invincibilityTimer;
+    private boolean playerIsInvincible = false; // Add this variable to track player invincibility state
+
+
 
     public GamePane(Scene scene, gameScreen gameScreen) {
         this.scene = scene;
@@ -42,7 +46,7 @@ public class GamePane {
         drawAliens();
 
         alienShootingTimer = new Timer();
-        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 5000, 3000); // Delay: 5 seconds, Interval: 3 seconds
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, 3000); //delay: 5 sec interval: 3 sec
     }
 
     public void gameLoop() {
@@ -80,7 +84,7 @@ public class GamePane {
                 //collisions
                 detectAndHandleCollisions();
 
-                //Rendering
+                //rendering
                 drawFrame();
 
                 lastNanoTime = currentNanoTime;
@@ -117,24 +121,43 @@ public class GamePane {
                         }
                     }
 
-                    if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
-                            || (object1 instanceof Player && object2 instanceof Bullet && ! ((Bullet) object2).getPlayerShot())) {
-                        if(object1 instanceof Bullet) {
-                            objects.remove(object1);
-                            ((Player) object2).updateLives();
-                            //TODO: update heart bar, save score to menu?
-                            if(((Player) object2).isDead()) {
-                                objects.remove(object2);
-                                System.out.println("dead");
-                            }
-                        }
-                        if(object2 instanceof Bullet) {
-                            objects.remove(object2);
-                            ((Player) object1).updateLives();
-                            //TODO: update heart bar, save score to menu?
-                            if(((Player) object1).isDead()) {
+                    //Bullet hitting the player
+                        if (!playerIsInvincible) {
+                        if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
+                                || (object1 instanceof Player && object2 instanceof Bullet && ! ((Bullet) object2).getPlayerShot())) {
+                            if(object1 instanceof Bullet) {
                                 objects.remove(object1);
-                                System.out.println("dead");
+
+                                ((Player) object2).updateLives();
+                                double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
+                                ((Player) object2).setX(middleX);
+                                player.drawFrame(gc);
+
+                                startInvincibilityTimer();
+                                playerIsInvincible = true;
+
+                                if (player.isDead()) {
+                                    objects.remove(player);
+                                    System.out.println("dead");
+                                }
+                            }
+
+                            if(object2 instanceof Bullet) {
+                                //TODO: Make into a method
+                                objects.remove(object2);
+
+                                ((Player) object1).updateLives();
+                                double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
+                                ((Player) object1).setX(middleX);
+                                player.drawFrame(gc);
+
+                                startInvincibilityTimer();
+                                playerIsInvincible = true;
+
+                                if (player.isDead()) {
+                                    objects.remove(player);
+                                    System.out.println("dead");
+                                }
                             }
                         }
                     }
@@ -142,6 +165,7 @@ public class GamePane {
             }
         }
     }
+
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
@@ -154,7 +178,6 @@ public class GamePane {
                 }
             }
 
-            // Use Platform.runLater to update the UI from a background thread
             Platform.runLater(() -> {
                 for (Alien alien : aliensToShoot) {
                     alienShoot(alien);
@@ -165,12 +188,13 @@ public class GamePane {
     }
 
     public void shoot() {
-        //TODO: make sure the player cant shoot when they are dead
-        isShooting = true;
-        Image image = readImage("bullet.png");
-        Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY()-10);
-        bullet.setPlayerShot();
-        objects.add(bullet);
+        if(!player.isDead()) {
+            isShooting = true;
+            Image image = readImage("bullet.png");
+            Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
+            bullet.setPlayerShot();
+            objects.add(bullet);
+        }
     }
 
     public void alienShoot(Sprite object) {
@@ -248,6 +272,16 @@ public class GamePane {
     }
 
 
+    private void startInvincibilityTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                playerIsInvincible = false;
+            }
+        }, 4000); // Invincibility for 3 seconds
+    }
+
     public void updateAlienSprites(Sprite object) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -256,7 +290,7 @@ public class GamePane {
             Image oldImage = alien.getImage();
             Image newImage = null;
 
-            // Different image depending on the type of alien
+            //Different image depending on the type of alien
             if (alien.getType() == 1) {
                 newImage = readImage("alien1-2.png");
             } else if (alien.getType() == 2) {
@@ -268,12 +302,11 @@ public class GamePane {
             alien.updateSprite(newImage);
             alien.updateAABB();
 
-            // Use Platform.runLater to update the UI from a background thread
             Platform.runLater(() -> {
                 alien.drawFrame(gc);
             });
 
-            // Schedule a task to revert the sprite and update the UI
+            //create a timer to draw the "animations" for the aliens shooting
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
