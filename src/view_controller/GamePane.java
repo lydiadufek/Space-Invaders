@@ -26,7 +26,7 @@ public class GamePane {
     private boolean playerIsInvincible;
     private boolean playerShot;
     private Timer alienShootingTimer;
-    private Timer invincibilityTimer;
+    private ArrayList<Timer> timers = new ArrayList<>();
 
     private Scene scene;
     private gameScreen gameScreen;
@@ -46,6 +46,7 @@ public class GamePane {
 
         alienShootingTimer = new Timer();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, 3000); //delay: 5 sec interval: 3 sec
+        timers.add(alienShootingTimer);
     }
 
     public void gameLoop() {
@@ -137,7 +138,7 @@ public class GamePane {
                                 if (player.isDead()) {
                                     objects.remove(player);
                                     System.out.println("dead");
-                                    alienShootingTimer.cancel();
+                                    for (Timer timer: timers) timer.cancel();
                                 }
                             }
 
@@ -156,7 +157,7 @@ public class GamePane {
                                 if (player.isDead()) {
                                     objects.remove(player);
                                     System.out.println("dead");
-                                    alienShootingTimer.cancel();
+                                    for (Timer timer: timers) timer.cancel();
                                 }
                             }
                         }
@@ -287,6 +288,7 @@ public class GamePane {
                 playerIsInvincible = false;
             }
         }, 4000); //invicibility length
+        timers.add(timer);
     }
 
     public void updateAlienSprites(Sprite object) {
@@ -327,7 +329,7 @@ public class GamePane {
                     });
                 }
             }, 1000);
-            timer.cancel();
+            timers.add(timer);
         }
     }
 
@@ -375,6 +377,10 @@ public class GamePane {
 
     public ArrayList<Sprite> getObjects() {
         return objects;
+    }
+    
+    public ArrayList<Timer> getTimers() {
+    	return timers;
     }
 
 }
