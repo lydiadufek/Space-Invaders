@@ -45,12 +45,12 @@ public class startScreen extends Application {
     private gameScreen game;
     private helpScreen helpPane;
     private Stage stage;
+    private boolean isStarted;
 
     @Override
     public void start(Stage stage) {
         System.out.println("space invaders!!");
         pane = new GridPane();
-        game = new gameScreen();
         helpPane = new helpScreen(this);
 
         layoutGUI();
@@ -72,7 +72,8 @@ public class startScreen extends Application {
 
     private void registerHandlers() {
         start.setOnAction(event -> {
-//            System.out.println("Started!");
+            isStarted = true;
+            game = new gameScreen(isStarted);
             stage.setScene(game.getScene());
             stage.show();
         });

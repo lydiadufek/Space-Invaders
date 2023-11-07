@@ -33,6 +33,7 @@ public class gameScreen extends Application {
     private GamePane gamePane;
     private int MAX_LIVES = 2;
     private Scene scene;
+    private boolean isStarted;
 
     public static void main(String[] args) {
         launch(args);
@@ -50,7 +51,8 @@ public class gameScreen extends Application {
         stage.show();
     }
 
-    public gameScreen() {
+    public gameScreen(boolean isStarted) {
+        this.isStarted = isStarted;
         root = new BorderPane();
         scene = new Scene(root, 500, 700);
 
@@ -65,7 +67,8 @@ public class gameScreen extends Application {
 
         Player player = gamePane.getPlayer();
 
-        gamePane.gameLoop();
+        if(isStarted)
+            gamePane.gameLoop();
     }
 
     public Scene getScene() {
@@ -143,7 +146,7 @@ public class gameScreen extends Application {
             row.setSpacing(5);
             paneList.add(row);
             // lining up second row of ships
-            // TODO on ships <3, the score label shifts. want it to be stationary
+            //TODO on ships <3, the score label shifts. want it to be stationary
             if (i != 0) {
                 row.getChildren().add(new Label("\t\t\t"));
             }
@@ -154,8 +157,9 @@ public class gameScreen extends Application {
         Font font = getFont();
 
         Label livesLabel = new Label("LIVES ");
-        //TODO: KATIE FIX IT       label.setLayoutX(100); // Set the X coordinate
-        //        label.setLayoutY(50);  // Set the Y coordinate
+        //TODO: KATIE FIX IT
+        // label.setLayoutX(100); // Set the X coordinate
+        // label.setLayoutY(50);  // Set the Y coordinate
         livesLabel.setFont(font);
         livesLabel.setTextFill(Color.WHITE);
 

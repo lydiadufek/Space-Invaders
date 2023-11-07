@@ -30,7 +30,7 @@ public class Bullet extends Sprite {
         if (playerShot) {
             yVelocity = -10;  // Player's bullets move upward
         } else {
-            yVelocity = 10;   // Alien's bullets move downward
+            yVelocity = 5;   // Alien's bullets move downward
         }
         y += yVelocity;
     }

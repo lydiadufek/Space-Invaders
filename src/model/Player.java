@@ -9,7 +9,7 @@ public class Player extends Sprite {
     private int lifeAmount;
     private int score;
     private GraphicsContext gc;
-    
+
     public Player(Image image, double x, double y) {
         super(image, x, y);
         lifeAmount = 3; //3 total
@@ -19,12 +19,20 @@ public class Player extends Sprite {
     }
 
     public void drawFrame(GraphicsContext gc) {
+        this.gc = gc;
         gc.drawImage(image, x, y);
     }
 
     public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {
         bullet.move(gc);
 //        System.out.println("PEW PEW PEW!!");
+    }
+
+
+    public void setX(double x) {
+        this.x = x;
+        updateAABB();
+        drawFrame(gc);
     }
 
     public void moveLeft(GraphicsContext gc) {
@@ -55,8 +63,16 @@ public class Player extends Sprite {
         score += amount;
     }
 
+    public int getLives() {
+        return lifeAmount;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
     public boolean newLife() {
-        if(score == 1500) {
+        if(score >=    1500) {
             lifeAmount++;
             return true;
         } else {
