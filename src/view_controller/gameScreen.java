@@ -31,10 +31,13 @@ public class gameScreen {
     private Scene scene;
     private boolean isStarted;
 
+    private final int WW = startScreen.getWW();
+    private final int WH = startScreen.getWH();
+
     public gameScreen(boolean isStarted) {
         this.isStarted = isStarted;
         root = new BorderPane();
-        scene = new Scene(root, 500, 700);
+        scene = new Scene(root, WW, WH);
 
         setBackground();
         setupTopBar();

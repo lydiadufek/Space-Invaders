@@ -28,6 +28,9 @@ public class helpScreen extends Application {
     private startScreen home;
     private Hyperlink backButton;
 
+    private final int WW = startScreen.getWW();
+    private final int WH = startScreen.getWH();
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -35,8 +38,7 @@ public class helpScreen extends Application {
     @Override
     public void start(Stage stage) {
         root = new BorderPane();
-//        System.out.println("space invaders!!");
-        scene = new Scene(root, 500, 700);
+        scene = new Scene(root, WW, WH);
 
         setBackground();
         setupGUI();
@@ -49,7 +51,7 @@ public class helpScreen extends Application {
         this.home = home;
         root = new BorderPane();
 //        System.out.println("space invaders!!");
-        scene = new Scene(root, 500, 700);
+        scene = new Scene(root, WW, WH);
 
         setBackground();
         setupGUI();

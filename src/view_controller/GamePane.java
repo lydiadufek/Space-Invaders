@@ -35,13 +35,16 @@ public class GamePane {
     private Canvas canvas;
     private GraphicsContext gc;
 
+    private final int WW = startScreen.getWW();
+    private final int WH = startScreen.getWH();
+
     public GamePane(Scene scene, gameScreen gameScreen) {
         this.scene = scene;
         this.gameScreen = gameScreen;
         random = new Random();
         levelNum = 1;
 
-        canvas = new Canvas(500, 650);
+        canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
         objects = new ArrayList<>();
         aliens = new Alien[5][7];
