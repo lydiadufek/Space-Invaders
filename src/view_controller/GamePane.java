@@ -21,18 +21,17 @@ import java.util.*;
 public class GamePane {
     private Player player;
     private ArrayList<Sprite> objects;
-    private Canvas canvas;
-    private GraphicsContext gc;
-    private boolean isShooting = false;
-    private boolean notAlien = false;
-    private Scene scene;
-    private gameScreen gameScreen;
+    private boolean isShooting;
+    private boolean notAlien;
+    private boolean playerIsInvincible;
     private boolean playerShot;
     private Timer alienShootingTimer;
     private Timer invincibilityTimer;
-    private boolean playerIsInvincible = false; // Add this variable to track player invincibility state
 
-
+    private Scene scene;
+    private gameScreen gameScreen;
+    private Canvas canvas;
+    private GraphicsContext gc;
 
     public GamePane(Scene scene, gameScreen gameScreen) {
         this.scene = scene;
@@ -98,8 +97,8 @@ public class GamePane {
                 Sprite object1 = objects.get(i);
                 Sprite object2 = objects.get(j);
 
-                //Player hitting the Alien
                 if (isCollided(object1.getAABB(), object2.getAABB())) {
+                    //Player hitting the Alien
                     if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
                             || (object1 instanceof Bullet && object2 instanceof Alien && ((Bullet) object1).getPlayerShot())) {
                         objects.remove(object1);
@@ -107,8 +106,8 @@ public class GamePane {
                         if(object1 instanceof Alien) {
                             gameScreen.updateScore(((Alien) object1).getScore());
                             player.updateScore(((Alien) object1).getScore());
-                            //TODO: fix this because right now its not checking properly
                             if(player.newLife()) {
+                                //TODO: update life label
                                 System.out.println("new life");
                             }
                         }
@@ -121,8 +120,8 @@ public class GamePane {
                         }
                     }
 
-                    //Bullet hitting the player
-                        if (!playerIsInvincible) {
+                    //Bullet hitting the Player
+                    if (!playerIsInvincible) {
                         if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
                                 || (object1 instanceof Player && object2 instanceof Bullet && ! ((Bullet) object2).getPlayerShot())) {
                             if(object1 instanceof Bullet) {
@@ -161,6 +160,13 @@ public class GamePane {
                             }
                         }
                     }
+
+                    //Bullets hitting each other
+                    if(object1 instanceof Bullet && object2 instanceof Bullet) {
+                        System.out.println("bullets collided");
+                        objects.remove(object1);
+                        objects.remove(object2);
+                    }
                 }
             }
         }
@@ -169,6 +175,7 @@ public class GamePane {
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
+            //TODO: Make this a 2d list
             Random random = new Random();
             List<Alien> aliensToShoot = new ArrayList<>();
 
@@ -271,7 +278,6 @@ public class GamePane {
         }
     }
 
-
     private void startInvincibilityTimer() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -279,7 +285,7 @@ public class GamePane {
             public void run() {
                 playerIsInvincible = false;
             }
-        }, 4000); // Invincibility for 3 seconds
+        }, 4000); //invicibility length
     }
 
     public void updateAlienSprites(Sprite object) {

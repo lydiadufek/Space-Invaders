@@ -10,19 +10,12 @@ public class Player extends Sprite {
     private int score;
     private GraphicsContext gc;
 
-    public boolean isInvincible;
-    private long invincibilityStartTime;
-    private long invincibilityDuration; // Specify the duration of invisibility in milliseconds
-
-
     public Player(Image image, double x, double y) {
         super(image, x, y);
         lifeAmount = 3; //3 total
         score = 0;
         xVelocity = 20;
         yVelocity = 0;
-
-        isInvincible = false;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -35,13 +28,6 @@ public class Player extends Sprite {
 //        System.out.println("PEW PEW PEW!!");
     }
 
-    public void setInvincible(boolean update) {
-        isInvincible = update;
-    }
-
-    public boolean isInvincible() {
-        return isInvincible && (System.currentTimeMillis() - invincibilityStartTime >= invincibilityDuration);
-    }
 
     public void setX(double x) {
         this.x = x;
@@ -81,8 +67,12 @@ public class Player extends Sprite {
         return lifeAmount;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public boolean newLife() {
-        if(score == 1500) {
+        if(score >=    1500) {
             lifeAmount++;
             return true;
         } else {
