@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Timer;
 
 public class gameScreen extends Application {
     private BorderPane root;
@@ -136,6 +137,10 @@ public class gameScreen extends Application {
     public void updateScore(int score) {
         int originalScore = Integer.parseInt(scoreNum.getText());
         scoreNum.setText(String.valueOf(originalScore + score));
+    }
+    
+    public ArrayList<Timer> getTimers() {
+    	return gamePane.getTimers();
     }
 
     private void setLivesDisplay(int num) {

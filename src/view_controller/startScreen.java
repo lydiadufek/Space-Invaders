@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Timer;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -60,6 +62,12 @@ public class startScreen extends Application {
         this.stage = stage;
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(event -> {
+        	if (game != null) {
+        		ArrayList<Timer> timers = game.getTimers();
+        		for (Timer timer: timers) timer.cancel();
+        	}
+        });
     }
 
     public Scene getScene() {

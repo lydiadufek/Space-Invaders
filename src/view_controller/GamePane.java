@@ -31,6 +31,7 @@ public class GamePane {
     private Random random;
     private int shotInterval;
     private int levelNum;
+    private ArrayList<Timer> timers = new ArrayList<>();
 
     private Scene scene;
     private gameScreen gameScreen;
@@ -57,6 +58,7 @@ public class GamePane {
         alienShootingTimer = new Timer();
         generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval); //delay: 5 sec interval: 3 sec
+        timers.add(alienShootingTimer);
     }
 
     public void gameLoop() {
@@ -146,19 +148,19 @@ public class GamePane {
                             || (object1 instanceof Bullet && object2 instanceof Alien && ((Bullet) object1).getPlayerShot())) {
                         objects.remove(object1);
                         objects.remove(object2);
-                        if(object1 instanceof Alien) {
+                        if (object1 instanceof Alien) {
                             gameScreen.updateScore(((Alien) object1).getScore());
                             player.updateScore(((Alien) object1).getScore());
-                            if(player.newLife()) {
+                            if (player.newLife()) {
                                 //TODO: update life label
                                 System.out.println("new life");
                             }
                             ((Alien) object1).kill();
                         }
-                        if(object2 instanceof Alien) {
+                        if (object2 instanceof Alien) {
                             gameScreen.updateScore(((Alien) object2).getScore());
                             player.updateScore(((Alien) object2).getScore());
-                            if(player.newLife()) {
+                            if (player.newLife()) {
                                 System.out.println("new life");
                             }
                             ((Alien) object2).kill();
@@ -361,6 +363,7 @@ public class GamePane {
                 playerIsInvincible = false;
             }
         }, 4000); //invicibility length
+        timers.add(timer);
     }
 
     public void updateAlienSprites(Sprite object) {
@@ -401,6 +404,7 @@ public class GamePane {
                     });
                 }
             }, 1000);
+            timers.add(timer);
         }
     }
 
@@ -448,6 +452,10 @@ public class GamePane {
 
     public ArrayList<Sprite> getObjects() {
         return objects;
+    }
+    
+    public ArrayList<Timer> getTimers() {
+    	return timers;
     }
 
 }
