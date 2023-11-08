@@ -1,7 +1,5 @@
 package view_controller;
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -9,52 +7,37 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 import model.Player;
-import model.Sprite;
+import model.Utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Timer;
 
-public class gameScreen extends Application {
+public class gameScreen {
     private BorderPane root;
     private Label scoreNum;
     private BorderPane topBar;
-    private VBox livesBox;
+    private HBox livesBox;
     private GamePane gamePane;
     private int MAX_LIVES = 2;
+    private int currentLives;
     private Scene scene;
     private boolean isStarted;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage stage) {
-        root = new BorderPane();
-        scene = new Scene(root, 500, 700);
-
-        setBackground();
-        setupTopBar();
-
-        stage.setScene(scene);
-        stage.show();
-    }
+    private final int WW = startScreen.getWW();
+    private final int WH = startScreen.getWH();
 
     public gameScreen(boolean isStarted) {
         this.isStarted = isStarted;
         root = new BorderPane();
-        scene = new Scene(root, 500, 700);
+        scene = new Scene(root, WW, WH);
 
         setBackground();
         setupTopBar();
@@ -66,8 +49,9 @@ public class gameScreen extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         Player player = gamePane.getPlayer();
+        currentLives = MAX_LIVES;
 
-        if(isStarted)
+        if (isStarted)
             gamePane.gameLoop();
     }
 
@@ -94,25 +78,15 @@ public class gameScreen extends Application {
         }
     }
 
-    private Font getFont() {
-        FileInputStream fontInputStream;
-        try {
-            fontInputStream = new FileInputStream("lib/pixeboy-font.ttf");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return Font.loadFont(fontInputStream, 25);
-    }
-
     private void setupTopBar() {
         topBar = new BorderPane();
         HBox scoreBox = new HBox();
         scoreBox.setSpacing(10);
 
-        livesBox = new VBox();
+        livesBox = new HBox();
         livesBox.setSpacing(5);
 
-        Font font = getFont();
+        Font font = Utils.getFont(25);
 
         // initialize score label
         Label scoreLabel = new Label("  SCORE");
@@ -128,43 +102,17 @@ public class gameScreen extends Application {
         topBar.setLeft(scoreBox);
         topBar.setPadding(new Insets(10, 10, 10, 10));
 
-        setLivesDisplay(MAX_LIVES);
+        setLivesDisplay();
 
         root.setTop(topBar);
     }
 
-    public void updateScore(int score) {
-        int originalScore = Integer.parseInt(scoreNum.getText());
-        scoreNum.setText(String.valueOf(originalScore + score));
-    }
-
-    private void setLivesDisplay(int num) {
-        //TODO: make method that updates the save lives
-        ArrayList<HBox> paneList = new ArrayList<>();
-        for (int i = 0; i < MAX_LIVES; i += 4) {
-            HBox row = new HBox();
-            row.setSpacing(5);
-            paneList.add(row);
-            // lining up second row of ships
-            //TODO on ships <3, the score label shifts. want it to be stationary
-            if (i != 0) {
-                row.getChildren().add(new Label("\t\t\t"));
-            }
-            livesBox.getChildren().add(row);
-        }
-        ArrayList<ImageView> extraShips = new ArrayList<>();
-
-        Font font = getFont();
-
+    private void setLivesDisplay() {
+        Font font = Utils.getFont(25);
         Label livesLabel = new Label("LIVES ");
-        //TODO: KATIE FIX IT
-        // label.setLayoutX(100); // Set the X coordinate
-        // label.setLayoutY(50);  // Set the Y coordinate
         livesLabel.setFont(font);
         livesLabel.setTextFill(Color.WHITE);
-
-        // Thinking I might remove this line and add the label some other way
-        paneList.get(0).getChildren().add(livesLabel);
+        livesBox.getChildren().add(livesLabel);
 
         FileInputStream shipImagePath;
         try {
@@ -174,28 +122,25 @@ public class gameScreen extends Application {
         }
 
         Image shipImageObj = new Image(shipImagePath);
-        for (int i = 0; i < num; i++) {
-            extraShips.add(new ImageView(shipImageObj));
+        for (int i = 0; i <= MAX_LIVES; i++) {
+            livesBox.getChildren().add(new ImageView(shipImageObj));
         }
-
-        for (int i = 0; i < extraShips.size(); i++) {
-            paneList.get(i/4).getChildren().add(extraShips.get(i));
-        }
-
+        livesBox.getChildren().get(MAX_LIVES+1).setVisible(false);
         topBar.setRight(livesBox);
     }
 
-    private void setupGameScreen() {
-//        gamePane = new GamePane();
-//        root.setCenter(gamePane.getCanvas());
-        scene.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.SPACE) {
-                gamePane.shoot();
-            } else if (keyEvent.getCode() == KeyCode.LEFT) {
-                gamePane.moveLeft();
-            } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-                gamePane.moveRight();
-            }
-        });
+    public void updateScore(int score) {
+        int originalScore = Integer.parseInt(scoreNum.getText());
+        scoreNum.setText(String.valueOf(originalScore + score));
     }
+    
+    public ArrayList<Timer> getTimers() {
+    	return gamePane.getTimers();
+    }
+
+    protected void removeLifeIcon() {
+        livesBox.getChildren().get(currentLives+1).setVisible(false);
+        currentLives--;
+    }
+
 }
