@@ -64,8 +64,7 @@ public class GamePane {
         //it needs to move across the screen first
         alienShipTimer = new Timer();
         delay = generateRandomAlienShipDelay();
-        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 5000, delay); //delay: 5 sec interval: 3 sec
-
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, delay);
 
         timers.add(alienShootingTimer);
         timers.add(alienShipTimer);
@@ -109,17 +108,14 @@ public class GamePane {
                 //rendering
                 drawFrame();
 
+                //checking the alienship
                 if (alienShip != null) {
                     alienShip.moveAcrossScreen(gc, canvas.getWidth());
 
-//                    double newX = alienShip.getX() - 1;
-//                    if (newX + alienShip.getWidth() < canvas.getWidth()) {
-//                        alienShip.moveAcrossScreen(gc, canvas.getWidth());
-//                    } else {
-//                        System.out.println("hello");
-//                        objects.remove(alienShip);
-//                        delay = generateRandomAlienShipDelay();
-//                    }
+                    double newX = alienShip.getX() - 1;
+                    if (newX - (alienShip.getWidth()/2) >= canvas.getWidth()) {
+                        objects.remove(alienShip);
+                    }
                 }
 
                 lastNanoTime = currentNanoTime;
@@ -296,18 +292,14 @@ public class GamePane {
     }
 
     private int generateRandomAlienShipDelay() {
-        return random.nextInt(2000, 10000);
+        return random.nextInt(15000, 30000);
     }
 
     private class AlienShipTimer extends TimerTask {
         @Override
         public void run() {
-            //TODO: find where i can remove the ship
-            //TODO: find an interval and delay that makes sense
             if (alienShip == null || alienShip.getX() > canvas.getWidth()) {
                 spawnAlienShip();
-
-                // Reset the timer with a new random delay
                 delay = generateRandomAlienShipDelay();
                 alienShipTimer.cancel();
                 alienShipTimer = new Timer();
@@ -317,7 +309,6 @@ public class GamePane {
     }
 
     private void spawnAlienShip() {
-        System.out.println("spawned");
         Image image = readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
         objects.add(alienShip);

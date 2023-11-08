@@ -18,7 +18,7 @@ public class AlienShip extends Sprite {
         this.startingPositionY = y;
         this.scoreAmount = scoreAmount;
 
-        xVelocity = 20;
+        xVelocity = 1;
         //once hit it dies --> collider should just control this
         //random score amount
     }
