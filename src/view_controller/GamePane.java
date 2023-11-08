@@ -23,6 +23,7 @@ public class GamePane {
     private boolean playerIsInvincible;
     private boolean playerShot;
     private Timer alienShootingTimer;
+    private Timer alienMovingTimer;
     private Timer invincibilityTimer;
     private Alien[][] aliens;
     private Random random;
@@ -34,6 +35,9 @@ public class GamePane {
     private gameScreen gameScreen;
     private Canvas canvas;
     private GraphicsContext gc;
+    
+    private Double coordTrack = 250.0;
+    private String direction = "right";
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
@@ -57,6 +61,9 @@ public class GamePane {
         generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval); //delay: 5 sec interval: 3 sec
         timers.add(alienShootingTimer);
+        
+        alienMovingTimer = new Timer();
+        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
     }
 
     public void gameLoop() {
@@ -268,6 +275,38 @@ public class GamePane {
                 }
             });
         }
+    }
+    
+    private class moveAllAliens extends TimerTask {
+    	@Override
+        public void run() {
+	    	for (int i = 0; i < objects.size(); i++) {
+	    		if(objects.get(i) instanceof Alien) {
+	    			Sprite alien = objects.get(i);
+	    			alien.changeVelocity(3, 10);
+	    			if(direction.equals("left")) {
+	    				alien.moveLeft(gc);
+	    			}
+	    			if(direction.equals("right")) {
+	    				alien.moveRight(gc);
+	    			}
+	    			
+	    			if (coordTrack > 290.0) {
+	    				alien.moveDown(gc);	
+	    				direction = "left";
+	    			}
+	    			if (coordTrack < 230.0) {
+	    				alien.moveDown(gc);
+	    				direction = "right";
+	    			}
+	    		}
+	    	}
+	    	if (direction.equals("left")) {
+	    		coordTrack -= 3;
+	    	} else {
+	    		coordTrack += 3;
+	    	}
+    	}
     }
 
     public void shoot() {
