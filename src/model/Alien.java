@@ -1,5 +1,6 @@
 package model;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
@@ -19,18 +20,34 @@ public class Alien extends Sprite {
         this.scoreAmount = scoreAmount;
         this.isShooting = false;
         this.type = type;
+
+        xVelocity = 5;
+        yVelocity = 5;
+
     }
 
-    public void updateHealth(int damage) {
-        health -= damage;
+    public void moveDown(GraphicsContext gc) {
+        y += yVelocity;
+        drawFrame(gc);
+        updateAABB();
     }
 
-    public int updateScore(int score) {
-        return scoreAmount += score;
+    public void moveUp(GraphicsContext gc) {
+        y -= yVelocity;
+        drawFrame(gc);
+        updateAABB();
     }
 
-    public boolean stillAlive() {
-        return health != 0;
+    public void moveLeft(GraphicsContext gc) {
+        x -= xVelocity;
+        drawFrame(gc);
+        updateAABB();
+    }
+
+    public void moveRight(GraphicsContext gc) {
+        x += xVelocity;
+        drawFrame(gc);
+        updateAABB();
     }
 
     public void updateAABB() {

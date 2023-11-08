@@ -119,6 +119,7 @@ public class GamePane {
                             }
                         }
                     }
+
                     //Bullet hitting the Player
                     if (!playerIsInvincible) {
                         if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
@@ -140,7 +141,6 @@ public class GamePane {
                                     alienShootingTimer.cancel();
                                 }
                             }
-
                             if(object2 instanceof Bullet) {
                                 //TODO: Make into a method
                                 objects.remove(object2);

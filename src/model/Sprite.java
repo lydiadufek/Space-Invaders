@@ -73,8 +73,4 @@ public abstract class Sprite {
         image = newImage;
     }
 
-//
-//    public void updateHealth(int damage) {
-//        health -= damage;
-//    }
 }
