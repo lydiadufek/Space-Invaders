@@ -72,5 +72,23 @@ public abstract class Sprite {
     public void updateSprite(Image newImage) {
         image = newImage;
     }
+    
+    public void moveLeft(GraphicsContext gc) {
+        x -= xVelocity;
+        drawFrame(gc);
+        updateAABB();
+    }
+    
+    public void moveRight(GraphicsContext gc) {
+        x += xVelocity;
+        drawFrame(gc);
+        updateAABB();
+    }
+    
+    public void moveDown(GraphicsContext gc) {
+        y += yVelocity;
+        drawFrame(gc);
+        updateAABB();
+    }
 
 }
