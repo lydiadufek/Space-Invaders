@@ -108,6 +108,63 @@ public class GamePane {
                 Sprite object1 = objects.get(i);
                 Sprite object2 = objects.get(j);
 
+// ^^^^^^^^^^^^^EXPERIMENTAL CLEANUP, DOESN'T WORK^^^^^^^^^^^^^^^^^^^
+//                if (isCollided(object1.getAABB(), object2.getAABB())) {
+//                    Sprite[] orderedObjs = bulletFirst(object1, object2);
+//                    Bullet bullet = (Bullet) orderedObjs[0];
+//                    Sprite otherObj = orderedObjs[1];
+//
+//                    if (bullet != null && otherObj instanceof Alien && bullet.getPlayerShot()) {
+//                        objects.remove(object1);
+//                        objects.remove(object2);
+//                        gameScreen.updateScore(((Alien) otherObj).getScore());
+//                        player.updateScore(((Alien) otherObj).getScore());
+//                        if (player.newLife()) {
+//                            //TODO: update life label
+//                            System.out.println("new life");
+//                        }
+//                    }
+//
+//                    //Bullet hitting the Player
+//                    if (!playerIsInvincible) {
+//                        if (bullet != null && otherObj instanceof Player && !bullet.getPlayerShot()) {
+//                            handlePlayerBeingShot((Player) otherObj, bullet);
+//                        }
+//                    }
+//
+//                    //Bullets hitting each other
+//                    if (bullet != null && object2 instanceof Bullet) {
+//                        System.out.println("bullets collided");
+//                        objects.remove(object1);
+//                        objects.remove(object2);
+//                    }
+//                }
+
+                if (isCollided(object1.getAABB(), object2.getAABB())) {
+                    //Player hitting the Alien
+                    if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+                            || (object1 instanceof Bullet && object2 instanceof Alien && ((Bullet) object1).getPlayerShot())) {
+                        objects.remove(object1);
+                        objects.remove(object2);
+                        if (object1 instanceof Alien) {
+                            gameScreen.updateScore(((Alien) object1).getScore());
+                            player.updateScore(((Alien) object1).getScore());
+                            if (player.newLife()) {
+                                //TODO: update life label
+                                gameScreen.addLifeIcon();
+                            }
+                            ((Alien) object1).kill();
+                        }
+                        if (object2 instanceof Alien) {
+                            gameScreen.updateScore(((Alien) object2).getScore());
+                            player.updateScore(((Alien) object2).getScore());
+                            if (player.newLife()) {
+                                System.out.println("new life");
+                                gameScreen.addLifeIcon();
+                            }
+                            ((Alien) object2).kill();
+                        }
+                    }
 
                     //Bullet hitting the Player
                     if (!playerIsInvincible) {
@@ -116,7 +173,6 @@ public class GamePane {
                             if (object1 instanceof Bullet) {
                                 handlePlayerBeingShot((Player) object2, (Bullet) object1);
                             }
-
                             if (object2 instanceof Bullet) {
                                 handlePlayerBeingShot((Player) object1, (Bullet) object2);
                             }
@@ -132,6 +188,7 @@ public class GamePane {
                 }
             }
         }
+    }
 
     private Sprite[] bulletFirst(Sprite object1, Sprite object2) {
         Sprite[] retVal = new Sprite[2];
@@ -154,6 +211,7 @@ public class GamePane {
         objects.remove(bullet);
 
         player.updateLives();
+
         double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
         player.setX(middleX);
         player.drawFrame(gc);
@@ -278,7 +336,7 @@ public class GamePane {
                 type = 2;
             } else {
                 image = readImage("alien1-1.png");
-                scoreAmount = 10;
+                scoreAmount = 1000;
                 type = 1;
             }
 
@@ -304,7 +362,7 @@ public class GamePane {
             public void run() {
                 playerIsInvincible = false;
             }
-        }, 4000); //invicibility length
+        }, 2000); //invicibility length
         timers.add(timer);
     }
 
@@ -385,9 +443,9 @@ public class GamePane {
     public ArrayList<Sprite> getObjects() {
         return objects;
     }
-    
+
     public ArrayList<Timer> getTimers() {
-    	return timers;
+        return timers;
     }
 
 }

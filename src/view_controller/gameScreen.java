@@ -26,7 +26,7 @@ public class gameScreen {
     private BorderPane topBar;
     private HBox livesBox;
     private GamePane gamePane;
-    private int MAX_LIVES = 2;
+    private int MAX_LIVES = 3;
     private int currentLives;
     private Scene scene;
     private boolean isStarted;
@@ -114,18 +114,17 @@ public class gameScreen {
         livesLabel.setTextFill(Color.WHITE);
         livesBox.getChildren().add(livesLabel);
 
-        FileInputStream shipImagePath;
+        FileInputStream heartImage;
         try {
-            shipImagePath = new FileInputStream("lib/heart2.png");
+            heartImage = new FileInputStream("lib/heart2.png");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        Image shipImageObj = new Image(shipImagePath);
-        for (int i = 0; i <= MAX_LIVES; i++) {
-            livesBox.getChildren().add(new ImageView(shipImageObj));
+        Image heartObj = new Image(heartImage);
+        for (int i = 0; i < MAX_LIVES; i++) {
+            livesBox.getChildren().add(new ImageView(heartObj));
         }
-        livesBox.getChildren().get(MAX_LIVES+1).setVisible(false);
         topBar.setRight(livesBox);
     }
 
@@ -139,8 +138,21 @@ public class gameScreen {
     }
 
     protected void removeLifeIcon() {
-        livesBox.getChildren().get(currentLives+1).setVisible(false);
+        livesBox.getChildren().remove(currentLives);
         currentLives--;
+    }
+
+    protected void addLifeIcon() {
+        FileInputStream heartImage;
+        try {
+            heartImage = new FileInputStream("lib/heart2.png");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        Image heartObj = new Image(heartImage);
+        livesBox.getChildren().add(new ImageView(heartObj));
+        currentLives++;
     }
 
 }

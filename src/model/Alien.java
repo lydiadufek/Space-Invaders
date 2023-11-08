@@ -66,6 +66,10 @@ public class Alien extends Sprite {
         isShooting = status;
     }
 
+    public boolean stillAlive() {
+        return health != 0;
+    }
+
     public void kill() {
         health = 0;
     }
