@@ -29,7 +29,7 @@ public class Player extends Sprite {
     public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {
         bullet.move(gc);
     }
-    
+
     public void setX(double x) {
         this.x = x;
         updateAABB();

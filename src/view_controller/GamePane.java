@@ -120,7 +120,6 @@ public class GamePane {
 //                        gameScreen.updateScore(((Alien) otherObj).getScore());
 //                        player.updateScore(((Alien) otherObj).getScore());
 //                        if (player.newLife()) {
-//                            //TODO: update life label
 //                            System.out.println("new life");
 //                        }
 //                    }
@@ -150,7 +149,6 @@ public class GamePane {
                             gameScreen.updateScore(((Alien) object1).getScore());
                             player.updateScore(((Alien) object1).getScore());
                             if (player.newLife()) {
-                                //TODO: update life label
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object1).kill();
@@ -159,7 +157,6 @@ public class GamePane {
                             gameScreen.updateScore(((Alien) object2).getScore());
                             player.updateScore(((Alien) object2).getScore());
                             if (player.newLife()) {
-                                System.out.println("new life");
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object2).kill();
@@ -210,12 +207,16 @@ public class GamePane {
     private void handlePlayerBeingShot(Player player, Bullet bullet) {
         objects.remove(bullet);
 
+        //update the life counter
         player.updateLives();
+        gameScreen.removeLifeIcon();
 
+        //reset the player
         double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
         player.setX(middleX);
         player.drawFrame(gc);
 
+        //invicibility time frame
         startInvincibilityTimer();
         playerIsInvincible = true;
 
@@ -223,7 +224,6 @@ public class GamePane {
             objects.remove(player);
             System.out.println("dead");
         }
-        gameScreen.removeLifeIcon();
     }
 
     private void generateShotInterval() {
@@ -305,7 +305,7 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-//            drawAABB(object); //draw aabb
+            //drawAABB(object);
         }
     }
 
@@ -325,7 +325,7 @@ public class GamePane {
             int scoreAmount;
             int type;
 
-            //update the iamge and score dependin on the alien type
+            //update the image and score dependin on the alien type
             if (i == 0) {
                 image = readImage("alien3-1.png");
                 scoreAmount = 50;
@@ -336,7 +336,7 @@ public class GamePane {
                 type = 2;
             } else {
                 image = readImage("alien1-1.png");
-                scoreAmount = 1000;
+                scoreAmount = 10;
                 type = 1;
             }
 
