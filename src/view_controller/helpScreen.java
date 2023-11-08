@@ -15,7 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import model.Utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,9 +27,6 @@ public class helpScreen extends Application {
     private startScreen home;
     private Hyperlink backButton;
 
-    private final int WW = startScreen.getWW();
-    private final int WH = startScreen.getWH();
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -38,7 +34,8 @@ public class helpScreen extends Application {
     @Override
     public void start(Stage stage) {
         root = new BorderPane();
-        scene = new Scene(root, WW, WH);
+//        System.out.println("space invaders!!");
+        scene = new Scene(root, 500, 700);
 
         setBackground();
         setupGUI();
@@ -51,7 +48,7 @@ public class helpScreen extends Application {
         this.home = home;
         root = new BorderPane();
 //        System.out.println("space invaders!!");
-        scene = new Scene(root, WW, WH);
+        scene = new Scene(root, 500, 700);
 
         setBackground();
         setupGUI();
@@ -66,7 +63,7 @@ public class helpScreen extends Application {
     private void setupGUI() {
         Label label = new Label("Move Ship Left - Left Arrow Key\n\nMove Ship Right - Right"
                 + " Arrow Key\n\nShoot Bullet - SPACE BAR\n\nPause Game - ESC Key");
-        Font font = Utils.getFont(25);
+        Font font = getFont();
         label.setFont(font);
         label.setTextFill(Color.WHITE);
         root.setCenter(label);
@@ -95,6 +92,16 @@ public class helpScreen extends Application {
             Background bg = new Background(new BackgroundFill(c, null, null));
             root.setBackground(bg);
         }
+    }
+
+    private Font getFont() {
+        FileInputStream fontInputStream;
+        try {
+            fontInputStream = new FileInputStream("lib/pixeboy-font.ttf");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return Font.loadFont(fontInputStream, 25);
     }
 
     private void registerHandlers() {
