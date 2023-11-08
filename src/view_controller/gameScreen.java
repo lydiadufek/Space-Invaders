@@ -60,22 +60,14 @@ public class gameScreen {
     }
 
     private void setBackground() {
-        try {
-            InputStream inStream = new FileInputStream("lib/game-background.jpg");
-            Image image = new Image(inStream);
-            BackgroundImage bgImage = new BackgroundImage(image,
-                    BackgroundRepeat.REPEAT,
-                    BackgroundRepeat.REPEAT,
-                    BackgroundPosition.DEFAULT,
-                    BackgroundSize.DEFAULT);
-            Background bg = new Background(bgImage);
-            root.setBackground(bg);
-        } catch (FileNotFoundException e) {
-            System.out.println("Background image not found. Setting to default black.");
-            Paint c = Color.BLACK;
-            Background bg = new Background(new BackgroundFill(c, null, null));
-            root.setBackground(bg);
-        }
+        Image image = Utils.readImage("game-background.jpg");
+        BackgroundImage bgImage = new BackgroundImage(image,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        Background bg = new Background(bgImage);
+        root.setBackground(bg);
     }
 
     private void setupTopBar() {
@@ -114,17 +106,11 @@ public class gameScreen {
         livesLabel.setTextFill(Color.WHITE);
         livesBox.getChildren().add(livesLabel);
 
-        FileInputStream heartImage;
-        try {
-            heartImage = new FileInputStream("lib/heart2.png");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        Image heartObj = new Image(heartImage);
+        Image heartObj = Utils.readImage("heart2.png");
         for (int i = 0; i < MAX_LIVES; i++) {
             livesBox.getChildren().add(new ImageView(heartObj));
         }
+        livesBox.getChildren().get(MAX_LIVES).setVisible(false);
         topBar.setRight(livesBox);
     }
 
@@ -138,20 +124,14 @@ public class gameScreen {
     }
 
     protected void removeLifeIcon() {
-        livesBox.getChildren().remove(currentLives);
+        livesBox.getChildren().get(currentLives).setVisible(false);
         currentLives--;
     }
 
     protected void addLifeIcon() {
-        FileInputStream heartImage;
-        try {
-            heartImage = new FileInputStream("lib/heart2.png");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        Image heartObj = new Image(heartImage);
-        livesBox.getChildren().add(new ImageView(heartObj));
+//        Image heartObj = Utils.readImage("heart2.png");
+//        livesBox.getChildren().add(new ImageView(heartObj));
+        livesBox.getChildren().get(currentLives).setVisible(true);
         currentLives++;
     }
 
