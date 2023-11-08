@@ -17,18 +17,22 @@ import static model.Utils.readImage;
 
 public class GamePane {
     private Player player;
+    private AlienShip alienShip;
     private ArrayList<Sprite> objects;
     private boolean isShooting;
     private boolean notAlien;
     private boolean playerIsInvincible;
     private boolean playerShot;
     private Timer alienShootingTimer;
+    private Timer alienShipTimer;
     private Timer invincibilityTimer;
     private Alien[][] aliens;
     private Random random;
     private int shotInterval;
     private int levelNum;
     private ArrayList<Timer> timers;
+
+    private int delay;
 
     private Scene scene;
     private gameScreen gameScreen;
@@ -56,7 +60,15 @@ public class GamePane {
         alienShootingTimer = new Timer();
         generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval); //delay: 5 sec interval: 3 sec
+
+        //it needs to move across the screen first
+        alienShipTimer = new Timer();
+        delay = generateRandomAlienShipDelay();
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 5000, delay); //delay: 5 sec interval: 3 sec
+
+
         timers.add(alienShootingTimer);
+        timers.add(alienShipTimer);
     }
 
     public void gameLoop() {
@@ -96,6 +108,19 @@ public class GamePane {
 
                 //rendering
                 drawFrame();
+
+                if (alienShip != null) {
+                    alienShip.moveAcrossScreen(gc, canvas.getWidth());
+
+//                    double newX = alienShip.getX() - 1;
+//                    if (newX + alienShip.getWidth() < canvas.getWidth()) {
+//                        alienShip.moveAcrossScreen(gc, canvas.getWidth());
+//                    } else {
+//                        System.out.println("hello");
+//                        objects.remove(alienShip);
+//                        delay = generateRandomAlienShipDelay();
+//                    }
+                }
 
                 lastNanoTime = currentNanoTime;
             }
@@ -268,6 +293,35 @@ public class GamePane {
                 }
             });
         }
+    }
+
+    private int generateRandomAlienShipDelay() {
+        return random.nextInt(2000, 10000);
+    }
+
+    private class AlienShipTimer extends TimerTask {
+        @Override
+        public void run() {
+            //TODO: find where i can remove the ship
+            //TODO: find an interval and delay that makes sense
+            if (alienShip == null || alienShip.getX() > canvas.getWidth()) {
+                spawnAlienShip();
+
+                // Reset the timer with a new random delay
+                delay = generateRandomAlienShipDelay();
+                alienShipTimer.cancel();
+                alienShipTimer = new Timer();
+                alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), delay, delay);
+            }
+        }
+    }
+
+    private void spawnAlienShip() {
+        System.out.println("spawned");
+        Image image = readImage("AlienShip.png");
+        alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
+        objects.add(alienShip);
+        alienShip.drawFrame(gc);
     }
 
     public void shoot() {

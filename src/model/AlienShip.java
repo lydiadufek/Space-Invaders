@@ -1,5 +1,6 @@
 package model;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
@@ -17,12 +18,18 @@ public class AlienShip extends Sprite {
         this.startingPositionY = y;
         this.scoreAmount = scoreAmount;
 
+        xVelocity = 20;
         //once hit it dies --> collider should just control this
         //random score amount
     }
 
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
+    public void moveAcrossScreen(GraphicsContext gc, double canvasWidth) {
+        x += xVelocity;
+        drawFrame(gc);
     }
 
     public int getScore() {
