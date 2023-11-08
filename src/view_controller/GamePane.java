@@ -132,7 +132,7 @@ public class GamePane {
                 }
             }
         }
-    }
+
     private Sprite[] bulletFirst(Sprite object1, Sprite object2) {
         Sprite[] retVal = new Sprite[2];
         if (object1 instanceof Bullet) {
