@@ -117,7 +117,7 @@ public class GamePane {
 
                 //checking the alienship
                 if (alienShip != null) {
-                    alienShip.moveAcrossScreen(gc, canvas.getWidth());
+                    alienShip.moveAcrossScreen(gc);
 
                     double newX = alienShip.getX() - 1;
                     if (newX - (alienShip.getWidth()/2) >= canvas.getWidth()) {
@@ -166,7 +166,6 @@ public class GamePane {
 //                        objects.remove(object2);
 //                    }
 //                }
-
                 if (isCollided(object1.getAABB(), object2.getAABB())) {
                     //Player hitting the Alien
                     if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
@@ -194,7 +193,7 @@ public class GamePane {
                     //Bullet hitting the Player
                     if (!playerIsInvincible) {
                         if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
-                                || (object1 instanceof Player && object2 instanceof Bullet && ! ((Bullet) object2).getPlayerShot())) {
+                                || (object1 instanceof Player && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
                             if (object1 instanceof Bullet) {
                                 handlePlayerBeingShot((Player) object2, (Bullet) object1);
                             }
@@ -205,10 +204,36 @@ public class GamePane {
                     }
 
                     //Bullets hitting each other
-                    if(object1 instanceof Bullet && object2 instanceof Bullet) {
+                    if (object1 instanceof Bullet && object2 instanceof Bullet) {
                         System.out.println("bullets collided");
                         objects.remove(object1);
                         objects.remove(object2);
+                    }
+
+                    //Player hitting the AlienShip
+                    if ((object1 instanceof AlienShip && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+                            || (object1 instanceof Bullet && object2 instanceof AlienShip && ((Bullet) object1).getPlayerShot())) {
+                        System.out.println("here");
+                        objects.remove(object1);
+                        objects.remove(object2);
+                        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+//                        alienShipTimer.cancel();
+
+                        //TODO: why isnt it being removed completely
+                        if (object1 instanceof AlienShip) {
+                            gameScreen.updateScore(((AlienShip) object1).getScore());
+                            player.updateScore(((AlienShip) object1).getScore());
+                            if (player.newLife()) {
+                                gameScreen.addLifeIcon();
+                            }
+                        }
+                        if (object2 instanceof AlienShip) {
+                            gameScreen.updateScore(((AlienShip) object2).getScore());
+                            player.updateScore(((AlienShip) object2).getScore());
+                            if (player.newLife()) {
+                                gameScreen.addLifeIcon();
+                            }
+                        }
                     }
                 }
             }
@@ -350,6 +375,7 @@ public class GamePane {
     private void spawnAlienShip() {
         Image image = readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
+        alienShip.getScore();
         objects.add(alienShip);
         alienShip.drawFrame(gc);
     }
@@ -389,7 +415,7 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-            //drawAABB(object);
+            drawAABB(object);
         }
     }
 
