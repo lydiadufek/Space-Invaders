@@ -102,6 +102,11 @@ public class GamePane {
                         moveLeft();
                     } else if (keyEvent.getCode() == KeyCode.RIGHT) {
                         moveRight();
+                    } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                        stop();
+                        for (int i = 0; i < timers.size(); i++) {
+                            timers.get(i).cancel();
+                        }
                     }
                 });
 
@@ -338,7 +343,7 @@ public class GamePane {
             for (Sprite object : new ArrayList<>(objects)) {
                 if (object instanceof Alien) {
                     Alien alien = (Alien) object;
-                    updateAlienSprites(alien);
+//                    updateAlienSprites(alien);
                     alien.changeVelocity(3, 10);
 	    			if(direction.equals("left")) {
 	    				alien.moveLeft(gc);

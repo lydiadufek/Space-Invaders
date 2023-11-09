@@ -29,13 +29,11 @@ public class gameScreen {
     private int MAX_LIVES = 3;
     private int currentLives;
     private Scene scene;
-    private boolean isStarted;
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
 
     public gameScreen(boolean isStarted) {
-        this.isStarted = isStarted;
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
