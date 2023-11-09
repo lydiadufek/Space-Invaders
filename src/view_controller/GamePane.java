@@ -525,15 +525,14 @@ public class GamePane {
                     long elapsedTime = System.currentTimeMillis() - startTime;
 
                     if (elapsedTime < 400) {
-                        alien.drawFrame(gc);
                     } else if (elapsedTime >= 400) {
                         alien.updateSprite(oldImage);
                         alien.updateAABB();
 
-                        alien.drawFrame(gc);
-                        
                         stop();
                     }
+                    drawFrame();
+
                 }
             }.start();
         }
