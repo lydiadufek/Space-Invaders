@@ -39,12 +39,14 @@ public class GamePane {
     private gameScreen gameScreen;
     private Canvas canvas;
     private GraphicsContext gc;
-    
+
     private Double coordTrack = 250.0;
     private String direction = "right";
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
+
+    private boolean alienShipHit;
 
     public GamePane(Scene scene, gameScreen gameScreen) {
         this.scene = scene;
@@ -61,6 +63,8 @@ public class GamePane {
         drawPlayer();
         drawAliens();
 
+        //these are not getting deleted properly
+
         alienShootingTimer = new Timer();
         generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval); //delay: 5 sec interval: 3 sec
@@ -70,11 +74,13 @@ public class GamePane {
         delay = generateRandomAlienShipDelay();
         alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, delay);
 
-        timers.add(alienShootingTimer);
-        timers.add(alienShipTimer);
 
         alienMovingTimer = new Timer();
         alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
+
+        timers.add(alienShootingTimer);
+        timers.add(alienShipTimer);
+        timers.add(alienMovingTimer);
     }
 
     public void gameLoop() {
@@ -116,12 +122,16 @@ public class GamePane {
                 drawFrame();
 
                 //checking the alienship
-                if (alienShip != null) {
+                if (alienShip != null && alienShip.isActive()) {
                     alienShip.moveAcrossScreen(gc);
 
                     double newX = alienShip.getX() - 1;
                     if (newX - (alienShip.getWidth()/2) >= canvas.getWidth()) {
+                        System.out.println("hello");
+
+                        alienShip.setActive(false);
                         objects.remove(alienShip);
+//                        alienShipHit = false;
                     }
                 }
 
@@ -213,13 +223,11 @@ public class GamePane {
                     //Player hitting the AlienShip
                     if ((object1 instanceof AlienShip && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
                             || (object1 instanceof Bullet && object2 instanceof AlienShip && ((Bullet) object1).getPlayerShot())) {
-                        System.out.println("here");
+
+                        alienShip.setActive(false);
                         objects.remove(object1);
                         objects.remove(object2);
-                        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-//                        alienShipTimer.cancel();
 
-                        //TODO: why isnt it being removed completely
                         if (object1 instanceof AlienShip) {
                             gameScreen.updateScore(((AlienShip) object1).getScore());
                             player.updateScore(((AlienShip) object1).getScore());
@@ -317,34 +325,35 @@ public class GamePane {
             Platform.runLater(() -> {
                 for (Alien alien : aliensToShoot) {
                     alienShoot(alien);
-                    updateAlienSprites(alien);
+//                    updateAlienSprites(alien);
                 }
             });
         }
     }
-    
+
     private class moveAllAliens extends TimerTask {
     	@Override
         public void run() {
-	    	for (int i = 0; i < objects.size(); i++) {
-	    		if(objects.get(i) instanceof Alien) {
-	    			Sprite alien = objects.get(i);
-	    			alien.changeVelocity(3, 10);
+            for (Sprite object : new ArrayList<>(objects)) {
+                if (object instanceof Alien) {
+                    Alien alien = (Alien) object;
+                    updateAlienSprites(alien);
+                    alien.changeVelocity(3, 10);
 	    			if(direction.equals("left")) {
 	    				alien.moveLeft(gc);
-	    			}
+                    }
 	    			if(direction.equals("right")) {
 	    				alien.moveRight(gc);
-	    			}
-	    			
+                    }
+
 	    			if (coordTrack > 290.0) {
-	    				alien.moveDown(gc);	
-	    				direction = "left";
-	    			}
+	    				alien.moveDown(gc);
+                        direction = "left";
+                    }
 	    			if (coordTrack < 230.0) {
 	    				alien.moveDown(gc);
-	    				direction = "right";
-	    			}
+                        direction = "right";
+                    }
 	    		}
 	    	}
 	    	if (direction.equals("left")) {
@@ -352,30 +361,31 @@ public class GamePane {
 	    	} else {
 	    		coordTrack += 3;
 	    	}
-    	}
+        }
     }
 
     private int generateRandomAlienShipDelay() {
-        return random.nextInt(15000, 30000);
+        return random.nextInt(30000, 46000);
     }
 
     private class AlienShipTimer extends TimerTask {
         @Override
         public void run() {
-            if (alienShip == null || alienShip.getX() > canvas.getWidth()) {
+            if (alienShip == null || alienShip.getX() > canvas.getWidth() || !alienShip.isActive()) {
                 spawnAlienShip();
                 delay = generateRandomAlienShipDelay();
-                alienShipTimer.cancel();
-                alienShipTimer = new Timer();
-                alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), delay, delay);
+                alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 30000, delay);
+                timers.add(alienShipTimer);
             }
         }
     }
 
     private void spawnAlienShip() {
+        System.out.println("hello");
         Image image = readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
         alienShip.getScore();
+        alienShip.setActive(true);
         objects.add(alienShip);
         alienShip.drawFrame(gc);
     }
@@ -415,7 +425,7 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-            drawAABB(object);
+            //drawAABB(object);
         }
     }
 
@@ -477,8 +487,6 @@ public class GamePane {
     }
 
     public void updateAlienSprites(Sprite object) {
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
         if (object instanceof Alien) {
             Alien alien = (Alien) object;
             Image oldImage = alien.getImage();
@@ -496,9 +504,6 @@ public class GamePane {
             alien.updateSprite(newImage);
             alien.updateAABB();
 
-            Platform.runLater(() -> {
-                alien.drawFrame(gc);
-            });
 
             //create a timer to draw the "animations" for the aliens shooting
             Timer timer = new Timer();
@@ -513,7 +518,7 @@ public class GamePane {
                         alien.drawFrame(gc);
                     });
                 }
-            }, 1000);
+            }, 400);
             timers.add(timer);
         }
     }

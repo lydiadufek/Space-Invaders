@@ -12,6 +12,7 @@ public class AlienShip extends Sprite {
     private int health;
     private int scoreAmount;
     private int type;
+    private boolean isActive;
 
     public AlienShip(Image image, int x, int y) {
         super(image, x, y);
@@ -23,6 +24,7 @@ public class AlienShip extends Sprite {
         this.scoreAmount = scoreAmount;
 
         xVelocity = 1;
+
     }
 
     public void updateAABB() {
@@ -33,6 +35,14 @@ public class AlienShip extends Sprite {
         x += xVelocity;
         drawFrame(gc);
         updateAABB();
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     public int getScore() {
@@ -51,7 +61,6 @@ public class AlienShip extends Sprite {
             scoreAmount = 300;
         }
 
-        System.out.println(scoreAmount);
         return scoreAmount;
     }
 }
