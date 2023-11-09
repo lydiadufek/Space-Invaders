@@ -91,7 +91,6 @@ public class helpScreen extends Application {
 
     private void registerHandlers() {
         backButton.setOnAction(event -> {
-//            System.out.println("back!");
             home.getStage().setScene(home.getScene());
             home.getStage().show();
         });

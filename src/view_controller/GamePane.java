@@ -394,7 +394,6 @@ public class GamePane {
     }
 
     private void spawnAlienShip() {
-        System.out.println("hello");
         Image image = readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
         alienShip.getScore();

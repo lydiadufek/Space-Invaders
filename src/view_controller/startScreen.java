@@ -36,7 +36,6 @@ public class startScreen extends Application {
     private gameScreen game;
     private helpScreen helpPane;
     private Stage stage;
-    private boolean isStarted;
 
     private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 700;
@@ -79,8 +78,7 @@ public class startScreen extends Application {
 
     private void registerHandlers() {
         startLink.setOnAction(event -> {
-            isStarted = true;
-            game = new gameScreen(isStarted);
+            game = new gameScreen();
             stage.setScene(game.getScene());
             stage.show();
         });
