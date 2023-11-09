@@ -339,7 +339,7 @@ public class GamePane {
                 if (object instanceof Alien) {
                     Alien alien = (Alien) object;
                     updateAlienSprites(alien);
-                    alien.changeVelocity(3, 400);
+                    alien.changeVelocity(3, 10);
 	    			if(direction.equals("left")) {
 	    				alien.moveLeft(gc);
                     }
