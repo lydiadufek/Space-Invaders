@@ -40,11 +40,12 @@ public class GamePane {
     private Canvas canvas;
     private GraphicsContext gc;
 
-    private Double coordTrack = 250.0;
-    private String direction = "right";
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
+    
+    private int coordTrack = WW/2;
+    private String direction = "right";
 
     private boolean alienShipHit;
 
@@ -347,11 +348,11 @@ public class GamePane {
 	    				alien.moveRight(gc);
                     }
 
-	    			if (coordTrack > 290.0) {
+	    			if (coordTrack > (WW/2 + 130)) {
 	    				alien.moveDown(gc);
                         direction = "left";
                     }
-	    			if (coordTrack < 230.0) {
+	    			if (coordTrack < (WW/2 - 130)) {
 	    				alien.moveDown(gc);
                         direction = "right";
                     }
