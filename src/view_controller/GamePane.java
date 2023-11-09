@@ -344,7 +344,7 @@ public class GamePane {
             for (Sprite object : new ArrayList<>(objects)) {
                 if (object instanceof Alien) {
                     Alien alien = (Alien) object;
-//                    updateAlienSprites(alien);
+                    updateAlienSprites(alien);
                     alien.changeVelocity(3, 10);
 	    			if(direction.equals("left")) {
 	    				alien.moveLeft(gc);
@@ -525,17 +525,13 @@ public class GamePane {
                     long elapsedTime = System.currentTimeMillis() - startTime;
 
                     if (elapsedTime < 400) {
-                        Platform.runLater(() -> {
-                            alien.drawFrame(gc);
-                        });
+                        alien.drawFrame(gc);
                     } else if (elapsedTime >= 400) {
                         alien.updateSprite(oldImage);
                         alien.updateAABB();
 
-                        Platform.runLater(() -> {
-                            alien.drawFrame(gc);
-                        });
-
+                        alien.drawFrame(gc);
+                        
                         stop();
                     }
                 }
