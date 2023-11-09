@@ -48,6 +48,10 @@ public class Player extends Sprite {
         updateAABB();
     }
 
+    public void setDead() {
+        lifeAmount = 0;
+    }
+
     public void updateLives() {
         lifeAmount--;
     }

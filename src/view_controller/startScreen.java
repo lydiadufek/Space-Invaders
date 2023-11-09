@@ -38,7 +38,7 @@ public class startScreen extends Application {
     private Stage stage;
     private boolean isStarted;
 
-    private static final int WINDOW_WIDTH = 500;
+    private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 700;
 
     @Override
