@@ -144,6 +144,10 @@ public class GamePane {
                     }
                 }
 
+                if(player.isDead()) {
+                    stop();
+
+                }
                 lastNanoTime = currentNanoTime;
             }
         }.start();
