@@ -300,6 +300,7 @@ public class GamePane {
         @Override
         public void run() {
             generateShotInterval();
+            System.out.println(shotInterval);
 
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
@@ -381,7 +382,6 @@ public class GamePane {
     }
 
     private void spawnAlienShip() {
-        System.out.println("hello");
         Image image = readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
         alienShip.getScore();

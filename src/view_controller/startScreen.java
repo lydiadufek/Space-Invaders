@@ -79,8 +79,7 @@ public class startScreen extends Application {
 
     private void registerHandlers() {
         startLink.setOnAction(event -> {
-            isStarted = true;
-            game = new gameScreen(isStarted);
+            game = new gameScreen();
             stage.setScene(game.getScene());
             stage.show();
         });
