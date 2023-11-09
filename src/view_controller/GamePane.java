@@ -27,6 +27,8 @@ public class GamePane {
     private Timer alienShipTimer;
     private Timer alienMovingTimer;
     private Timer invincibilityTimer;
+    private int ALIENS_PER_ROW = 9;
+    private int ALIEN_ROWS = 5;
     private Alien[][] aliens;
     private Random random;
     private int shotInterval;
@@ -57,7 +59,7 @@ public class GamePane {
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
         objects = new ArrayList<>();
-        aliens = new Alien[5][7];
+        aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
         timers = new ArrayList<>();
 
         drawPlayer();
@@ -436,35 +438,44 @@ public class GamePane {
     }
 
     private void drawAliens() {
-        int spacingX = 20;
+        int spacingX = 18;
         int spacingY = 20;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < ALIEN_ROWS; i++) {
             Image image;
             int scoreAmount;
             int type;
+            int interval;
+            int shiftX;
+            int shiftY;
 
             //update the image and score dependin on the alien type
             if (i == 0) {
                 image = readImage("alien3-1.png");
                 scoreAmount = 50;
                 type = 3;
+                interval = 12;
+                shiftX = -47; shiftY = 0;
             } else if (i == 1 || i == 2) {
                 image = readImage("alien2-1.png");
                 scoreAmount = 25;
                 type = 2;
+                interval = 6;
+                shiftX = -23; shiftY = -5;
             } else {
                 image = readImage("alien1-1.png");
                 scoreAmount = 10;
                 type = 1;
+                interval = 0;
+                shiftX = 0; shiftY = -15;
             }
 
-            double totalWidth = 7 * image.getWidth();
-            double startX = (canvas.getWidth() - totalWidth - 7 * spacingX) / 2;
+            double totalWidth = ALIENS_PER_ROW * image.getWidth();
+            double startX = (canvas.getWidth() - totalWidth - ALIENS_PER_ROW * spacingX) / 2;
 
-            for (int j = 0; j < 7; j++) {
-                double x = startX + j * (image.getWidth() + spacingX);
-                double y = i * (image.getHeight() + spacingY);
+            for (int j = 0; j < ALIENS_PER_ROW; j++) {
+                double x = startX + j * (image.getWidth() + spacingX + interval) + shiftX;
+                double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
 
                 Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
                 objects.add(alien);
