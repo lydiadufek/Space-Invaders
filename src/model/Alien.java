@@ -21,8 +21,8 @@ public class Alien extends Sprite {
         this.isShooting = false;
         this.type = type;
 
-        xVelocity = 5;
-        yVelocity = 5;
+        xVelocity = 15;
+        yVelocity = 15;
 
     }
 

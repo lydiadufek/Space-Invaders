@@ -1,33 +1,66 @@
 package model;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import java.util.*;
+
 
 public class AlienShip extends Sprite {
+    private Random random;
     private int startingPositionX, startingPositionY;
     private int health;
     private int scoreAmount;
     private int type;
+    private boolean isActive;
 
     public AlienShip(Image image, int x, int y) {
         super(image, x, y);
+        random = new Random();
 
         this.health = health;
         this.startingPositionX = x;
         this.startingPositionY = y;
         this.scoreAmount = scoreAmount;
 
-        //once hit it dies --> collider should just control this
-        //random score amount
+        xVelocity = 1;
+
     }
 
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
 
+    public void moveAcrossScreen(GraphicsContext gc) {
+        x += xVelocity;
+        drawFrame(gc);
+        updateAABB();
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
     public int getScore() {
-        //roll a random score amount
-        //50, 100, 150, 300
+        int x = random.nextInt(1, 5);
+
+        if(x == 1) {
+            scoreAmount = 50;
+        }
+        if(x == 2) {
+            scoreAmount = 100;
+        }
+        if(x == 3) {
+            scoreAmount = 150;
+        }
+        if(x == 4) {
+            scoreAmount = 300;
+        }
+
         return scoreAmount;
     }
 }
