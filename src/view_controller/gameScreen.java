@@ -9,14 +9,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import model.Player;
 import model.Utils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -26,16 +22,15 @@ public class gameScreen {
     private BorderPane topBar;
     private HBox livesBox;
     private GamePane gamePane;
-    private int MAX_LIVES = 3;
+    private int MAX_LIVES = 4;
+    private int STARTING_LIVES = 3;
     private int currentLives;
     private Scene scene;
-    private boolean isStarted;
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
 
-    public gameScreen(boolean isStarted) {
-        this.isStarted = isStarted;
+    public gameScreen() {
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
@@ -49,10 +44,9 @@ public class gameScreen {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         Player player = gamePane.getPlayer();
-        currentLives = MAX_LIVES;
+        currentLives = STARTING_LIVES;
 
-        if (isStarted)
-            gamePane.gameLoop();
+        gamePane.gameLoop();
     }
 
     public Scene getScene() {
@@ -110,7 +104,9 @@ public class gameScreen {
         for (int i = 0; i < MAX_LIVES; i++) {
             livesBox.getChildren().add(new ImageView(heartObj));
         }
-        livesBox.getChildren().get(MAX_LIVES).setVisible(false);
+        for (int i = STARTING_LIVES; i <= MAX_LIVES; i++) {
+            livesBox.getChildren().get(i).setVisible(false);
+        }
         topBar.setRight(livesBox);
     }
 
