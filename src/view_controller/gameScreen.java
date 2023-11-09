@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import model.Player;
 import model.Utils;
 
@@ -30,14 +31,14 @@ public class gameScreen {
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
 
-    public gameScreen() {
+    public gameScreen(startScreen home, Stage stage) {
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
         setBackground();
         setupTopBar();
 
-        gamePane = new GamePane(scene, this);
+        gamePane = new GamePane(scene, this, home, stage);
         root.setCenter(gamePane.getCanvas());
 
         Canvas canvas = gamePane.getCanvas();

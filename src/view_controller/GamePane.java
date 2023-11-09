@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import model.*;
 
 import java.util.*;
@@ -40,6 +41,8 @@ public class GamePane {
 
     private Scene scene;
     private gameScreen gameScreen;
+    private Stage stage;
+    private startScreen home;
     private Canvas canvas;
     private GraphicsContext gc;
     private GridPane pausePane;
@@ -54,9 +57,11 @@ public class GamePane {
 
     private boolean alienShipHit;
 
-    public GamePane(Scene scene, gameScreen gameScreen) {
+    public GamePane(Scene scene, gameScreen gameScreen, startScreen home, Stage stage) {
         this.scene = scene;
         this.gameScreen = gameScreen;
+        this.home = home;
+        this.stage = stage;
         random = new Random();
         levelNum = 1;
 
@@ -152,6 +157,12 @@ public class GamePane {
                 }
 
                 lastNanoTime = currentNanoTime;
+                if (player.isDead()) {
+                	for (Timer timer: timers) timer.cancel();
+                	this.stop();
+                	home.getStage().setScene(home.getScene());
+                    home.getStage().show();
+                }
             }
         }.start();
     }
