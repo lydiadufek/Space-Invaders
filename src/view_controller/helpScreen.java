@@ -79,22 +79,14 @@ public class helpScreen extends Application {
     }
 
     private void setBackground() {
-        try {
-            InputStream inStream = new FileInputStream("lib/game-background.jpg");
-            Image image = new Image(inStream);
-            BackgroundImage bgImage = new BackgroundImage(image,
-                    BackgroundRepeat.REPEAT,
-                    BackgroundRepeat.REPEAT,
-                    BackgroundPosition.DEFAULT,
-                    BackgroundSize.DEFAULT);
-            Background bg = new Background(bgImage);
-            root.setBackground(bg);
-        } catch (FileNotFoundException e) {
-            System.out.println("Background image not found. Setting to default black.");
-            Paint c = Color.BLACK;
-            Background bg = new Background(new BackgroundFill(c, null, null));
-            root.setBackground(bg);
-        }
+        Image image = Utils.readImage("game-background.jpg");
+        BackgroundImage bgImage = new BackgroundImage(image,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        Background bg = new Background(bgImage);
+        root.setBackground(bg);
     }
 
     private void registerHandlers() {
