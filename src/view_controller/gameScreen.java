@@ -22,7 +22,7 @@ public class gameScreen {
     private BorderPane topBar;
     private HBox livesBox;
     private GamePane gamePane;
-    private int MAX_LIVES = 4;
+    private int MAX_LIVES = 5;
     private int STARTING_LIVES = 3;
     private int currentLives;
     private Scene scene;

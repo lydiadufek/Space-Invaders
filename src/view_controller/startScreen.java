@@ -36,7 +36,6 @@ public class startScreen extends Application {
     private gameScreen game;
     private helpScreen helpPane;
     private Stage stage;
-    private boolean isStarted;
 
     private static final int WINDOW_WIDTH = 500;
     private static final int WINDOW_HEIGHT = 700;

@@ -300,7 +300,6 @@ public class GamePane {
         @Override
         public void run() {
             generateShotInterval();
-            System.out.println(shotInterval);
 
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
