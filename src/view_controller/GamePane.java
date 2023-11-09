@@ -7,6 +7,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import model.*;
@@ -41,6 +42,7 @@ public class GamePane {
     private gameScreen gameScreen;
     private Canvas canvas;
     private GraphicsContext gc;
+    private GridPane pausePane;
 
 
     private final int WW = startScreen.getWW();
@@ -48,6 +50,7 @@ public class GamePane {
     
     private int coordTrack = WW/2;
     private String direction = "right";
+    private int alienVelocity = 3;
 
     private boolean alienShipHit;
 
@@ -110,6 +113,10 @@ public class GamePane {
                         for (int i = 0; i < timers.size(); i++) {
                             timers.get(i).cancel();
                         }
+                    }
+                    else if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                    	stop();
+                    	for (Timer timer: timers) timer.cancel();
                     }
                 });
 
@@ -347,7 +354,7 @@ public class GamePane {
                 if (object instanceof Alien) {
                     Alien alien = (Alien) object;
                     updateAlienSprites(alien);
-                    alien.changeVelocity(3, 10);
+                    alien.changeVelocity(alienVelocity, 10);
 	    			if(direction.equals("left")) {
 	    				alien.moveLeft(gc);
                     }
@@ -355,11 +362,11 @@ public class GamePane {
 	    				alien.moveRight(gc);
                     }
 
-	    			if (coordTrack > (WW/2 + 130)) {
+	    			if (coordTrack > (WW/2 + 80)) {
 	    				alien.moveDown(gc);
                         direction = "left";
                     }
-	    			if (coordTrack < (WW/2 - 130)) {
+	    			if (coordTrack < (WW/2 - 80)) {
 	    				alien.moveDown(gc);
                         direction = "right";
                     }
@@ -371,9 +378,9 @@ public class GamePane {
 	    		}
 	    	}
 	    	if (direction.equals("left")) {
-	    		coordTrack -= 3;
+	    		coordTrack -= alienVelocity;
 	    	} else {
-	    		coordTrack += 3;
+	    		coordTrack += alienVelocity;
 	    	}
 
         }
@@ -572,7 +579,7 @@ public class GamePane {
 
         return comp1 && comp2 && comp3 && comp4;
     }
-
+    
     public Canvas getCanvas() {
         return canvas;
     }
