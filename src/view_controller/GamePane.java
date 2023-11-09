@@ -97,6 +97,7 @@ public class GamePane {
                 scene.setOnKeyPressed(keyEvent -> {
                     if (keyEvent.getCode() == KeyCode.SPACE) {
                         shoot();
+                        //TODO: restrict how many the player can shoot
                     } else if (keyEvent.getCode() == KeyCode.LEFT) {
                         moveLeft();
                     } else if (keyEvent.getCode() == KeyCode.RIGHT) {
@@ -338,7 +339,7 @@ public class GamePane {
                 if (object instanceof Alien) {
                     Alien alien = (Alien) object;
                     updateAlienSprites(alien);
-                    alien.changeVelocity(3, 10);
+                    alien.changeVelocity(3, 400);
 	    			if(direction.equals("left")) {
 	    				alien.moveLeft(gc);
                     }
@@ -354,6 +355,11 @@ public class GamePane {
 	    				alien.moveDown(gc);
                         direction = "right";
                     }
+                    
+                    if(alien.getY() >= player.getY()) {
+                        player.setDead();
+                        objects.remove(player);
+                    }
 	    		}
 	    	}
 	    	if (direction.equals("left")) {
@@ -361,6 +367,7 @@ public class GamePane {
 	    	} else {
 	    		coordTrack += 3;
 	    	}
+
         }
     }
 
@@ -486,13 +493,13 @@ public class GamePane {
         timers.add(timer);
     }
 
-    public void updateAlienSprites(Sprite object) {
+    private void updateAlienSprites(Sprite object) {
         if (object instanceof Alien) {
             Alien alien = (Alien) object;
             Image oldImage = alien.getImage();
             Image newImage = null;
 
-            //Different image depending on the type of alien
+            // Different image depending on the type of alien
             if (alien.getType() == 1) {
                 newImage = readImage("alien1-2.png");
             } else if (alien.getType() == 2) {
@@ -504,22 +511,30 @@ public class GamePane {
             alien.updateSprite(newImage);
             alien.updateAABB();
 
+            //this might prevent internal error 66
+            new AnimationTimer() {
+                long startTime = System.currentTimeMillis();
 
-            //create a timer to draw the "animations" for the aliens shooting
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
                 @Override
-                public void run() {
-                    alien.isShooting(false);
-                    alien.updateSprite(oldImage);
-                    alien.updateAABB();
+                public void handle(long now) {
+                    long elapsedTime = System.currentTimeMillis() - startTime;
 
-                    Platform.runLater(() -> {
-                        alien.drawFrame(gc);
-                    });
+                    if (elapsedTime < 400) {
+                        Platform.runLater(() -> {
+                            alien.drawFrame(gc);
+                        });
+                    } else if (elapsedTime >= 400) {
+                        alien.updateSprite(oldImage);
+                        alien.updateAABB();
+
+                        Platform.runLater(() -> {
+                            alien.drawFrame(gc);
+                        });
+
+                        stop();
+                    }
                 }
-            }, 400);
-            timers.add(timer);
+            }.start();
         }
     }
 
