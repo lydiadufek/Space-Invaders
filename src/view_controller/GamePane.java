@@ -2,14 +2,26 @@ package view_controller;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 
@@ -45,8 +57,8 @@ public class GamePane {
     private startScreen home;
     private Canvas canvas;
     private GraphicsContext gc;
-    private GridPane pausePane;
-
+    
+    private boolean isPaused = false;
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
@@ -64,6 +76,7 @@ public class GamePane {
         this.stage = stage;
         random = new Random();
         levelNum = 1;
+        
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
@@ -71,8 +84,10 @@ public class GamePane {
         aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
         timers = new ArrayList<>();
 
+        
         drawPlayer();
         drawAliens();
+       
 
         //these are not getting deleted properly
 
@@ -92,9 +107,10 @@ public class GamePane {
         timers.add(alienShootingTimer);
         timers.add(alienShipTimer);
         timers.add(alienMovingTimer);
+        
     }
 
-    public void gameLoop() {
+	public void gameLoop() {
         new AnimationTimer() {
             long lastNanoTime = System.nanoTime();
 
@@ -114,16 +130,12 @@ public class GamePane {
                     } else if (keyEvent.getCode() == KeyCode.RIGHT) {
                         moveRight();
                     } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                        stop();
-                        for (int i = 0; i < timers.size(); i++) {
-                            timers.get(i).cancel();
+                    	isPaused = !isPaused;
+                        if (isPaused) {
+                            pauseGame();
+                        	showPausePopup();
                         }
-                    }
-                    else if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                    	stop();
-                    	for (Timer timer: timers) timer.cancel();
-                    }
-                });
+                    }});
 
                 //bullet mechanics
                 for (int i = objects.size() - 1; i >= 0; i--) {
@@ -566,6 +578,73 @@ public class GamePane {
             }.start();
         }
     }
+    
+    
+    private void showPausePopup() {
+        Stage pauseStage = new Stage();
+        BorderPane pausePane = new BorderPane();
+
+        Image image = Utils.readImage("game-background.jpg");
+        BackgroundImage bgImage = new BackgroundImage(image,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        Background bg = new Background(bgImage);
+        pausePane.setBackground(bg);
+
+        Label label = new Label("Game Paused");
+        Font font = Utils.getFont(30);
+        label.setFont(font);
+        label.setTextFill(Color.WHITE);
+        pausePane.setCenter(label);
+
+        Button resumeBtn = new Button("Resume");
+        resumeBtn.setFont(font);
+        resumeBtn.setOnAction(e -> {
+            isPaused = false;
+            pauseStage.close();
+            resumeGame();
+        });
+
+        pausePane.setBottom(resumeBtn);
+        BorderPane.setAlignment(resumeBtn, Pos.CENTER);
+        BorderPane.setMargin(resumeBtn, new Insets(10, 0, 10, 0));
+
+        Scene pauseScene = new Scene(pausePane, 450, 400);
+        pauseStage.setScene(pauseScene);
+        pauseStage.setTitle("Pause");
+        pauseStage.initModality(Modality.APPLICATION_MODAL); // cannot touch other window stuff w this
+        pauseStage.initOwner(this.stage); // makes our big stage the 'owner' of puse pop up
+
+        pauseStage.showAndWait();
+    }
+    
+    private void pauseGame() {
+        isPaused = true;
+        for (Timer timer : timers) {
+            timer.cancel();
+        }
+    }
+    
+    private void resumeGame() {
+        isPaused = false;
+        timers.clear();
+
+        alienShootingTimer = new Timer();
+        generateShotInterval();
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
+        timers.add(alienShootingTimer);
+
+        alienShipTimer = new Timer();
+        delay = generateRandomAlienShipDelay();
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, delay);
+        timers.add(alienShipTimer);
+
+        alienMovingTimer = new Timer();
+        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
+        timers.add(alienMovingTimer);
+    }
 
     public void drawAABB(Sprite object) {
         gc.setStroke(Color.WHITE);
@@ -590,6 +669,7 @@ public class GamePane {
 
         return comp1 && comp2 && comp3 && comp4;
     }
+    
     
     public Canvas getCanvas() {
         return canvas;
