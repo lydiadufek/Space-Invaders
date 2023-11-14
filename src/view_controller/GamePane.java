@@ -73,8 +73,7 @@ public class GamePane {
 
         drawPlayer();
         drawAliens();
-
-        //these are not getting deleted properly
+        drawBarriers();
 
         alienShootingTimer = new Timer();
         generateShotInterval();
@@ -114,12 +113,6 @@ public class GamePane {
                     } else if (keyEvent.getCode() == KeyCode.RIGHT) {
                         moveRight();
                     } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                        stop();
-                        for (int i = 0; i < timers.size(); i++) {
-                            timers.get(i).cancel();
-                        }
-                    }
-                    else if (keyEvent.getCode() == KeyCode.ESCAPE) {
                     	stop();
                     	for (Timer timer: timers) timer.cancel();
                     }
@@ -518,6 +511,34 @@ public class GamePane {
                 alien.drawFrame(gc);
             }
         }
+    }
+
+    private void drawBarriers() {
+        Image image = null;
+        Image image2 = null;
+        Image image3 = null;
+        Image[] temp = null;
+        Barrier barrier = null;
+
+        image = readImage("BottomLeftCorner-1.png");
+        image2 = readImage("originalShip.png");
+        image3 = readImage("originalShip.png");
+
+        temp = new Image[]{image, image2, image3};
+
+        barrier = new Barrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - 150, canvas.getHeight() - image.getHeight()-80);
+        objects.add(barrier);
+        barrier.drawFrame(gc);
+
+        image = readImage("TopLeftCorner-1.png");
+        image2 = readImage("originalShip.png");
+        image3 = readImage("originalShip.png");
+
+        temp = new Image[]{image, image2, image3};
+
+        barrier = new Barrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - 150, canvas.getHeight() - image.getHeight()- (75 + image.getHeight()));
+        objects.add(barrier);
+        barrier.drawFrame(gc);
     }
 
     private void startInvincibilityTimer() {
