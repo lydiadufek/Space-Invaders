@@ -172,7 +172,8 @@ public class GamePane {
                 if (player.isDead()) {
                 	for (Timer timer: timers) timer.cancel();
                 	this.stop();
-                	home.getStage().setScene(home.getScene());
+                	GameOver endScreen = new GameOver(home);
+                	home.getStage().setScene(endScreen.getScene());
                     home.getStage().show();
                 }
             }
