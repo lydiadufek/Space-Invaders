@@ -27,7 +27,7 @@ import java.util.*;
 
 
 public class GamePane {
-    // static variables first
+    // static variables
     private static final int WW = startScreen.getWW();
     private static final int WH = startScreen.getWH();
 
