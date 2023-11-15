@@ -105,7 +105,6 @@ public class GamePane {
         timers.add(alienShootingTimer);
         timers.add(alienShipTimer);
         timers.add(alienMovingTimer);
-        
     }
 
 	public void gameLoop() {
@@ -283,6 +282,23 @@ public class GamePane {
                                 gameScreen.addLifeIcon();
                             }
                         }
+                    }
+
+                    //Player hitting the barrier
+                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
+                        objects.remove(object2);
+
+                        ((SubBarrier) object1).receiveDamage();
+                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+                        int health = ((SubBarrier) object1).getHealth();
+                        object1.updateSprite(temp[health]);
+                        //check if its the center --> reaplce damage depending on who shit
+                    }
+
+                    if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
+                            || (object1 instanceof Player && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
+                        objects.remove(object2);
                     }
                 }
             }
@@ -531,31 +547,17 @@ public class GamePane {
     }
 
     private void drawBarriers() {
-        Image image = null;
-        Image image2 = null;
-        Image image3 = null;
-        Image[] temp = null;
-        Barrier barrier = null;
+        Barrier barrier = new Barrier(150, 80, canvas, objects, gc);
+        barrier.draw();
 
-        image = readImage("BottomLeftCorner-1.png");
-        image2 = readImage("originalShip.png");
-        image3 = readImage("originalShip.png");
+        Barrier barrier2 = new Barrier(300, 80, canvas, objects, gc);
+        barrier2.draw();
 
-        temp = new Image[]{image, image2, image3};
+        Barrier barrier3 = new Barrier(-50, 80, canvas, objects, gc);
+        barrier3.draw();
 
-        barrier = new Barrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - 150, canvas.getHeight() - image.getHeight()-80);
-        objects.add(barrier);
-        barrier.drawFrame(gc);
-
-        image = readImage("TopLeftCorner-1.png");
-        image2 = readImage("originalShip.png");
-        image3 = readImage("originalShip.png");
-
-        temp = new Image[]{image, image2, image3};
-
-        barrier = new Barrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - 150, canvas.getHeight() - image.getHeight()- (75 + image.getHeight()));
-        objects.add(barrier);
-        barrier.drawFrame(gc);
+        Barrier barrier4 = new Barrier(-250, 80, canvas, objects, gc);
+        barrier4.draw();
     }
 
     private void startInvincibilityTimer() {
@@ -608,8 +610,7 @@ public class GamePane {
             }.start();
         }
     }
-    
-    
+
     private void showPausePopup() {
         Stage pauseStage = new Stage();
         BorderPane pausePane = new BorderPane();
@@ -699,8 +700,7 @@ public class GamePane {
 
         return comp1 && comp2 && comp3 && comp4;
     }
-    
-    
+
     public Canvas getCanvas() {
         return canvas;
     }
