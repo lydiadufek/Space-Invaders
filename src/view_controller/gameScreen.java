@@ -2,8 +2,6 @@ package view_controller;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,40 +9,44 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import model.Player;
 import model.Utils;
 
 import java.util.ArrayList;
 import java.util.Timer;
 
 public class gameScreen {
+
+    // static variables
+    private static final int WW = startScreen.getWW();
+    private static final int WH = startScreen.getWH();
+
+    // instance variables
     private BorderPane root;
-    private Label scoreNum;
     private BorderPane topBar;
+
+    private Label scoreNum;
     private HBox livesBox;
+
     private GamePane gamePane;
-    private int MAX_LIVES = 5;
-    private int STARTING_LIVES = 3;
-    private int currentLives;
     private Scene scene;
 
-    private final int WW = startScreen.getWW();
-    private final int WH = startScreen.getWH();
+    private int currentLives;
+    
+    // constants
+    private final int MAX_LIVES = 5;
+    private final int STARTING_LIVES = 3;
 
-    public gameScreen(startScreen home, Stage stage) {
+    public gameScreen(Stage stage, startScreen home) {
+
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
         setBackground();
         setupTopBar();
 
-        gamePane = new GamePane(scene, this, home, stage);
+        gamePane = new GamePane(stage, scene, home, this);
         root.setCenter(gamePane.getCanvas());
 
-        Canvas canvas = gamePane.getCanvas();
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        Player player = gamePane.getPlayer();
         currentLives = STARTING_LIVES;
 
         gamePane.gameLoop();
@@ -52,6 +54,12 @@ public class gameScreen {
 
     public Scene getScene() {
         return scene;
+    }
+
+    public void newLevel() {
+        gamePane = new GamePane();
+        root.setCenter(gamePane.getCanvas());
+        gamePane.gameLoop();
     }
 
     private void setBackground() {
@@ -121,12 +129,12 @@ public class gameScreen {
     }
 
     protected void removeLifeIcon() {
-        livesBox.getChildren().get(currentLives).setVisible(false);
+        livesBox.getChildren().get(currentLives-1).setVisible(false);
         currentLives--;
     }
 
     protected void addLifeIcon() {
-        livesBox.getChildren().get(currentLives).setVisible(true);
+        livesBox.getChildren().get(currentLives-1).setVisible(true);
         currentLives++;
     }
 
