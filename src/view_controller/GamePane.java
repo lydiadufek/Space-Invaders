@@ -663,7 +663,7 @@ public class GamePane {
         label.setFont(font);
         label.setTextFill(Color.WHITE);
         pausePane.setCenter(label);
-
+        
         Button resumeBtn = new Button("Resume");
         resumeBtn.setFont(font);
         resumeBtn.setOnAction(e -> {
@@ -671,12 +671,27 @@ public class GamePane {
             pauseStage.close();
             resumeGame();
         });
+        Button quitBtn = new Button("Main Menu");
+        quitBtn.setFont(font);
+        quitBtn.setOnAction(e -> {
+            pauseStage.close();
+            for (Timer timer : timers) {
+                timer.cancel();
+            }
+            timers.clear();
+            home.getStage().setScene(home.getScene());
+            home.getStage().show();
+        });
+        
 
-        pausePane.setBottom(resumeBtn);
-        BorderPane.setAlignment(resumeBtn, Pos.CENTER);
-        BorderPane.setMargin(resumeBtn, new Insets(10, 0, 10, 0));
+        pausePane.setLeft(resumeBtn);
+        pausePane.setRight(quitBtn);
+        BorderPane.setAlignment(resumeBtn, Pos.BOTTOM_LEFT);
+        BorderPane.setAlignment(quitBtn, Pos.BOTTOM_RIGHT);
+        BorderPane.setMargin(resumeBtn, new Insets(10, 10, 10, 10));
+        BorderPane.setMargin(quitBtn, new Insets(0, 10, 10, 0));
 
-        Scene pauseScene = new Scene(pausePane, 450, 400);
+        Scene pauseScene = new Scene(pausePane,550, 500);
         pauseStage.setScene(pauseScene);
         pauseStage.setTitle("Pause");
         pauseStage.initModality(Modality.APPLICATION_MODAL); // cannot touch other window stuff w this
