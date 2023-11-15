@@ -121,12 +121,12 @@ public class gameScreen {
     }
 
     protected void removeLifeIcon() {
-        livesBox.getChildren().get(currentLives).setVisible(false);
+        livesBox.getChildren().get(currentLives-1).setVisible(false);
         currentLives--;
     }
 
     protected void addLifeIcon() {
-        livesBox.getChildren().get(currentLives).setVisible(true);
+        livesBox.getChildren().get(currentLives-1).setVisible(true);
         currentLives++;
     }
 
