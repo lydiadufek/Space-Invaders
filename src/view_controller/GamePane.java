@@ -87,9 +87,7 @@ public class GamePane {
         
         drawPlayer();
         drawAliens();
-       
-
-        //these are not getting deleted properly
+        drawBarriers();
 
         alienShootingTimer = new Timer();
         generateShotInterval();
@@ -107,7 +105,6 @@ public class GamePane {
         timers.add(alienShootingTimer);
         timers.add(alienShipTimer);
         timers.add(alienMovingTimer);
-        
     }
 
 	public void gameLoop() {
@@ -130,7 +127,7 @@ public class GamePane {
                     } else if (keyEvent.getCode() == KeyCode.RIGHT) {
                         moveRight();
                     } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                    	isPaused = !isPaused;
+                        isPaused = !isPaused;
                         if (isPaused) {
                             pauseGame();
                         	showPausePopup();
@@ -168,6 +165,10 @@ public class GamePane {
                     }
                 }
 
+                if(player.isDead()) {
+                    stop();
+
+                }
                 lastNanoTime = currentNanoTime;
                 if (player.isDead()) {
                 	for (Timer timer: timers) timer.cancel();
@@ -282,6 +283,23 @@ public class GamePane {
                                 gameScreen.addLifeIcon();
                             }
                         }
+                    }
+
+                    //Player hitting the barrier
+                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
+                        objects.remove(object2);
+
+                        ((SubBarrier) object1).receiveDamage();
+                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+                        int health = ((SubBarrier) object1).getHealth();
+                        object1.updateSprite(temp[health]);
+                        //check if its the center --> reaplce damage depending on who shit
+                    }
+
+                    if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
+                            || (object1 instanceof Player && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
+                        objects.remove(object2);
                     }
                 }
             }
@@ -529,6 +547,20 @@ public class GamePane {
         }
     }
 
+    private void drawBarriers() {
+        Barrier barrier = new Barrier(150, 80, canvas, objects, gc);
+        barrier.draw();
+
+        Barrier barrier2 = new Barrier(300, 80, canvas, objects, gc);
+        barrier2.draw();
+
+        Barrier barrier3 = new Barrier(-50, 80, canvas, objects, gc);
+        barrier3.draw();
+
+        Barrier barrier4 = new Barrier(-250, 80, canvas, objects, gc);
+        barrier4.draw();
+    }
+
     private void startInvincibilityTimer() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -579,8 +611,7 @@ public class GamePane {
             }.start();
         }
     }
-    
-    
+
     private void showPausePopup() {
         Stage pauseStage = new Stage();
         BorderPane pausePane = new BorderPane();
@@ -670,8 +701,7 @@ public class GamePane {
 
         return comp1 && comp2 && comp3 && comp4;
     }
-    
-    
+
     public Canvas getCanvas() {
         return canvas;
     }
