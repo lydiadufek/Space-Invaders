@@ -23,10 +23,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
-
 import java.util.*;
 
-import static model.Utils.readImage;
 
 public class GamePane {
     // static variables first
@@ -77,6 +75,39 @@ public class GamePane {
 
         GamePane.levelNum = 0;
         GamePane.random = new Random();
+
+        isPaused = false;
+
+        canvas = new Canvas(WW, WH*0.929);
+        gc = canvas.getGraphicsContext2D();
+
+        objects = new ArrayList<>();
+        aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
+        timers = new ArrayList<>();
+
+        coordTrack = WW/2;
+
+        drawPlayer();
+        drawAliens();
+
+        //these are not getting deleted properly
+        alienShootingTimer = new Timer();
+        shotInterval = generateShotInterval();
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
+        timers.add(alienShootingTimer);
+
+        //it needs to move across the screen first
+        alienShipTimer = new Timer();
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, generateRandomAlienShipDelay());
+        timers.add(alienShipTimer);
+
+        alienMovingTimer = new Timer();
+        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
+        timers.add(alienMovingTimer);
+    }
+
+    public GamePane() {
+        GamePane.levelNum += 1;
 
         isPaused = false;
 
@@ -176,6 +207,10 @@ public class GamePane {
 
                 if (allAliensDead()) {
                     System.out.println("NEXT LEVEL");
+                    for (Timer timer: timers){
+                        timer.cancel();
+                    }
+                    this.stop();
                     gameScreen.newLevel();
                     System.out.println("SHOULD NEVER GET HERE");
                 }
@@ -300,7 +335,7 @@ public class GamePane {
         }
     }
 
-    private Sprite[] bulletFirst(Sprite object1, Sprite object2) {
+    private static Sprite[] bulletFirst(Sprite object1, Sprite object2) {
         Sprite[] retVal = new Sprite[2];
         if (object1 instanceof Bullet) {
             retVal[0] = object1;
@@ -435,7 +470,7 @@ public class GamePane {
     }
 
     private void spawnAlienShip() {
-        Image image = readImage("AlienShip.png");
+        Image image = Utils.readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
         alienShip.getScore();
         alienShip.setActive(true);
@@ -445,7 +480,7 @@ public class GamePane {
 
     public void shoot() {
         if(!player.isDead()) {
-            Image image = readImage("bullet.png");
+            Image image = Utils.readImage("bullet.png");
             Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
             bullet.setPlayerShot();
             objects.add(bullet);
@@ -453,7 +488,7 @@ public class GamePane {
     }
 
     public void alienShoot(Sprite object) {
-        Image image = readImage("bullet.png");
+        Image image = Utils.readImage("bullet.png");
         Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY()-10);
         objects.add(bullet);
     }
@@ -482,7 +517,7 @@ public class GamePane {
     }
 
     private void drawPlayer() {
-        Image image = readImage("ship.png");
+        Image image = Utils.readImage("ship.png");
         player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
         objects.add(player);
         player.drawFrame(gc);
@@ -502,19 +537,19 @@ public class GamePane {
 
             //update the image and score dependin on the alien type
             if (i == 0) {
-                image = readImage("alien3-1.png");
+                image = Utils.readImage("alien3-1.png");
                 scoreAmount = 50;
                 type = 3;
                 interval = 12;
                 shiftX = -47; shiftY = 0;
             } else if (i == 1 || i == 2) {
-                image = readImage("alien2-1.png");
+                image = Utils.readImage("alien2-1.png");
                 scoreAmount = 25;
                 type = 2;
                 interval = 6;
                 shiftX = -23; shiftY = -5;
             } else {
-                image = readImage("alien1-1.png");
+                image = Utils.readImage("alien1-1.png");
                 scoreAmount = 10;
                 type = 1;
                 interval = 0;
@@ -548,18 +583,17 @@ public class GamePane {
     }
 
     private void updateAlienSprites(Sprite object) {
-        if (object instanceof Alien) {
-            Alien alien = (Alien) object;
+        if (object instanceof Alien alien) {
             Image oldImage = alien.getImage();
             Image newImage = null;
 
             // Different image depending on the type of alien
             if (alien.getType() == 1) {
-                newImage = readImage("alien1-2.png");
+                newImage = Utils.readImage("alien1-2.png");
             } else if (alien.getType() == 2) {
-                newImage = readImage("alien2-2.png");
+                newImage = Utils.readImage("alien2-2.png");
             } else if (alien.getType() == 3) {
-                newImage = readImage("alien3-2.png");
+                newImage = Utils.readImage("alien3-2.png");
             }
 
             alien.updateSprite(newImage);
@@ -658,7 +692,7 @@ public class GamePane {
         gc.strokeRect(object.getAABB().getX(), object.getAABB().getY(), object.getAABB().getWidth(), object.getAABB().getHeight());
     }
 
-    public boolean isCollided(Rectangle obj1, Rectangle obj2) {
+    public static boolean isCollided(Rectangle obj1, Rectangle obj2) {
         double obj1Top = obj1.getY();
         double obj1Bottom = obj1Top + obj1.getHeight();
         double obj1Left = obj1.getX();
@@ -681,7 +715,7 @@ public class GamePane {
         return canvas;
     }
 
-    public Player getPlayer() {
+    public static Player getPlayer() {
         return player;
     }
 

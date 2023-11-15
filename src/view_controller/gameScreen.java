@@ -46,10 +46,6 @@ public class gameScreen {
         gamePane = new GamePane(stage, scene, home, this);
         root.setCenter(gamePane.getCanvas());
 
-        Canvas canvas = gamePane.getCanvas();
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        Player player = gamePane.getPlayer();
         currentLives = STARTING_LIVES;
 
         gamePane.gameLoop();
@@ -60,7 +56,9 @@ public class gameScreen {
     }
 
     public void newLevel() {
-        gamePane = new GamePane(stage, scene, home, this);
+        gamePane = new GamePane();
+        root.setCenter(gamePane.getCanvas());
+        gamePane.gameLoop();
     }
 
     private void setBackground() {
