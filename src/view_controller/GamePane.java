@@ -89,21 +89,7 @@ public class GamePane {
 
         drawPlayer();
         drawAliens();
-
-        //these are not getting deleted properly
-        alienShootingTimer = new Timer();
-        shotInterval = generateShotInterval();
-        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
-        timers.add(alienShootingTimer);
-
-        //it needs to move across the screen first
-        alienShipTimer = new Timer();
-        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, generateRandomAlienShipDelay());
-        timers.add(alienShipTimer);
-
-        alienMovingTimer = new Timer();
-        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
-        timers.add(alienMovingTimer);
+        startTimers();
     }
 
     public GamePane() {
@@ -122,7 +108,10 @@ public class GamePane {
 
         drawPlayer();
         drawAliens();
+        startTimers();
+    }
 
+    private void startTimers() {
         //these are not getting deleted properly
         alienShootingTimer = new Timer();
         shotInterval = generateShotInterval();
@@ -212,7 +201,6 @@ public class GamePane {
                     }
                     this.stop();
                     gameScreen.newLevel();
-                    System.out.println("SHOULD NEVER GET HERE");
                 }
             }
         }.start();

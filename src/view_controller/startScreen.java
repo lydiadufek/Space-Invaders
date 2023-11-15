@@ -27,16 +27,20 @@ public class startScreen extends Application {
         launch(args);
     }
 
-    private GridPane pane;
-    private Font font;
-    private Hyperlink startLink;
-    private Hyperlink helpLink;
-    private Label scoreLabel;
+    // instance variables
+    private Stage stage;
     private Scene scene;
+
     private gameScreen game;
     private helpScreen helpPane;
-    private Stage stage;
 
+    private GridPane pane;
+    private Font font;
+    private Label scoreLabel;
+    private Hyperlink startLink;
+    private Hyperlink helpLink;
+
+    // static constants
     private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 700;
 
