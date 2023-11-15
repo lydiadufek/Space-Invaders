@@ -17,7 +17,6 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -30,84 +29,83 @@ import java.util.*;
 import static model.Utils.readImage;
 
 public class GamePane {
-    private Player player;
-    private AlienShip alienShip;
+    // static variables first
+    private static final int WW = startScreen.getWW();
+    private static final int WH = startScreen.getWH();
+
+    private static Stage stage;
+    private static Scene scene;
+    private static startScreen home;
+    private static gameScreen gameScreen;
+
+    private static int levelNum;
+    private static Player player;
+    private static Random random;
+
+    // instance variables
     private ArrayList<Sprite> objects;
-    private boolean isShooting;
-    private boolean notAlien;
+    private Alien[][] aliens;
+    private AlienShip alienShip;
+
     private boolean playerIsInvincible;
-    private boolean playerShot;
     private Timer alienShootingTimer;
     private Timer alienShipTimer;
     private Timer alienMovingTimer;
-    private Timer invincibilityTimer;
-    private int ALIENS_PER_ROW = 9;
-    private int ALIEN_ROWS = 5;
-    private Alien[][] aliens;
-    private Random random;
+
     private int shotInterval;
-    private int levelNum;
     private ArrayList<Timer> timers;
 
-    private int delay;
-
-    private Scene scene;
-    private gameScreen gameScreen;
-    private Stage stage;
-    private startScreen home;
     private Canvas canvas;
     private GraphicsContext gc;
     
-    private boolean isPaused = false;
+    private boolean isPaused;
+    private int coordTrack;
 
-    private final int WW = startScreen.getWW();
-    private final int WH = startScreen.getWH();
-    
-    private int coordTrack = WW/2;
-    private String direction = "right";
-    private int alienVelocity = 3;
+    private String alienTravelDirection = "right";
 
-    private boolean alienShipHit;
+    // constants
+    private final int ALIEN_VELOCITY = 3;
+    private final int ALIENS_PER_ROW = 9;
+    private final int ALIEN_ROWS = 5;
 
-    public GamePane(Scene scene, gameScreen gameScreen, startScreen home, Stage stage) {
-        this.scene = scene;
-        this.gameScreen = gameScreen;
-        this.home = home;
-        this.stage = stage;
-        random = new Random();
-        levelNum = 1;
-        
+
+    public GamePane(Stage stage, Scene scene, startScreen home, gameScreen gameScreen) {
+        GamePane.stage = stage;
+        GamePane.scene = scene;
+        GamePane.home = home;
+        GamePane.gameScreen = gameScreen;
+
+        GamePane.levelNum = 0;
+        GamePane.random = new Random();
+
+        isPaused = false;
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
+
         objects = new ArrayList<>();
         aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
         timers = new ArrayList<>();
 
-        
+        coordTrack = WW/2;
+
         drawPlayer();
         drawAliens();
-       
 
         //these are not getting deleted properly
-
         alienShootingTimer = new Timer();
-        generateShotInterval();
-        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval); //delay: 5 sec interval: 3 sec
+        shotInterval = generateShotInterval();
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
+        timers.add(alienShootingTimer);
 
         //it needs to move across the screen first
         alienShipTimer = new Timer();
-        delay = generateRandomAlienShipDelay();
-        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, delay);
-
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, generateRandomAlienShipDelay());
+        timers.add(alienShipTimer);
 
         alienMovingTimer = new Timer();
         alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
-
-        timers.add(alienShootingTimer);
-        timers.add(alienShipTimer);
         timers.add(alienMovingTimer);
-        
     }
 
 	public void gameLoop() {
@@ -154,7 +152,7 @@ public class GamePane {
                 //rendering
                 drawFrame();
 
-                //checking the alienship
+                //checking the alien ship
                 if (alienShip != null && alienShip.isActive()) {
                     alienShip.moveAcrossScreen(gc);
 
@@ -164,7 +162,6 @@ public class GamePane {
 
                         alienShip.setActive(false);
                         objects.remove(alienShip);
-//                        alienShipHit = false;
                     }
                 }
 
@@ -176,8 +173,23 @@ public class GamePane {
                 	home.getStage().setScene(endScreen.getScene());
                     home.getStage().show();
                 }
+
+                if (allAliensDead()) {
+                    System.out.println("NEXT LEVEL");
+                    gameScreen.newLevel();
+                    System.out.println("SHOULD NEVER GET HERE");
+                }
             }
         }.start();
+    }
+
+    private boolean allAliensDead() {
+        for (Sprite sprite: objects) {
+            if (sprite instanceof Alien) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void detectAndHandleCollisions() {
@@ -317,7 +329,7 @@ public class GamePane {
         player.setX(middleX);
         player.drawFrame(gc);
 
-        //invicibility time frame
+        //invincibility time frame
         startInvincibilityTimer();
         playerIsInvincible = true;
 
@@ -327,25 +339,24 @@ public class GamePane {
         }
     }
 
-    private void generateShotInterval() {
+    private int generateShotInterval() {
         if (levelNum < 10) {
             int maxTime = (-110*levelNum) + 2100;
-            shotInterval = random.nextInt(300, maxTime);
+            return random.nextInt(300, maxTime);
         } else {
-            shotInterval = random.nextInt(300, 1000);
+            return random.nextInt(300, 1000);
         }
     }
 
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
-            generateShotInterval();
+            shotInterval = generateShotInterval();
 
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
-                int j;
-                for (j = aliens.length-1; j >= 0; j--) {
+                for (int j = aliens.length-1; j >= 0; j--) {
                     if (aliens[j][i].stillAlive()) {
                         bottomRowAliens.add(aliens[j][i]);
                         break;
@@ -365,7 +376,6 @@ public class GamePane {
             Platform.runLater(() -> {
                 for (Alien alien : aliensToShoot) {
                     alienShoot(alien);
-//                    updateAlienSprites(alien);
                 }
             });
         }
@@ -375,24 +385,23 @@ public class GamePane {
     	@Override
         public void run() {
             for (Sprite object : new ArrayList<>(objects)) {
-                if (object instanceof Alien) {
-                    Alien alien = (Alien) object;
+                if (object instanceof Alien alien) {
                     updateAlienSprites(alien);
-                    alien.changeVelocity(alienVelocity, 10);
-	    			if(direction.equals("left")) {
+                    alien.changeVelocity(ALIEN_VELOCITY, 10);
+	    			if (alienTravelDirection.equals("left")) {
 	    				alien.moveLeft(gc);
                     }
-	    			if(direction.equals("right")) {
+	    			if (alienTravelDirection.equals("right")) {
 	    				alien.moveRight(gc);
                     }
 
 	    			if (coordTrack > (WW/2 + 80)) {
 	    				alien.moveDown(gc);
-                        direction = "left";
+                        alienTravelDirection = "left";
                     }
 	    			if (coordTrack < (WW/2 - 80)) {
 	    				alien.moveDown(gc);
-                        direction = "right";
+                        alienTravelDirection = "right";
                     }
                     
                     if(alien.getY() >= player.getY()) {
@@ -401,16 +410,16 @@ public class GamePane {
                     }
 	    		}
 	    	}
-	    	if (direction.equals("left")) {
-	    		coordTrack -= alienVelocity;
+	    	if (alienTravelDirection.equals("left")) {
+	    		coordTrack -= ALIEN_VELOCITY;
 	    	} else {
-	    		coordTrack += alienVelocity;
+	    		coordTrack += ALIEN_VELOCITY;
 	    	}
 
         }
     }
 
-    private int generateRandomAlienShipDelay() {
+    private long generateRandomAlienShipDelay() {
         return random.nextInt(30000, 46000);
     }
 
@@ -419,8 +428,7 @@ public class GamePane {
         public void run() {
             if (alienShip == null || alienShip.getX() > canvas.getWidth() || !alienShip.isActive()) {
                 spawnAlienShip();
-                delay = generateRandomAlienShipDelay();
-                alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 30000, delay);
+                alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 30000, generateRandomAlienShipDelay());
                 timers.add(alienShipTimer);
             }
         }
@@ -437,7 +445,6 @@ public class GamePane {
 
     public void shoot() {
         if(!player.isDead()) {
-            isShooting = true;
             Image image = readImage("bullet.png");
             Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
             bullet.setPlayerShot();
@@ -633,13 +640,12 @@ public class GamePane {
         timers.clear();
 
         alienShootingTimer = new Timer();
-        generateShotInterval();
+        shotInterval = generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
         timers.add(alienShootingTimer);
 
         alienShipTimer = new Timer();
-        delay = generateRandomAlienShipDelay();
-        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, delay);
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, generateRandomAlienShipDelay());
         timers.add(alienShipTimer);
 
         alienMovingTimer = new Timer();
@@ -670,7 +676,6 @@ public class GamePane {
 
         return comp1 && comp2 && comp3 && comp4;
     }
-    
     
     public Canvas getCanvas() {
         return canvas;

@@ -30,15 +30,20 @@ public class gameScreen {
 
     private final int WW = startScreen.getWW();
     private final int WH = startScreen.getWH();
+    private startScreen home;
+    private Stage stage;
 
     public gameScreen(startScreen home, Stage stage) {
+        this.home = home;
+        this.stage = stage;
+
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
         setBackground();
         setupTopBar();
 
-        gamePane = new GamePane(scene, this, home, stage);
+        gamePane = new GamePane(stage, scene, home, this);
         root.setCenter(gamePane.getCanvas());
 
         Canvas canvas = gamePane.getCanvas();
@@ -52,6 +57,10 @@ public class gameScreen {
 
     public Scene getScene() {
         return scene;
+    }
+
+    public void newLevel() {
+        gamePane = new GamePane(stage, scene, home, this);
     }
 
     private void setBackground() {
