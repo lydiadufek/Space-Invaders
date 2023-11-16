@@ -1,50 +1,32 @@
 package view_controller;
 
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 import model.Utils;
 
-public class BetweenLevelScreen {
-
-    private static BetweenLevelScreen INSTANCE;
-    private static final Stage stage = Window.getStage();
-    private static final GameScreen gameScreen = GameScreen.getInstance();;
-    private static final int WW = Window.getWidth();
-    private static final int WH = Window.getHeight();
-
+public class helpScreen {
     private BorderPane root;
     private Scene scene;
+    private startScreen home;
+    private Hyperlink backButton;
 
-    public static BetweenLevelScreen getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new BetweenLevelScreen();
-        }
-        return INSTANCE;
-    }
+    private static final int WW = startScreen.getWW();
+    private static final int WH = startScreen.getWH();
 
-    private BetweenLevelScreen() {
+    public helpScreen(startScreen home) {
+        this.home = home;
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
         setBackground();
         setupGUI();
-    }
-
-    public void runTransition() {
-        Window.changeScene(scene);
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        Window.changeScene(gameScreen.getScene());
+        registerHandlers();
     }
 
     public Scene getScene() {
@@ -52,11 +34,18 @@ public class BetweenLevelScreen {
     }
 
     private void setupGUI() {
-        Label label = new Label("Level " + GamePane.getLevelNum());
+        Label label = new Label("Move Ship Left - Left Arrow Key\n\nMove Ship Right - Right"
+                + " Arrow Key\n\nShoot Bullet - SPACE BAR\n\nPause Game - ESC Key");
         Font font = Utils.getFont(25);
         label.setFont(font);
         label.setTextFill(Color.WHITE);
         root.setCenter(label);
+
+        backButton = new Hyperlink("Back");
+        backButton.setFont(font);
+        backButton.setTextFill(Color.WHITE);
+        backButton.setPadding(new Insets(20));
+        root.setBottom(backButton);
     }
 
     private void setBackground() {
@@ -70,4 +59,10 @@ public class BetweenLevelScreen {
         root.setBackground(bg);
     }
 
+    private void registerHandlers() {
+        backButton.setOnAction(event -> {
+            home.getStage().setScene(home.getScene());
+            home.getStage().show();
+        });
+    }
 }
