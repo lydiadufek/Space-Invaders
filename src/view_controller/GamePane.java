@@ -122,7 +122,6 @@ public class GamePane {
     }
 
     private void startTimers() {
-        //these are not getting deleted properly
         alienShootingTimer = new Timer();
         shotInterval = generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
@@ -152,7 +151,6 @@ public class GamePane {
                 scene.setOnKeyPressed(keyEvent -> {
                     if (keyEvent.getCode() == KeyCode.SPACE) {
                         shoot();
-                        //TODO: restrict how many the player can shoot
                     } else if (keyEvent.getCode() == KeyCode.LEFT) {
                         moveLeft();
                     } else if (keyEvent.getCode() == KeyCode.RIGHT) {
@@ -195,10 +193,6 @@ public class GamePane {
                     }
                 }
 
-                if(player.isDead()) {
-                    stop();
-
-                }
                 lastNanoTime = currentNanoTime;
                 if (player.isDead()) {
                 	for (Timer timer: timers) timer.cancel();
@@ -348,7 +342,6 @@ public class GamePane {
                             objects.remove(object1);
 
                         object1.updateSprite(temp[health]);
-                        //check if its the center --> reaplce damage depending on who shit
                     }
 
                     if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
@@ -654,7 +647,6 @@ public class GamePane {
             alien.updateSprite(newImage);
             alien.updateAABB();
 
-            //this might prevent internal error 66
             new AnimationTimer() {
                 long startTime = System.currentTimeMillis();
 

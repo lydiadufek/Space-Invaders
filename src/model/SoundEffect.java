@@ -13,7 +13,6 @@ public class SoundEffect {
 	
 	 public SoundEffect(String fileName) {
        path = "lib/" + fileName;
-
        this.fileName = fileName;
 	 }
 	 
@@ -27,6 +26,5 @@ public class SoundEffect {
 		    MediaPlayer mediaPlayer = new MediaPlayer(media);
 		    mediaPlayer.play();
 	 }
-	 
 
 }
