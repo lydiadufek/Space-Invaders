@@ -3,7 +3,6 @@ package view_controller;
 import java.util.ArrayList;
 import java.util.Timer;
 
-import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -21,11 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Utils;
 
-public class StartScreen extends Application {
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+public class StartScreen {
 
     // instance variables
     private Stage stage;
@@ -44,8 +39,8 @@ public class StartScreen extends Application {
     private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 700;
 
-    @Override
-    public void start(Stage stage) {
+    public StartScreen(Stage stage) {
+        this.stage = stage;
         System.out.println("space invaders!!");
         pane = new GridPane();
         helpPane = new HelpScreen(this);
@@ -54,9 +49,7 @@ public class StartScreen extends Application {
         registerHandlers();
 
         scene = new Scene(pane, WINDOW_WIDTH, WINDOW_HEIGHT);
-        this.stage = stage;
-        stage.setScene(scene);
-        stage.show();
+
         stage.setOnCloseRequest(event -> {
         	if (game != null) {
         		ArrayList<Timer> timers = game.getTimers();
