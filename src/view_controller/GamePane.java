@@ -72,7 +72,7 @@ public class GamePane {
     private final int ALIEN_VELOCITY = 3;
     private final int ALIENS_PER_ROW = 9;
     private final int ALIEN_ROWS = 5;
-    private  final long SHOT_COOLDOWN = 200000000;
+    private final long SHOT_COOLDOWN = 200000000;
 
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
@@ -552,7 +552,9 @@ public class GamePane {
 
     private void drawPlayer() {
         Image image = Utils.readImage("ship.png");
-        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
+        if (player == null) {
+            player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
+        }
         objects.add(player);
         player.drawFrame(gc);
     }
