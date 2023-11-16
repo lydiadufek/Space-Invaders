@@ -44,7 +44,7 @@ public class GamePane {
     private SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
     private SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
     private SoundEffect ufoSound = new SoundEffect("ufoHit.mp3");
-    private SoundEffect alienSound = new SoundEffect("alienDies.mp3");
+    private SoundEffect alienSound = new SoundEffect("alienDieNoise.mp3");
 
     // instance variables
     private ArrayList<Sprite> objects;
