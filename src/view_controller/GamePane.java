@@ -289,15 +289,19 @@ public class GamePane {
                             || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
                         objects.remove(object2);
 
-                        ((SubBarrier) object1).receiveDamage();
+                        ((SubBarrier) object1).receiveDamagePlayer();
                         Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
-                        int health = ((SubBarrier) object1).getHealth();
+                        System.out.println(temp.toString());
+                        int health = ((SubBarrier) object1).getPlayerHealth();
+                        if(health == 4)
+                            objects.remove(object1);
+
                         object1.updateSprite(temp[health]);
                         //check if its the center --> reaplce damage depending on who shit
                     }
 
-                    if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
-                            || (object1 instanceof Player && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
+                    if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
+                            || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
                         objects.remove(object2);
                     }
                 }
