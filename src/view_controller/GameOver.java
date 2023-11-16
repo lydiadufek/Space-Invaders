@@ -1,37 +1,26 @@
 package view_controller;
 
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.Utils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Optional;
-
 public class GameOver {
-    private BorderPane root;
-    private Scene scene;
-    private startScreen home;
-    private Hyperlink gameOver;
+    private static final Stage stage = Window.getStage();
 
-    private final int WW = startScreen.getWW();
-    private final int WH = startScreen.getWH();
+    private static BorderPane root;
+    private static Scene scene;
+    private static StartScreen home;
+    private static Hyperlink gameOver;
+
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
     
-    public GameOver(startScreen home) {
+    public GameOver(StartScreen home) {
         this.home = home;
         root = new BorderPane();
 //        System.out.println("space invaders!!");
@@ -68,8 +57,9 @@ public class GameOver {
 
     private void registerHandlers() {
         gameOver.setOnAction(event -> {
-            home.getStage().setScene(home.getScene());
-            home.getStage().show();
+            Window.changeScene(home.getScene());
+//            home.getStage().setScene(home.getScene());
+//            home.getStage().show();
         });
     }
 }

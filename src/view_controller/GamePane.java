@@ -28,15 +28,15 @@ import java.util.*;
 
 public class GamePane {
     // static variables
-    private static final int WW = startScreen.getWW();
-    private static final int WH = startScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
-    private static Stage stage;
-    private static Scene scene;
-    private static startScreen home;
-    private static gameScreen gameScreen;
+    private static final Stage stage = Window.getStage();
+    private static final GameScreen gameScreen = GameScreen.getInstance();
+    private static final Scene scene = GameScreen.getInstance().getScene();
+//    private static Scene scene;
 
-    private static int levelNum;
+    private static int levelNum = 0;
     private static Player player;
     private static Random random;
 
@@ -67,33 +67,31 @@ public class GamePane {
     private final int ALIEN_ROWS = 5;
 
 
-    public GamePane(Stage stage, Scene scene, startScreen home, gameScreen gameScreen) {
-        GamePane.stage = stage;
-        GamePane.scene = scene;
-        GamePane.home = home;
-        GamePane.gameScreen = gameScreen;
-
-        GamePane.levelNum = 0;
-        GamePane.random = new Random();
-
-        isPaused = false;
-
-        canvas = new Canvas(WW, WH*0.929);
-        gc = canvas.getGraphicsContext2D();
-
-        objects = new ArrayList<>();
-        aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
-        timers = new ArrayList<>();
-
-        coordTrack = WW/2;
-
-        drawPlayer();
-        drawAliens();
-        drawBarriers();
-        startTimers();
-    }
+//    public GamePane() {
+//        GamePane.scene = scene;
+//
+//        GamePane.levelNum = 0;
+//        GamePane.random = new Random();
+//
+//        isPaused = false;
+//
+//        canvas = new Canvas(WW, WH*0.929);
+//        gc = canvas.getGraphicsContext2D();
+//
+//        objects = new ArrayList<>();
+//        aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
+//        timers = new ArrayList<>();
+//
+//        coordTrack = WW/2;
+//
+//        drawPlayer();
+//        drawAliens();
+//        drawBarriers();
+//        startTimers();
+//    }
 
     public GamePane() {
+        random = new Random();
         GamePane.levelNum += 1;
 
         isPaused = false;
@@ -109,6 +107,7 @@ public class GamePane {
 
         drawPlayer();
         drawAliens();
+        drawBarriers();
         startTimers();
     }
 
@@ -130,6 +129,7 @@ public class GamePane {
     }
 
 	public void gameLoop() {
+
         new AnimationTimer() {
             long lastNanoTime = System.nanoTime();
 
@@ -141,6 +141,7 @@ public class GamePane {
 
                 //user input
                 scene.setOnKeyPressed(keyEvent -> {
+                    System.out.println("pressed");
                     if (keyEvent.getCode() == KeyCode.SPACE) {
                         shoot();
                         //TODO: restrict how many the player can shoot
@@ -194,9 +195,10 @@ public class GamePane {
                 if (player.isDead()) {
                 	for (Timer timer: timers) timer.cancel();
                 	this.stop();
-                	GameOver endScreen = new GameOver(home);
-                	home.getStage().setScene(endScreen.getScene());
-                    home.getStage().show();
+                	GameOver endScreen = new GameOver(StartScreen.getInstance());
+                    Window.changeScene(endScreen.getScene());
+//                	Window.getStage().setScene(endScreen.getScene());
+//                    Window.getStage().show();
                 }
 
                 if (allAliensDead()) {
@@ -220,6 +222,10 @@ public class GamePane {
         return true;
     }
 
+    public static int getLevelNum() {
+        return levelNum;
+    }
+
     private void detectAndHandleCollisions() {
         for (int i = 0; i < objects.size(); i++) {
             for (int j = i + 1; j < objects.size(); j++) {
@@ -235,7 +241,7 @@ public class GamePane {
 //                    if (bullet != null && otherObj instanceof Alien && bullet.getPlayerShot()) {
 //                        objects.remove(object1);
 //                        objects.remove(object2);
-//                        gameScreen.updateScore(((Alien) otherObj).getScore());
+//                        GameScreen.updateScore(((Alien) otherObj).getScore());
 //                        player.updateScore(((Alien) otherObj).getScore());
 //                        if (player.newLife()) {
 //                            System.out.println("new life");
@@ -324,17 +330,17 @@ public class GamePane {
                         }
                     }
 
-                    //Player hitting the barrier
-                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
-                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
-                        objects.remove(object2);
-
-                        ((SubBarrier) object1).receiveDamage();
-                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
-                        int health = ((SubBarrier) object1).getHealth();
-                        object1.updateSprite(temp[health]);
-                        //check if its the center --> reaplce damage depending on who shit
-                    }
+//                    //Player hitting the barrier
+//                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+//                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
+//                        objects.remove(object2);
+//
+//                        ((SubBarrier) object1).receiveDamage();
+//                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+//                        int health = ((SubBarrier) object1).getHealth();
+//                        object1.updateSprite(temp[health]);
+//                        //check if its the center --> reaplce damage depending on who shit
+//                    }
 
                     if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())
                             || (object1 instanceof Player && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
@@ -367,6 +373,11 @@ public class GamePane {
 
         //update the life counter
         player.updateLives();
+        if (player.isDead()) {
+            objects.remove(player);
+            System.out.println("dead");
+        }
+
         gameScreen.removeLifeIcon();
 
         //reset the player
@@ -377,11 +388,6 @@ public class GamePane {
         //invincibility time frame
         startInvincibilityTimer();
         playerIsInvincible = true;
-
-        if (player.isDead()) {
-            objects.remove(player);
-            System.out.println("dead");
-        }
     }
 
     private int generateShotInterval() {
@@ -528,7 +534,9 @@ public class GamePane {
 
     private void drawPlayer() {
         Image image = Utils.readImage("ship.png");
-        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
+        if (player == null) {
+            player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() - 10);
+        }
         objects.add(player);
         player.drawFrame(gc);
     }
@@ -679,8 +687,9 @@ public class GamePane {
                 timer.cancel();
             }
             timers.clear();
-            home.getStage().setScene(home.getScene());
-            home.getStage().show();
+            Window.changeScene(StartScreen.getScene());
+//            Window.getStage().setScene(StartScreen.getScene());
+//            Window.getStage().show();
         });
         
 

@@ -14,11 +14,15 @@ import model.Utils;
 import java.util.ArrayList;
 import java.util.Timer;
 
-public class gameScreen {
+public final class GameScreen {
 
-    // static variables
-    private static final int WW = startScreen.getWW();
-    private static final int WH = startScreen.getWH();
+    // static constants
+    private static GameScreen INSTANCE;
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
+    private static final int MAX_LIVES = 5;
+    private static final int STARTING_LIVES = 3;
+//    private final Stage stage = Window.getStage();
 
     // instance variables
     private BorderPane root;
@@ -31,20 +35,22 @@ public class gameScreen {
     private Scene scene;
 
     private int currentLives;
-    
-    // constants
-    private final int MAX_LIVES = 5;
-    private final int STARTING_LIVES = 3;
 
-    public gameScreen(Stage stage, startScreen home) {
+    public static GameScreen getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new GameScreen();
+        }
+        return INSTANCE;
+    }
 
+    private GameScreen() {
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
 
         setBackground();
         setupTopBar();
 
-        gamePane = new GamePane(stage, scene, home, this);
+        gamePane = new GamePane();
         root.setCenter(gamePane.getCanvas());
 
         currentLives = STARTING_LIVES;
@@ -57,6 +63,8 @@ public class gameScreen {
     }
 
     public void newLevel() {
+        BetweenLevelScreen transition = BetweenLevelScreen.getInstance();
+        transition.runTransition();
         gamePane = new GamePane();
         root.setCenter(gamePane.getCanvas());
         gamePane.gameLoop();

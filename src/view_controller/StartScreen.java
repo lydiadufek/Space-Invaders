@@ -21,79 +21,57 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Utils;
 
-public class startScreen extends Application {
+public class StartScreen  {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
+    private static StartScreen INSTANCE;
     // instance variables
-    private Stage stage;
-    private Scene scene;
+    private static Scene scene;
 
-    private gameScreen game;
-    private helpScreen helpPane;
+    private static GameScreen game; // <<<<< trying to remove
 
-    private GridPane pane;
-    private Font font;
-    private Label scoreLabel;
-    private Hyperlink startLink;
-    private Hyperlink helpLink;
+    private static GridPane pane;
+    private static Font font;
+    private static Label scoreLabel;
+    private static Hyperlink startLink;
+    private static Hyperlink helpLink;
 
     // static constants
-    private static final int WINDOW_WIDTH = 700;
-    private static final int WINDOW_HEIGHT = 700;
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
+    private static final HelpScreen helpScreen = HelpScreen.getInstance();
 
-    @Override
-    public void start(Stage stage) {
-        System.out.println("space invaders!!");
-        pane = new GridPane();
-        helpPane = new helpScreen(this);
+
+    public static StartScreen getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new StartScreen();
+        }
+        return INSTANCE;
+    }
+    private StartScreen() {
+        StartScreen.pane = new GridPane();
+        StartScreen.scene = new Scene(pane, WW, WH);
 
         layoutGUI();
         registerHandlers();
-
-        scene = new Scene(pane, WINDOW_WIDTH, WINDOW_HEIGHT);
-        this.stage = stage;
-        stage.setScene(scene);
-        stage.show();
-        stage.setOnCloseRequest(event -> {
-        	if (game != null) {
-        		ArrayList<Timer> timers = game.getTimers();
-        		for (Timer timer: timers) timer.cancel();
-        	}
-        });
     }
 
-    public static int getWW() {
-        return WINDOW_WIDTH;
-    }
-    public static int getWH() {
-        return WINDOW_HEIGHT;
-    }
-
-    public Scene getScene() {
+    public static Scene getScene() {
         return scene;
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 
     private void registerHandlers() {
         startLink.setOnAction(event -> {
-            game = new gameScreen(stage, this);
-            stage.setScene(game.getScene());
-            stage.show();
+            game = GameScreen.getInstance();
+            Window.setGame(game);
+            Window.changeScene(game.getScene());
         });
 
         helpLink.setOnAction((event) -> {
-            stage.setScene(helpPane.getScene());
-            stage.show();
+            Window.changeScene(helpScreen.getScene());
         });
     }
 
-    private void layoutGUI() {
+    private static void layoutGUI() {
         Image image = Utils.readImage("game-background.jpg");
         BackgroundImage bgImage = new BackgroundImage(image,
                 BackgroundRepeat.NO_REPEAT,
