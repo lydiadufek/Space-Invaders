@@ -36,9 +36,9 @@ public class Barrier {
 
         //-------------------------------------------------
         image = readImage("BottomLeftCorner-1.png");
-        image2 = readImage("BottomLeftCorner-2.png.");
-        image3 = readImage("BottomLeftCorner-3.png.");
-        image4 = readImage("BottomLeftCorner-4.png.");
+        image2 = readImage("BottomLeftCorner-2.png");
+        image3 = readImage("BottomLeftCorner-3.png");
+        image4 = readImage("BottomLeftCorner-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
         barrier = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight()-y);
