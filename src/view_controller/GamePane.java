@@ -61,9 +61,12 @@ public class GamePane {
 
     private String alienTravelDirection = "right";
     
+    // sounds
     private SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
     private SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
     private SoundEffect ufoSound = new SoundEffect("ufoHit.mp3");
+    private SoundEffect alienSound = new SoundEffect("alienDies.mp3");
+
 
 
     // constants
@@ -274,6 +277,7 @@ public class GamePane {
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object1).kill();
+                            alienSound.playSound();
                         }
                         if (object2 instanceof Alien) {
                             gameScreen.updateScore(((Alien) object2).getScore());
