@@ -124,6 +124,10 @@ public class GameScreen {
         scoreNum.setText(String.valueOf(originalScore + score));
     }
     
+    public int getScore() {
+    	return Integer.parseInt(scoreNum.getText());
+    }
+    
     public ArrayList<Timer> getTimers() {
     	return gamePane.getTimers();
     }

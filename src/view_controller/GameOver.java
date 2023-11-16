@@ -1,27 +1,57 @@
 package view_controller;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Optional;
+
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import model.Utils;
 
 public class GameOver {
-    private BorderPane root;
+    private GridPane root;
     private Scene scene;
     private StartScreen home;
     private Hyperlink gameOver;
+    private int score;
+    private String[] scores;
+    private Text newText;
 
     private static final int WW = Window.getWidth();
     private static final int WH = Window.getHeight();
-    
-    public GameOver(StartScreen home) {
-        this.home = home;
-        root = new BorderPane();
-//        System.out.println("space invaders!!");
+
+    public GameOver(StartScreen home, int score) {
+        this.home = home; this.score = score;
+        root = new GridPane();
         scene = new Scene(root, WW, WH);
+        
+        try {
+            FileInputStream rawBytes = new FileInputStream("scores.ser");
+			ObjectInputStream inFile = new ObjectInputStream(rawBytes);
+			scores = (String[]) inFile.readObject();
+			inFile.close();
+			throw new Exception();
+		} catch (Exception e) {
+	        scores = new String[5];
+	        scores[0] = "LYD : 500";
+	        scores[1] = "KAT : 300";
+	        scores[2] = "CAM : 250";
+	        scores[3] = "FED : 100";
+	        scores[4] = "RIC : 005";
+		}
 
         setBackground();
         setupGUI();
@@ -38,7 +68,35 @@ public class GameOver {
     	Font font = Utils.getFont(100);
         gameOver.setFont(font);
         gameOver.setTextFill(Color.WHITE);
-        root.setCenter(gameOver);
+        root.add(gameOver, 0, 1);
+    	font = Utils.getFont(60);
+    	int newScore = setScores();
+    	newText = new Text();
+        
+        for (int i = 0; i < scores.length; i++) {
+        	Text label = new Text(scores[i]);
+        	label.setFont(font);
+            label.setFill(Color.WHITE);
+        	root.add(label, 0, i + 4);
+        	if (i == newScore) newText = label;
+        }
+        root.setAlignment(Pos.BASELINE_CENTER);
+        root.setVgap(40);
+    }
+    
+    private int setScores() {
+    	int i = 0;
+    	while (i < 5 && score <= Integer.parseInt(scores[i].substring(6))) i++;
+    	if (i == 5) return i;
+    	String newScore = "_AA : " + score;
+    	int num = i;
+    	while (i < 5) {
+    		String tmpString = scores[i];
+    		scores[i] = newScore;
+    		newScore = tmpString;
+    		i++;
+    	}
+    	return num;
     }
 
     private void setBackground() {
@@ -53,7 +111,43 @@ public class GameOver {
     }
 
     private void registerHandlers() {
+    	newText.requestFocus();
+        newText.setOnKeyPressed(event -> {
+        	if (Character.isAlphabetic(event.getText().charAt(0))) {
+        		int i = 0;
+        		while (newText.getText().charAt(i) != '_' && i < 3) {System.out.println(newText.getText().charAt(i)); i++;}
+        		if (i == 0) {
+        			String str = event.getText() + "_" + newText.getText().substring(2);
+        			newText.setText(str);
+        		}
+        		else if (i == 1) {
+        			String str = newText.getText().substring(0, 1) + event.getText() + "_" + newText.getText().substring(3);
+        			newText.setText(str);
+        		}
+        		else if (i == 2) {
+        			String str = newText.getText().substring(0, 2) + event.getText() + newText.getText().substring(3);
+        			newText.setText(str);
+        		}
+        	}
+        });
+        
         gameOver.setOnAction(event -> {
+            newText.setText(newText.getText().replace('_', 'A'));
+        	Alert alert = new Alert(AlertType.CONFIRMATION);
+        	alert.setHeaderText("Press ok to serialize scores");
+        	Optional<ButtonType> result = alert.showAndWait();
+        	if (result.get() == ButtonType.OK) {
+	    		try {
+	    			FileOutputStream bytesToDisk = new FileOutputStream("scores.ser");
+	    	    	ObjectOutputStream outFile = new ObjectOutputStream(bytesToDisk);
+	    	    	outFile.writeObject(scores);
+	    	    	outFile.close();
+	    		} catch (Exception e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
+        	}
+    		home.setScore(score);
             home.getStage().setScene(home.getScene());
             home.getStage().show();
         });

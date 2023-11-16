@@ -1,5 +1,8 @@
 package view_controller;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -91,7 +94,8 @@ public class StartScreen {
 
         font = Utils.getFont(50);
 
-        scoreLabel = new Label("High Score: 000"); //Temporary
+        scoreLabel = new Label();
+        setScore(-1);
         scoreLabel.setFont(font);
         scoreLabel.setTextFill(Color.color(1, 1, 1));
         pane.add(scoreLabel, 0, 1);
@@ -114,5 +118,22 @@ public class StartScreen {
         pane.add(new ImageView(Utils.readImage("ship.png")), 0, 8);
         pane.setAlignment(Pos.BASELINE_CENTER);
         pane.setVgap(50);
+    }
+    
+    public void setScore(int score) {
+    	if (score < 0) {
+	    	try {
+	        	FileInputStream rawBytes = new FileInputStream("scores.ser");
+				ObjectInputStream inFile = new ObjectInputStream(rawBytes);
+				String[] scores = (String[]) inFile.readObject();
+				scoreLabel.setText("High Score: " + scores[0].substring(6));
+				inFile.close();
+			} catch (Exception e) {
+				scoreLabel.setText("High Score: 000");
+			}
+    	}
+    	else {
+    		scoreLabel.setText("High Score: " + score);
+    	}
     }
 }
