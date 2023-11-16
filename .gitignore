@@ -6,3 +6,6 @@
 /bin
 .temp*.txt
 *.log
+src/model/model.txt
+.classpath
+.project
