@@ -60,6 +60,10 @@ public class GamePane {
     private int coordTrack;
 
     private String alienTravelDirection = "right";
+    
+    private SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
+    private SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
+
 
     // constants
     private final int ALIEN_VELOCITY = 3;
@@ -290,6 +294,7 @@ public class GamePane {
                             if (object2 instanceof Bullet) {
                                 handlePlayerBeingShot((Player) object1, (Bullet) object2);
                             }
+                            deathSound.playSound();
                         }
                     }
 
@@ -493,6 +498,7 @@ public class GamePane {
     }
 
     public void shoot() {
+    	shootSound.playSound();
         if(!player.isDead()) {
             Image image = Utils.readImage("bullet.png");
             Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
