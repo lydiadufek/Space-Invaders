@@ -17,8 +17,8 @@ import java.util.Timer;
 public class GameScreen {
 
     // static variables
-    private static final int WW = StartScreen.getWW();
-    private static final int WH = StartScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
     // instance variables
     private BorderPane root;

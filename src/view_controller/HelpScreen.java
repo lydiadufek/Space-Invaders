@@ -16,8 +16,8 @@ public class HelpScreen {
     private StartScreen home;
     private Hyperlink backButton;
 
-    private static final int WW = StartScreen.getWW();
-    private static final int WH = StartScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
     public HelpScreen(StartScreen home) {
         this.home = home;

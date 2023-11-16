@@ -36,8 +36,8 @@ public class StartScreen {
     private Hyperlink helpLink;
 
     // static constants
-    private static final int WINDOW_WIDTH = 700;
-    private static final int WINDOW_HEIGHT = 700;
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
     public StartScreen(Stage stage) {
         this.stage = stage;
@@ -48,7 +48,7 @@ public class StartScreen {
         layoutGUI();
         registerHandlers();
 
-        scene = new Scene(pane, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene = new Scene(pane, WW, WH);
 
         stage.setOnCloseRequest(event -> {
         	if (game != null) {
@@ -56,13 +56,6 @@ public class StartScreen {
         		for (Timer timer: timers) timer.cancel();
         	}
         });
-    }
-
-    public static int getWW() {
-        return WINDOW_WIDTH;
-    }
-    public static int getWH() {
-        return WINDOW_HEIGHT;
     }
 
     public Scene getScene() {

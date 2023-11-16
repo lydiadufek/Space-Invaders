@@ -14,8 +14,8 @@ public class GameOver {
     private StartScreen home;
     private Hyperlink gameOver;
 
-    private final int WW = StartScreen.getWW();
-    private final int WH = StartScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
     
     public GameOver(StartScreen home) {
         this.home = home;

@@ -28,8 +28,8 @@ import java.util.*;
 
 public class GamePane {
     // static variables
-    private static final int WW = StartScreen.getWW();
-    private static final int WH = StartScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
     private static Stage stage;
     private static Scene scene;
