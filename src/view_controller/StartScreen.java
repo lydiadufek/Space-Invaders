@@ -21,7 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Utils;
 
-public class startScreen extends Application {
+public class StartScreen extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -31,8 +31,8 @@ public class startScreen extends Application {
     private Stage stage;
     private Scene scene;
 
-    private gameScreen game;
-    private helpScreen helpPane;
+    private GameScreen game;
+    private HelpScreen helpPane;
 
     private GridPane pane;
     private Font font;
@@ -48,7 +48,7 @@ public class startScreen extends Application {
     public void start(Stage stage) {
         System.out.println("space invaders!!");
         pane = new GridPane();
-        helpPane = new helpScreen(this);
+        helpPane = new HelpScreen(this);
 
         layoutGUI();
         registerHandlers();
@@ -82,7 +82,7 @@ public class startScreen extends Application {
 
     private void registerHandlers() {
         startLink.setOnAction(event -> {
-            game = new gameScreen(stage, this);
+            game = new GameScreen(stage, this);
             stage.setScene(game.getScene());
             stage.show();
         });
