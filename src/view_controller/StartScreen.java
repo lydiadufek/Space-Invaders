@@ -3,7 +3,6 @@ package view_controller;
 import java.util.ArrayList;
 import java.util.Timer;
 
-import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -21,18 +20,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Utils;
 
-public class startScreen extends Application {
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+public class StartScreen {
 
     // instance variables
     private Stage stage;
     private Scene scene;
 
-    private gameScreen game;
-    private helpScreen helpPane;
+    private GameScreen game;
+    private HelpScreen helpPane;
 
     private GridPane pane;
     private Font font;
@@ -41,35 +36,26 @@ public class startScreen extends Application {
     private Hyperlink helpLink;
 
     // static constants
-    private static final int WINDOW_WIDTH = 700;
-    private static final int WINDOW_HEIGHT = 700;
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
-    @Override
-    public void start(Stage stage) {
+    public StartScreen(Stage stage) {
+        this.stage = stage;
         System.out.println("space invaders!!");
         pane = new GridPane();
-        helpPane = new helpScreen(this);
+        helpPane = new HelpScreen(this);
 
         layoutGUI();
         registerHandlers();
 
-        scene = new Scene(pane, WINDOW_WIDTH, WINDOW_HEIGHT);
-        this.stage = stage;
-        stage.setScene(scene);
-        stage.show();
+        scene = new Scene(pane, WW, WH);
+
         stage.setOnCloseRequest(event -> {
         	if (game != null) {
         		ArrayList<Timer> timers = game.getTimers();
         		for (Timer timer: timers) timer.cancel();
         	}
         });
-    }
-
-    public static int getWW() {
-        return WINDOW_WIDTH;
-    }
-    public static int getWH() {
-        return WINDOW_HEIGHT;
     }
 
     public Scene getScene() {
@@ -82,7 +68,7 @@ public class startScreen extends Application {
 
     private void registerHandlers() {
         startLink.setOnAction(event -> {
-            game = new gameScreen(stage, this);
+            game = new GameScreen(stage, this);
             stage.setScene(game.getScene());
             stage.show();
         });

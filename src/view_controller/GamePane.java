@@ -28,13 +28,13 @@ import java.util.*;
 
 public class GamePane {
     // static variables
-    private static final int WW = startScreen.getWW();
-    private static final int WH = startScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
     private static Stage stage;
     private static Scene scene;
-    private static startScreen home;
-    private static gameScreen gameScreen;
+    private static StartScreen home;
+    private static GameScreen gameScreen;
 
     private static int levelNum;
     private static Player player;
@@ -75,7 +75,7 @@ public class GamePane {
     private  final long SHOT_COOLDOWN = 200000000;
 
 
-    public GamePane(Stage stage, Scene scene, startScreen home, gameScreen gameScreen) {
+    public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
         GamePane.scene = scene;
         GamePane.home = home;
@@ -239,7 +239,7 @@ public class GamePane {
 //                    if (bullet != null && otherObj instanceof Alien && bullet.getPlayerShot()) {
 //                        objects.remove(object1);
 //                        objects.remove(object2);
-//                        gameScreen.updateScore(((Alien) otherObj).getScore());
+//                        GameScreen.updateScore(((Alien) otherObj).getScore());
 //                        player.updateScore(((Alien) otherObj).getScore());
 //                        if (player.newLife()) {
 //                            System.out.println("new life");

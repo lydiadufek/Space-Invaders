@@ -10,16 +10,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import model.Utils;
 
-public class helpScreen {
+public class HelpScreen {
     private BorderPane root;
     private Scene scene;
-    private startScreen home;
+    private StartScreen home;
     private Hyperlink backButton;
 
-    private static final int WW = startScreen.getWW();
-    private static final int WH = startScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
-    public helpScreen(startScreen home) {
+    public HelpScreen(StartScreen home) {
         this.home = home;
         root = new BorderPane();
         scene = new Scene(root, WW, WH);

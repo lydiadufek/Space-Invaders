@@ -14,11 +14,11 @@ import model.Utils;
 import java.util.ArrayList;
 import java.util.Timer;
 
-public class gameScreen {
+public class GameScreen {
 
     // static variables
-    private static final int WW = startScreen.getWW();
-    private static final int WH = startScreen.getWH();
+    private static final int WW = Window.getWidth();
+    private static final int WH = Window.getHeight();
 
     // instance variables
     private BorderPane root;
@@ -36,7 +36,7 @@ public class gameScreen {
     private final int MAX_LIVES = 5;
     private final int STARTING_LIVES = 3;
 
-    public gameScreen(Stage stage, startScreen home) {
+    public GameScreen(Stage stage, StartScreen home) {
 
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
