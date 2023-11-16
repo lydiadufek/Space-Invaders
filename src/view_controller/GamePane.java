@@ -63,6 +63,7 @@ public class GamePane {
     
     private SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
     private SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
+    private SoundEffect ufoSound = new SoundEffect("ufoHit.mp3");
 
 
     // constants
@@ -309,6 +310,7 @@ public class GamePane {
                     if ((object1 instanceof AlienShip && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
                             || (object1 instanceof Bullet && object2 instanceof AlienShip && ((Bullet) object1).getPlayerShot())) {
 
+                    	ufoSound.playSound();
                         alienShip.setActive(false);
                         objects.remove(object1);
                         objects.remove(object2);
