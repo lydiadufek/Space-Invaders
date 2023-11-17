@@ -9,16 +9,17 @@ public class Player extends Sprite {
     private int lifeAmount;
     private int score;
     private int scoreReset; //once the user hits 1500
+    private long shootDelay;
 
     private GraphicsContext gc;
 
-    public Player(Image image, double x, double y) {
+    public Player(Image image, double x, double y, int xVelocity, long shootDelay, int health) {
         super(image, x, y);
-        lifeAmount = 3; //3 total
+        this.lifeAmount = health;
+        this.shootDelay = shootDelay;
+        this.xVelocity = xVelocity;
         score = 0;
         scoreReset = 0;
-        xVelocity = 20;
-        yVelocity = 0;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -85,5 +86,9 @@ public class Player extends Sprite {
         } else {
             return false;
         }
+    }
+
+    public long getDelay() {
+        return shootDelay;
     }
 }

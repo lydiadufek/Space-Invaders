@@ -72,7 +72,6 @@ public class GamePane {
     private final int ALIEN_VELOCITY = 3;
     private final int ALIENS_PER_ROW = 9;
     private final int ALIEN_ROWS = 5;
-    private  final long SHOT_COOLDOWN = 200000000;
 
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
@@ -95,7 +94,11 @@ public class GamePane {
 
         coordTrack = WW/2;
 
-        drawPlayer();
+        //create the player on the start screen
+        drawPlayer("ship.png", 20, 200000000, 3); //purpleShip
+//        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+//        drawPlayer("redShip.png", 50, 800000000, 3); //red
+//        drawPlayer("blueShip.png", 20, -10, 1); //blue
         drawAliens();
         drawBarriers();
         startTimers();
@@ -115,7 +118,7 @@ public class GamePane {
 
         coordTrack = WW/2;
 
-        drawPlayer();
+        drawPlayer("purpleShip.png", 20, 200_000_000, 3);
         drawAliens();
         drawBarriers();
         startTimers();
@@ -510,7 +513,7 @@ public class GamePane {
             long currentTime = System.nanoTime();
             long elapsedSinceLastShot = currentTime - lastShotTime;
 
-            if (elapsedSinceLastShot > SHOT_COOLDOWN) {
+            if (elapsedSinceLastShot > player.getDelay()) {
                 Image image = Utils.readImage("bullet.png");
                 Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
                 bullet.setPlayerShot();
@@ -550,9 +553,9 @@ public class GamePane {
         }
     }
 
-    private void drawPlayer() {
-        Image image = Utils.readImage("ship.png");
-        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
+    private void drawPlayer(String imageName, int xVelocity, long shootDelay, int health) {
+        Image image = Utils.readImage(imageName);
+        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10, xVelocity, shootDelay, health);
         objects.add(player);
         player.drawFrame(gc);
     }

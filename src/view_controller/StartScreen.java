@@ -115,7 +115,7 @@ public class StartScreen {
         helpLink.setTextFill(Color.color(1, 0, 0));
         pane.add(helpLink, 0, 6);
 
-        pane.add(new ImageView(Utils.readImage("ship.png")), 0, 8);
+        pane.add(new ImageView(Utils.readImage("purpleShip.png")), 0, 8);
         pane.setAlignment(Pos.BASELINE_CENTER);
         pane.setVgap(50);
     }

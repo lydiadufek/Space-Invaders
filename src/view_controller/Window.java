@@ -22,8 +22,8 @@ public class Window extends Application {
     public void start(Stage stage) {
         Window.stage = stage;
 
-        StartScreen startScreen = new StartScreen(stage);
-        Window.stage.setScene(startScreen.getScene());
+        StartScreen StartScreen = new StartScreen(stage);
+        Window.stage.setScene(StartScreen.getScene());
         Window.stage.show();
     }
 
