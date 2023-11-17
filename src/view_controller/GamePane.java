@@ -95,10 +95,11 @@ public class GamePane {
         coordTrack = WW/2;
 
         //create the player on the start screen
-        drawPlayer("ship.png", 20, 200000000, 3); //purpleShip
+//        drawPlayer("purpleShip.png", 20, 200000000, 3); //purpleShip
 //        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
-//        drawPlayer("redShip.png", 50, 800000000, 3); //red
-//        drawPlayer("blueShip.png", 20, -10, 1); //blue
+//        drawPlayer("redShip.png", 50, 500000000, 3); //red
+        drawPlayer("blueShip.png", 20, -10, 1); //blue
+
         drawAliens();
         drawBarriers();
         startTimers();
@@ -151,20 +152,18 @@ public class GamePane {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 //user input
-                scene.setOnKeyPressed(keyEvent -> {
-                    if (keyEvent.getCode() == KeyCode.SPACE) {
-                        shoot();
-                    } else if (keyEvent.getCode() == KeyCode.LEFT) {
-                        moveLeft();
-                    } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-                        moveRight();
-                    } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                        isPaused = !isPaused;
-                        if (isPaused) {
-                            pauseGame();
-                        	showPausePopup();
-                        }
-                    }});
+                Set<KeyCode> keysPressed = new HashSet<>();
+
+                scene.setOnKeyPressed(event -> {
+                    keysPressed.add(event.getCode());
+                    handlePlayerInput(keysPressed);
+                });
+
+                scene.setOnKeyReleased(event -> {
+                    keysPressed.remove(event.getCode());
+                    handlePlayerInput(keysPressed);
+                });
+
 
                 //bullet mechanics
                 for (int i = objects.size() - 1; i >= 0; i--) {
@@ -206,7 +205,6 @@ public class GamePane {
                 }
 
                 if (allAliensDead()) {
-                    //TODO: I dont think we need to reset the player and barriers, just spawn new aliens?
                     System.out.println("NEXT LEVEL");
                     for (Timer timer: timers){
                         timer.cancel();
@@ -216,6 +214,20 @@ public class GamePane {
                 }
             }
         }.start();
+    }
+
+    private void handlePlayerInput(Set<KeyCode> keysPressed) {
+        if (!player.isDead()) {
+            if (keysPressed.contains(KeyCode.SPACE)) {
+                shoot();
+            }
+            if (keysPressed.contains(KeyCode.LEFT)) {
+                moveLeft();
+            }
+            if (keysPressed.contains(KeyCode.RIGHT)) {
+                moveRight();
+            }
+        }
     }
 
     private boolean allAliensDead() {
@@ -508,12 +520,12 @@ public class GamePane {
     }
 
     public void shoot() {
-    	shootSound.playSound();
         if (!player.isDead()) {
             long currentTime = System.nanoTime();
             long elapsedSinceLastShot = currentTime - lastShotTime;
 
             if (elapsedSinceLastShot > player.getDelay()) {
+                shootSound.playSound();
                 Image image = Utils.readImage("bullet.png");
                 Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
                 bullet.setPlayerShot();
