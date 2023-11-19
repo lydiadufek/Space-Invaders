@@ -44,7 +44,7 @@ public class GamePane {
     private SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
     private SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
     private SoundEffect ufoSound = new SoundEffect("ufoHit.mp3");
-    private SoundEffect alienSound = new SoundEffect("alienDies.mp3");
+    private SoundEffect alienSound = new SoundEffect("alienDieNoise.mp3");
 
     // instance variables
     private ArrayList<Sprite> objects;
@@ -95,7 +95,11 @@ public class GamePane {
 
         coordTrack = WW/2;
 
-        drawPlayer();
+        //create the player on the start screen
+        drawPlayer("ship.png", 20, 200000000, 3); //purpleShip
+//        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+//        drawPlayer("redShip.png", 50, 800000000, 3); //red
+//        drawPlayer("blueShip.png", 20, -10, 1); //blue
         drawAliens();
         drawBarriers();
         startTimers();
@@ -115,7 +119,7 @@ public class GamePane {
 
         coordTrack = WW/2;
 
-        drawPlayer();
+        drawPlayer("purpleShip.png", 20, 200_000_000, 3);
         drawAliens();
         drawBarriers();
         startTimers();
@@ -510,7 +514,7 @@ public class GamePane {
             long currentTime = System.nanoTime();
             long elapsedSinceLastShot = currentTime - lastShotTime;
 
-            if (elapsedSinceLastShot > SHOT_COOLDOWN) {
+            if (elapsedSinceLastShot > player.getDelay()) {
                 Image image = Utils.readImage("bullet.png");
                 Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
                 bullet.setPlayerShot();
