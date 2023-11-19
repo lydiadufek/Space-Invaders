@@ -75,6 +75,9 @@ public class GamePane {
 
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
+        //TODO: Make aliens faster
+        //TODO: Makke barriers static
+        //TODO: extra lives stopped working
         GamePane.stage = stage;
         GamePane.scene = scene;
         GamePane.home = home;
@@ -83,7 +86,7 @@ public class GamePane {
         GamePane.levelNum = 0;
         GamePane.random = new Random();
 
-        isPaused = false;
+//        isPaused = false;
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
@@ -96,10 +99,9 @@ public class GamePane {
 
         //create the player on the start screen
 //        drawPlayer("purpleShip.png", 20, 200000000, 3); //purpleShip
-//        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
-//        drawPlayer("redShip.png", 50, 500000000, 3); //red
-        drawPlayer("blueShip.png", 20, -10, 1); //blue
-
+        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+//        drawPlayer("redShip.png", 40, 600000000, 3); //red
+//        drawPlayer("blueShip.png", 20, -10, 1); //blue
         drawAliens();
         drawBarriers();
         startTimers();
@@ -108,7 +110,7 @@ public class GamePane {
     public GamePane() {
         GamePane.levelNum += 1;
 
-        isPaused = false;
+//        isPaused = false;
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
@@ -152,20 +154,29 @@ public class GamePane {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 //user input
-                Set<KeyCode> keysPressed = new HashSet<>();
-
-                scene.setOnKeyPressed(event -> {
-                    keysPressed.add(event.getCode());
-                    handlePlayerInput(keysPressed);
+                final List<KeyCode> acceptedCodes = Arrays.asList(KeyCode.ESCAPE, KeyCode.RIGHT, KeyCode.LEFT, KeyCode.SPACE);
+                final Set<KeyCode> codes = new HashSet<>();
+                scene.setOnKeyReleased(e -> codes.clear());
+                scene.setOnKeyPressed(e -> {
+                    if (acceptedCodes.contains(e.getCode())) {
+                        codes.add(e.getCode());
+                        if (codes.contains(KeyCode.SPACE)) {
+                            shoot();
+                        } else if (codes.contains(KeyCode.LEFT)) {
+                            moveLeft();
+                        } else if (codes.contains(KeyCode.RIGHT)) {
+                            moveRight();
+                        } else if (codes.contains(KeyCode.ESCAPE)) {
+                            isPaused = true;
+                            stop();
+                            pauseGame();
+                            showPausePopup();
+                            if(!isPaused)
+                                start();
+                        }
+                    }
                 });
 
-                scene.setOnKeyReleased(event -> {
-                    keysPressed.remove(event.getCode());
-                    handlePlayerInput(keysPressed);
-                });
-
-
-                //bullet mechanics
                 for (int i = objects.size() - 1; i >= 0; i--) {
                     Sprite object = objects.get(i);
                     if (object instanceof Bullet) {
@@ -214,20 +225,6 @@ public class GamePane {
                 }
             }
         }.start();
-    }
-
-    private void handlePlayerInput(Set<KeyCode> keysPressed) {
-        if (!player.isDead()) {
-            if (keysPressed.contains(KeyCode.SPACE)) {
-                shoot();
-            }
-            if (keysPressed.contains(KeyCode.LEFT)) {
-                moveLeft();
-            }
-            if (keysPressed.contains(KeyCode.RIGHT)) {
-                moveRight();
-            }
-        }
     }
 
     private boolean allAliensDead() {
@@ -359,6 +356,7 @@ public class GamePane {
                         object1.updateSprite(temp[health]);
                     }
 
+                    //Aliens hitting the barrier
                     if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
                             || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
                         objects.remove(object2);
@@ -479,7 +477,7 @@ public class GamePane {
 	    				alien.moveDown(gc);
                         alienTravelDirection = "right";
                     }
-                    
+
                     if(alien.getY() >= player.getY()) {
                         player.setDead();
                         objects.remove(player);

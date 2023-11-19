@@ -38,13 +38,13 @@ public class Player extends Sprite {
     }
 
     public void moveLeft(GraphicsContext gc) {
-        x = lerp(x,x - xVelocity, 0.5);
+        x = lerp(x,x - xVelocity, 0.7);
         drawFrame(gc);
         updateAABB();
     }
 
     public void moveRight(GraphicsContext gc) {
-        x = lerp(x,x + xVelocity, 0.5);
+        x = lerp(x,x + xVelocity, 0.7);
         drawFrame(gc);
         updateAABB();
     }
