@@ -71,7 +71,7 @@ public class GamePane {
     private GraphicsContext gc;
 
     // constants
-    private final int ALIEN_VELOCITY = 3;
+    private int alien_velocity;
     private final int ALIENS_PER_ROW = 9;
     private final int ALIEN_ROWS = 5;
     private final long SHOT_COOLDOWN = 200000000;
@@ -87,6 +87,7 @@ public class GamePane {
         GamePane.random = new Random();
 
         isPaused = false;
+        alien_velocity = 3;
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
@@ -113,6 +114,7 @@ public class GamePane {
         System.out.println(player.getLives());
 
         isPaused = false;
+        regenerateAlienVelocity();
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
@@ -128,6 +130,11 @@ public class GamePane {
         drawAliens();
         drawBarriers();
         startTimers();
+    }
+
+    private void regenerateAlienVelocity() {
+
+
     }
 
     private void startTimers() {
@@ -343,32 +350,32 @@ public class GamePane {
                         }
                     }
 
-//                    //Player hitting the barrier
-//                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
-//                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
-//                        objects.remove(object2);
-//
-//                        ((SubBarrier) object1).receiveDamagePlayer();
-//                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
-//                        int health = ((SubBarrier) object1).getPlayerHealth();
-//                        if(health == 4)
-//                            objects.remove(object1);
-//
-//                        object1.updateSprite(temp[health]);
-//                    }
-//
-//                    if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
-//                            || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
-//                        objects.remove(object2);
-//
-//                        ((SubBarrier) object1).receiveDamagePlayer();
-//                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
-//                        int health = ((SubBarrier) object1).getPlayerHealth();
-//                        if(health == 4)
-//                            objects.remove(object1);
-//
-//                        object1.updateSprite(temp[health]);
-//                    }
+                    //Player hitting the barrier
+                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
+                        objects.remove(object2);
+
+                        ((SubBarrier) object1).receiveDamagePlayer();
+                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+                        int health = ((SubBarrier) object1).getPlayerHealth();
+                        if(health == 4)
+                            objects.remove(object1);
+
+                        object1.updateSprite(temp[health]);
+                    }
+
+                    if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
+                            || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
+                        objects.remove(object2);
+
+                        ((SubBarrier) object1).receiveDamagePlayer();
+                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+                        int health = ((SubBarrier) object1).getPlayerHealth();
+                        if(health == 4)
+                            objects.remove(object1);
+
+                        object1.updateSprite(temp[health]);
+                    }
                 }
             }
         }
@@ -461,7 +468,7 @@ public class GamePane {
             for (Sprite object : new ArrayList<>(objects)) {
                 if (object instanceof Alien alien) {
                     updateAlienSprites(alien);
-                    alien.changeVelocity(ALIEN_VELOCITY, 10);
+                    alien.changeVelocity(alien_velocity, 10);
 	    			if (alienTravelDirection.equals("left")) {
 	    				alien.moveLeft(gc);
                     }
@@ -485,9 +492,9 @@ public class GamePane {
 	    		}
 	    	}
 	    	if (alienTravelDirection.equals("left")) {
-	    		coordTrack -= ALIEN_VELOCITY;
+	    		coordTrack -= alien_velocity;
 	    	} else {
-	    		coordTrack += ALIEN_VELOCITY;
+	    		coordTrack += alien_velocity;
 	    	}
 
         }
