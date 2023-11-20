@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -17,8 +18,10 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Utils;
@@ -30,13 +33,15 @@ public class StartScreen {
     private Scene scene;
 
     private GameScreen game;
-    private HelpScreen helpPane;
+    private ShipScreen shipScreen;
 
     private GridPane pane;
+    private GridPane scoreTable;
     private Font font;
     private Label scoreLabel;
     private Hyperlink startLink;
-    private Hyperlink helpLink;
+    private String playerImage;
+    
 
     // static constants
     private static final int WW = Window.getWidth();
@@ -46,7 +51,11 @@ public class StartScreen {
         this.stage = stage;
         System.out.println("space invaders!!");
         pane = new GridPane();
-        helpPane = new HelpScreen(this);
+        shipScreen = new ShipScreen(this);
+        
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHalignment(HPos.CENTER);
+        pane.getColumnConstraints().add(columnConstraints);
 
         layoutGUI();
         registerHandlers();
@@ -71,14 +80,8 @@ public class StartScreen {
 
     private void registerHandlers() {
         startLink.setOnAction(event -> {
-            game = new GameScreen(stage, this);
-            stage.setScene(game.getScene());
-            stage.show();
-        });
-
-        helpLink.setOnAction((event) -> {
-            stage.setScene(helpPane.getScene());
-            stage.show();
+        	stage.setScene(shipScreen.getScene());
+        	stage.show();
         });
     }
 
@@ -92,7 +95,7 @@ public class StartScreen {
         Background bg = new Background(bgImage);
         pane.setBackground(bg);
 
-        font = Utils.getFont(50);
+        font = Utils.getFont(40);
 
         scoreLabel = new Label();
         setScore(-1);
@@ -102,22 +105,74 @@ public class StartScreen {
 
         Label nameLabel = new Label("Space Invaders!!");
         nameLabel.setFont(font);
-        nameLabel.setTextFill(Color.color(1, 0, 1));
+        nameLabel.setTextFill(Color.color(1, 1, 1));
         pane.add(nameLabel, 0, 3);
 
         startLink = new Hyperlink("Start game");
         startLink.setFont(font);
-        startLink.setTextFill(Color.color(0, 0, 1));
+        startLink.setTextFill(Color.color(0.5, 1, 0.5));
         pane.add(startLink, 0, 5);
+        
 
-        helpLink = new Hyperlink("How to Play");
-        helpLink.setFont(font);
-        helpLink.setTextFill(Color.color(1, 0, 0));
-        pane.add(helpLink, 0, 6);
-
-        pane.add(new ImageView(Utils.readImage("ship.png")), 0, 8);
+        Label instruct = new Label("Use Arrow Keys and Space Bar to Play");
+        Label instruct2 = new Label("Press ESC to Pause the Game");
+        instruct.setFont(Utils.getFont(35));
+        instruct2.setFont(Utils.getFont(25));
+        instruct.setTextFill(Color.color(1, 1, 1));
+        instruct2.setTextFill(Color.color(1, 1, 1));
+        instruct.setAlignment(Pos.CENTER);
+        pane.add(instruct, 0, 6);
+        pane.add(instruct2, 0, 7);
+        
+        // score table
+        Font scoreFont = Utils.getFont(30);
+        Label scoreNums = new Label("-- Score Advance Table --");
+        scoreNums.setTextFill(Color.color(1, 1, 1));
+        scoreNums.setFont(scoreFont);
+        scoreNums.setAlignment(Pos.CENTER);
+        pane.add(scoreNums, 0, 8);
+        
+        scoreTable = new GridPane();
+        
+        ColumnConstraints scoreConstraints = new ColumnConstraints();
+        scoreConstraints.setHalignment(HPos.CENTER);
+        scoreTable.getColumnConstraints().add(scoreConstraints);
+        scoreTable.setAlignment(Pos.CENTER);
+        
+        scoreTable.add(new ImageView(Utils.readImage("AlienShip.png")), 0, 0);
+        Label alienPts = new Label(" = ? Mystery");
+        alienPts.setTextFill(Color.color(1, 1, 1));
+        alienPts.setFont(scoreFont);
+        alienPts.setAlignment(Pos.CENTER);
+        scoreTable.add(alienPts, 1, 0);
+       
+        scoreTable.add(new ImageView(Utils.readImage("alien3-1.png")), 0, 1);
+        Label alien3Pts = new Label(" = 30 Points");
+        alien3Pts.setTextFill(Color.color(1, 1, 1));
+        alien3Pts.setFont(scoreFont);
+        alien3Pts.setAlignment(Pos.CENTER);
+        scoreTable.add(alien3Pts, 1, 1);
+        
+        scoreTable.add(new ImageView(Utils.readImage("alien2-1.png")), 0, 2);
+        Label alien2Pts = new Label(" = 20 Points");
+        alien2Pts.setTextFill(Color.color(1, 1, 1));
+        alien2Pts.setFont(scoreFont);
+        alien2Pts.setAlignment(Pos.CENTER);
+        scoreTable.add(alien2Pts, 1, 2);
+        
+        scoreTable.add(new ImageView(Utils.readImage("alien1-1.png")), 0, 3);
+        Label alien1Pts = new Label(" = 10 Points");
+        alien1Pts.setTextFill(Color.color(1, 1, 1));
+        alien1Pts.setFont(scoreFont);
+        alien1Pts.setAlignment(Pos.CENTER);
+        scoreTable.add(alien1Pts, 1, 3);
+        
+        scoreTable.setVgap(10);
+        
+        pane.add(scoreTable, 0, 9);
+                
         pane.setAlignment(Pos.BASELINE_CENTER);
-        pane.setVgap(50);
+        pane.setVgap(35);
     }
     
     public void setScore(int score) {
@@ -136,4 +191,20 @@ public class StartScreen {
     		scoreLabel.setText("High Score: " + score);
     	}
     }
+    
+    public void setShipImage(String image) {
+    	playerImage = image;
+    }
+    
+    public String getShipImage() {
+    	return playerImage;
+    }
+    
+    public void startGame() {
+    	game = new GameScreen(stage, this);
+    	stage.setScene(game.getScene());
+    	stage.show();
+    }
+    
+    
 }
