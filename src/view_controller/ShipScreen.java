@@ -3,6 +3,7 @@ package view_controller;
 import java.util.ArrayList;
 import java.util.Timer;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -38,6 +39,10 @@ public class ShipScreen {
         
         scene = new Scene(root, WW, WH);
         
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHalignment(HPos.CENTER);
+        pane.getColumnConstraints().add(columnConstraints);
+        
         setBackground();
         setupGUI();
         registerHandlers();
@@ -54,7 +59,7 @@ public class ShipScreen {
         label.setFont(font);
         label.setTextFill(Color.WHITE);
         label.setAlignment(Pos.CENTER);
-        pane.add(label, 0, 0);
+        pane.add(label, 1, 0);
         
         ImageView defaultShip = new ImageView(Utils.readImage("purpleShip.png"));
         defaultLink = new Hyperlink();
@@ -102,6 +107,7 @@ public class ShipScreen {
         
         pane.setHgap(10);
         pane.setVgap(25);
+        pane.setAlignment(Pos.CENTER);
         root.setCenter(pane);
     }
 
