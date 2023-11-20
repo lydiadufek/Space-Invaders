@@ -12,7 +12,7 @@ public class Window extends Application {
     private static final int WINDOW_HEIGHT = 700;
     private static Stage stage;
 
-    private static GameScreen game; // <<<<< trying to remove
+    private static GameScreen game;
 
     public static void main(String[] args) {
         launch(args);
@@ -53,7 +53,7 @@ public class Window extends Application {
         return stage;
     }
 
-    public static void changeScene(Scene scene) {
+    public synchronized static void changeScene(Scene scene) {
         stage.setScene(scene);
         stage.show();
     }

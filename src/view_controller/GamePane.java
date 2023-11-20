@@ -96,7 +96,7 @@ public class GamePane {
         coordTrack = WW/2;
 
         //create the player on the start screen
-        drawPlayer("ship.png", 20, 200000000, 3); //purpleShip
+        drawPlayer("purpleShip.png", 20, 200000000, 3); //purpleShip
 //        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
 //        drawPlayer("redShip.png", 50, 800000000, 3); //red
 //        drawPlayer("blueShip.png", 20, -10, 1); //blue
@@ -107,6 +107,7 @@ public class GamePane {
 
     public GamePane() {
         GamePane.levelNum += 1;
+        System.out.println(player.getLives());
 
         isPaused = false;
 
@@ -119,7 +120,7 @@ public class GamePane {
 
         coordTrack = WW/2;
 
-        drawPlayer("purpleShip.png", 20, 200_000_000, 3);
+        drawPlayer();
         drawAliens();
         drawBarriers();
         startTimers();
@@ -197,7 +198,6 @@ public class GamePane {
                     }
                 }
 
-                lastNanoTime = currentNanoTime;
                 if (player.isDead()) {
                 	for (Timer timer: timers) timer.cancel();
                 	this.stop();
@@ -208,13 +208,14 @@ public class GamePane {
 
                 if (allAliensDead()) {
                     //TODO: I dont think we need to reset the player and barriers, just spawn new aliens?
-                    System.out.println("NEXT LEVEL");
                     for (Timer timer: timers){
                         timer.cancel();
                     }
                     this.stop();
                     gameScreen.newLevel();
                 }
+
+                lastNanoTime = currentNanoTime;
             }
         }.start();
     }
@@ -226,6 +227,10 @@ public class GamePane {
             }
         }
         return true;
+    }
+
+    public static int getLevelNum() {
+        return levelNum;
     }
 
     private void detectAndHandleCollisions() {
@@ -334,32 +339,32 @@ public class GamePane {
                         }
                     }
 
-                    //Player hitting the barrier
-                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
-                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
-                        objects.remove(object2);
-
-                        ((SubBarrier) object1).receiveDamagePlayer();
-                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
-                        int health = ((SubBarrier) object1).getPlayerHealth();
-                        if(health == 4)
-                            objects.remove(object1);
-
-                        object1.updateSprite(temp[health]);
-                    }
-
-                    if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
-                            || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
-                        objects.remove(object2);
-
-                        ((SubBarrier) object1).receiveDamagePlayer();
-                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
-                        int health = ((SubBarrier) object1).getPlayerHealth();
-                        if(health == 4)
-                            objects.remove(object1);
-
-                        object1.updateSprite(temp[health]);
-                    }
+//                    //Player hitting the barrier
+//                    if ((object1 instanceof SubBarrier && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
+//                            || (object1 instanceof Bullet && object2 instanceof SubBarrier && ((Bullet) object1).getPlayerShot())) {
+//                        objects.remove(object2);
+//
+//                        ((SubBarrier) object1).receiveDamagePlayer();
+//                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+//                        int health = ((SubBarrier) object1).getPlayerHealth();
+//                        if(health == 4)
+//                            objects.remove(object1);
+//
+//                        object1.updateSprite(temp[health]);
+//                    }
+//
+//                    if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
+//                            || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
+//                        objects.remove(object2);
+//
+//                        ((SubBarrier) object1).receiveDamagePlayer();
+//                        Image[] temp = ((SubBarrier) object1).getPlayerDamageImages();
+//                        int health = ((SubBarrier) object1).getPlayerHealth();
+//                        if(health == 4)
+//                            objects.remove(object1);
+//
+//                        object1.updateSprite(temp[health]);
+//                    }
                 }
             }
         }
@@ -555,9 +560,15 @@ public class GamePane {
     }
 
     private void drawPlayer() {
-        Image image = Utils.readImage("ship.png");
+        player.setX((canvas.getWidth() / 2) - (player.getImage().getWidth() / 2));
+        objects.add(player);
+        player.drawFrame(gc);
+    }
+
+    private void drawPlayer(String imageName, int xVelocity, long shootDelay, int health) {
+        Image image = Utils.readImage(imageName);
         if (player == null) {
-            player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10);
+            player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10, xVelocity, shootDelay, health);
         }
         objects.add(player);
         player.drawFrame(gc);

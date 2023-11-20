@@ -19,6 +19,7 @@ public class GameScreen {
     // static variables
     private static final int WW = Window.getWidth();
     private static final int WH = Window.getHeight();
+    private static Transition transitionScreen;
 
     // instance variables
     private BorderPane root;
@@ -34,32 +35,39 @@ public class GameScreen {
     
     // constants
     private final int MAX_LIVES = 5;
-    private final int STARTING_LIVES = 3;
+    private int starting_lives;
 
     public GameScreen(Stage stage, StartScreen home) {
 
         root = new BorderPane();
         scene = new Scene(root, WW, WH);
+        transitionScreen = new Transition(this);
+
+        gamePane = new GamePane(stage, scene, home, this);
+        starting_lives = GamePane.getPlayer().getLives();
 
         setBackground();
         setupTopBar();
 
-        gamePane = new GamePane(stage, scene, home, this);
         root.setCenter(gamePane.getCanvas());
 
-        currentLives = STARTING_LIVES;
+        currentLives = starting_lives;
 
+        gamePane.gameLoop();
+    }
+
+    public void newLevel() {
+        transitionScreen.runTransition();
+    }
+
+    public void startNextLevel() {
+        gamePane = new GamePane();
+        root.setCenter(gamePane.getCanvas());
         gamePane.gameLoop();
     }
 
     public Scene getScene() {
         return scene;
-    }
-
-    public void newLevel() {
-        gamePane = new GamePane();
-        root.setCenter(gamePane.getCanvas());
-        gamePane.gameLoop();
     }
 
     private void setBackground() {
@@ -113,7 +121,7 @@ public class GameScreen {
         for (int i = 0; i < MAX_LIVES; i++) {
             livesBox.getChildren().add(new ImageView(heartObj));
         }
-        for (int i = STARTING_LIVES; i <= MAX_LIVES; i++) {
+        for (int i = starting_lives; i <= MAX_LIVES; i++) {
             livesBox.getChildren().get(i).setVisible(false);
         }
         topBar.setRight(livesBox);
