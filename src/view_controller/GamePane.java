@@ -39,7 +39,7 @@ public class GamePane {
     private static int levelNum;
     private static Player player;
     private static Random random;
-
+    
     // sounds
     private SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
     private SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
@@ -51,6 +51,8 @@ public class GamePane {
     private Alien[][] aliens;
     private ArrayList<Timer> timers;
     private AlienShip alienShip;
+    private String shipImage;
+
 
     private Timer alienShootingTimer;
     private Timer alienShipTimer;
@@ -93,9 +95,10 @@ public class GamePane {
         timers = new ArrayList<>();
 
         coordTrack = WW/2;
+        shipImage = home.getShipImage();
 
         //create the player on the start screen
-        drawPlayer("ship.png", 20, 200000000, 3); //purpleShip
+        drawPlayer(home.getShipImage(), 20, 200000000, 3); //purpleShip
 //        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
 //        drawPlayer("redShip.png", 50, 800000000, 3); //red
 //        drawPlayer("blueShip.png", 20, -10, 1); //blue
@@ -117,8 +120,11 @@ public class GamePane {
         timers = new ArrayList<>();
 
         coordTrack = WW/2;
+        shipImage = home.getShipImage();
+        
+        
 
-        drawPlayer("purpleShip.png", 20, 200_000_000, 3);
+        drawPlayer(home.getShipImage(), 20, 200_000_000, 3);
         drawAliens();
         drawBarriers();
         startTimers();
