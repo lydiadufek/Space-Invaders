@@ -67,6 +67,7 @@ public class GamePane {
 
     private boolean playerIsInvincible;
     private boolean isPaused;
+    private Set<KeyCode> pressedKeys;
 
     private String alienTravelDirection = "right";
 
@@ -87,6 +88,7 @@ public class GamePane {
 
         GamePane.levelNum = 0;
         GamePane.random = new Random();
+        setupKeypress();
 
         isPaused = false;
         alienVelocity = 3;
@@ -114,6 +116,7 @@ public class GamePane {
     public GamePane() {
         GamePane.levelNum += 1;
         System.out.println(player.getLives());
+        setupKeypress();
 
         isPaused = false;
         regenerateAlienVelocity();
@@ -132,6 +135,40 @@ public class GamePane {
         drawAliens();
         drawBarriers();
         startTimers();
+    }
+
+    private void setupKeypress() {
+        pressedKeys = new HashSet<>();
+        // user input
+        scene.setOnKeyPressed(keyEvent -> {
+            pressedKeys.add(keyEvent.getCode());
+            handleKeyPress();
+        });
+
+        scene.setOnKeyReleased(keyEvent -> {
+            pressedKeys.remove(keyEvent.getCode());
+        });
+    }
+
+    private void handleKeyPress() {
+        if (pressedKeys.contains(KeyCode.ESCAPE)) {
+            isPaused = !isPaused;
+            if (isPaused) {
+                pauseGame();
+                showPausePopup();
+            }
+            return;
+        }
+
+        if (pressedKeys.contains(KeyCode.SPACE)) {
+            shoot();
+        }
+        if (pressedKeys.contains(KeyCode.LEFT)) {
+            moveLeft();
+        }
+        if (pressedKeys.contains(KeyCode.RIGHT)) {
+            moveRight();
+        }
     }
 
     private void regenerateAlienVelocity() {
@@ -160,25 +197,9 @@ public class GamePane {
 
             @Override
             public void handle(long currentNanoTime) {
-                double elapsedTime = (currentNanoTime - lastNanoTime) / 1e9;
+//                double elapsedTime = (currentNanoTime - lastNanoTime) / 1e9;
 
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-                //user input
-                scene.setOnKeyPressed(keyEvent -> {
-                    if (keyEvent.getCode() == KeyCode.SPACE) {
-                        shoot();
-                    } else if (keyEvent.getCode() == KeyCode.LEFT) {
-                        moveLeft();
-                    } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-                        moveRight();
-                    } else if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                        isPaused = !isPaused;
-                        if (isPaused) {
-                            pauseGame();
-                        	showPausePopup();
-                        }
-                    }});
 
                 //bullet mechanics
                 for (int i = objects.size() - 1; i >= 0; i--) {
@@ -251,36 +272,6 @@ public class GamePane {
                 Sprite object1 = objects.get(i);
                 Sprite object2 = objects.get(j);
 
-// ^^^^^^^^^^^^^EXPERIMENTAL CLEANUP, DOESN'T WORK^^^^^^^^^^^^^^^^^^^
-//                if (isCollided(object1.getAABB(), object2.getAABB())) {
-//                    Sprite[] orderedObjs = bulletFirst(object1, object2);
-//                    Bullet bullet = (Bullet) orderedObjs[0];
-//                    Sprite otherObj = orderedObjs[1];
-//
-//                    if (bullet != null && otherObj instanceof Alien && bullet.getPlayerShot()) {
-//                        objects.remove(object1);
-//                        objects.remove(object2);
-//                        GameScreen.updateScore(((Alien) otherObj).getScore());
-//                        player.updateScore(((Alien) otherObj).getScore());
-//                        if (player.newLife()) {
-//                            System.out.println("new life");
-//                        }
-//                    }
-//
-//                    //Bullet hitting the Player
-//                    if (!playerIsInvincible) {
-//                        if (bullet != null && otherObj instanceof Player && !bullet.getPlayerShot()) {
-//                            handlePlayerBeingShot((Player) otherObj, bullet);
-//                        }
-//                    }
-//
-//                    //Bullets hitting each other
-//                    if (bullet != null && object2 instanceof Bullet) {
-//                        System.out.println("bullets collided");
-//                        objects.remove(object1);
-//                        objects.remove(object2);
-//                    }
-//                }
                 if (isCollided(object1.getAABB(), object2.getAABB())) {
                     //Player hitting the Alien
                     if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
