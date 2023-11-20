@@ -25,6 +25,8 @@ import javafx.stage.Stage;
 import model.*;
 import java.util.*;
 
+import static java.lang.Math.min;
+
 
 public class GamePane {
     // static variables
@@ -59,7 +61,8 @@ public class GamePane {
     private Timer alienMovingTimer;
 
     private int coordTrack;
-    private int shotInterval;
+    private static int shotInterval;
+    private double alienVelocity;
     private long lastShotTime;
 
     private boolean playerIsInvincible;
@@ -71,7 +74,6 @@ public class GamePane {
     private GraphicsContext gc;
 
     // constants
-    private int alien_velocity;
     private final int ALIENS_PER_ROW = 9;
     private final int ALIEN_ROWS = 5;
     private final long SHOT_COOLDOWN = 200000000;
@@ -87,7 +89,7 @@ public class GamePane {
         GamePane.random = new Random();
 
         isPaused = false;
-        alien_velocity = 3;
+        alienVelocity = 3;
 
         canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
@@ -133,13 +135,12 @@ public class GamePane {
     }
 
     private void regenerateAlienVelocity() {
-
-
+        alienVelocity = min( (0.3) * ((double) levelNum) + 3, 10 );
     }
 
     private void startTimers() {
         alienShootingTimer = new Timer();
-        shotInterval = generateShotInterval();
+        GamePane.shotInterval = generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
         timers.add(alienShootingTimer);
 
@@ -420,7 +421,7 @@ public class GamePane {
         }
     }
 
-    private int generateShotInterval() {
+    private static int generateShotInterval() {
         if (levelNum < 10) {
             int maxTime = (-110*levelNum) + 2100;
             return random.nextInt(300, maxTime);
@@ -432,7 +433,7 @@ public class GamePane {
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
-            shotInterval = generateShotInterval();
+            GamePane.shotInterval = generateShotInterval();
 
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
@@ -468,7 +469,7 @@ public class GamePane {
             for (Sprite object : new ArrayList<>(objects)) {
                 if (object instanceof Alien alien) {
                     updateAlienSprites(alien);
-                    alien.changeVelocity(alien_velocity, 10);
+                    alien.changeVelocity(alienVelocity, 10);
 	    			if (alienTravelDirection.equals("left")) {
 	    				alien.moveLeft(gc);
                     }
@@ -492,9 +493,9 @@ public class GamePane {
 	    		}
 	    	}
 	    	if (alienTravelDirection.equals("left")) {
-	    		coordTrack -= alien_velocity;
+	    		coordTrack -= alienVelocity;
 	    	} else {
-	    		coordTrack += alien_velocity;
+	    		coordTrack += alienVelocity;
 	    	}
 
         }
@@ -763,7 +764,7 @@ public class GamePane {
         timers.clear();
 
         alienShootingTimer = new Timer();
-        shotInterval = generateShotInterval();
+        GamePane.shotInterval = generateShotInterval();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
         timers.add(alienShootingTimer);
 
