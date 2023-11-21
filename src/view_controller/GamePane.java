@@ -551,12 +551,12 @@ public class GamePane {
     }
 
     public void shoot() {
-    	shootSound.playSound();
         if (!player.isDead()) {
             long currentTime = System.nanoTime();
             long elapsedSinceLastShot = currentTime - lastShotTime;
 
             if (elapsedSinceLastShot > player.getDelay()) {
+                shootSound.playSound();
                 Image image = Utils.readImage("bullet.png");
                 Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
                 bullet.setPlayerShot();
@@ -660,6 +660,7 @@ public class GamePane {
     }
 
     private void drawBarriers() {
+        //TODO: model drawPlayer
 //        Barrier barrier = new Barrier(150, 80, canvas, objects, gc);
 //        barrier.draw();
         draw(150, 80);
@@ -694,9 +695,8 @@ public class GamePane {
         image4 = readImage("BottomLeftCorner-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier == null) {
-            barrier = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - y);
-        }
+        barrier = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - y);
+
         objects.add(barrier);
         barrier.drawFrame(gc);
 
@@ -707,9 +707,7 @@ public class GamePane {
         image4 = readImage("TopLeftCorner-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier1 == null) {
-            barrier1 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
-        }
+        barrier1 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
         objects.add(barrier1);
         barrier1.drawFrame(gc);
 
@@ -720,9 +718,7 @@ public class GamePane {
         image4 = readImage("TopFill-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier2 == null) {
-            barrier2 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x + 1 - image.getWidth()), canvas.getHeight() - image.getHeight() - (y + 15 + image.getHeight()));
-        }
+        barrier2 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x + 1 - image.getWidth()), canvas.getHeight() - image.getHeight() - (y + 15 + image.getHeight()));
         objects.add(barrier2);
         barrier2.drawFrame(gc);
 
@@ -733,9 +729,7 @@ public class GamePane {
         image4 = readImage("TopFill-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier3 == null) {
-            barrier3 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x + 1) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y + 15) + image.getHeight()));
-        }
+        barrier3 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x + 1) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y + 15) + image.getHeight()));
         objects.add(barrier3);
         barrier3.drawFrame(gc);
 
@@ -746,9 +740,7 @@ public class GamePane {
         image4 = readImage("BottomFill-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier4 == null) {
-            barrier4 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x - 21), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
-        }
+        barrier4 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x - 21), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
         objects.add(barrier4);
         barrier4.drawFrame(gc);
 
@@ -759,9 +751,7 @@ public class GamePane {
         image4 = readImage("BottomFill-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier5 == null) {
-            barrier5 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 21) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
-        }
+        barrier5 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 21) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
         objects.add(barrier5);
         barrier5.drawFrame(gc);
 
@@ -772,9 +762,7 @@ public class GamePane {
         image4 = readImage("TopRightCorner-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier6 == null) {
-            barrier6 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 25) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
-        }
+        barrier6 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 25) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
         objects.add(barrier6);
         barrier6.drawFrame(gc);
 
@@ -785,9 +773,7 @@ public class GamePane {
         image4 = readImage("BottomRightCorner-4.png");
         temp = new Image[]{image, image2, image3, image4, image5};
 
-        if(barrier7 == null) {
-            barrier7 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 43) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 20) + image.getWidth()));
-        }
+        barrier7 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 43) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 20) + image.getWidth()));
         objects.add(barrier7);
         barrier7.drawFrame(gc);
     }
