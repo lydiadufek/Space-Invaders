@@ -91,7 +91,7 @@ public class ShipScreen {
         otherLink.setGraphic(otherShip);
         
         pane.add(otherLink, 0, 3);
-        Label otherLabel = new Label("Other Ship 1: New Attributes");
+        Label otherLabel = new Label("Jett Fighter: Fast Bullet Speed, 1 Life");
         otherLabel.setTextFill(Color.color(1, 1, 1));
         otherLabel.setFont(font);
         otherLabel.setAlignment(Pos.CENTER);
@@ -102,7 +102,7 @@ public class ShipScreen {
         otherLink2.setGraphic(otherShip2);
         
         pane.add(otherLink2, 0, 4);
-        Label otherLabel2 = new Label("Other Ship 2: New Attributes");
+        Label otherLabel2 = new Label("Pink Alien Ship: Fast Movement, Slow Bullet Speed");
         otherLabel2.setTextFill(Color.color(1, 1, 1));
         otherLabel2.setFont(font);
         otherLabel2.setAlignment(Pos.CENTER);
@@ -135,11 +135,11 @@ public class ShipScreen {
         	home.startGame();
         });
         otherLink.setOnAction(event -> {
-        	home.setShipImage("redShip.png");
+        	home.setShipImage("blueShip.png");
         	home.startGame();
         });
         otherLink2.setOnAction(event -> {
-        	home.setShipImage("blueShip.png");
+        	home.setShipImage("redShip.png");
         	home.startGame();
         });
     }
