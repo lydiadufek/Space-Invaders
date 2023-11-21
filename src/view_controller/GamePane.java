@@ -103,11 +103,16 @@ public class GamePane {
         coordTrack = WW/2;
         shipImage = home.getShipImage();
 
-        //create the player on the start screen
-        drawPlayer(shipImage, 20, 200000000, 3); //purpleShip
-//        drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
-//        drawPlayer("redShip.png", 50, 800000000, 3); //red
-//        drawPlayer("blueShip.png", 20, -10, 1); //blue
+        if(shipImage == "purpleShip.png") {
+            drawPlayer(shipImage, 20, 200000000, 3); //purpleShip
+        }else if(shipImage == "greenShip.png") {
+            drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+        }else if(shipImage == "redShip.png") {
+            drawPlayer("redShip.png", 50, 800000000, 3); //red
+        } else {
+            drawPlayer("blueShip.png", 20, -10, 1); //blue
+        }
+
         drawAliens();
         drawBarriers();
         startTimers();
@@ -131,7 +136,16 @@ public class GamePane {
         coordTrack = WW/2;
         shipImage = home.getShipImage();
 
-        drawPlayer();
+        if(shipImage == "purpleShip.png") {
+            drawPlayer(shipImage, 20, 200000000, 3); //purpleShip
+        }else if(shipImage == "greenShip.png") {
+            drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+        }else if(shipImage == "redShip.png") {
+            drawPlayer("redShip.png", 50, 800000000, 3); //red
+        } else {
+            drawPlayer("blueShip.png", 20, -10, 1); //blue
+        }
+
         drawAliens();
         drawBarriers();
         startTimers();
@@ -240,7 +254,6 @@ public class GamePane {
                 }
 
                 if (allAliensDead()) {
-                    //TODO: I dont think we need to reset the player and barriers, just spawn new aliens?
                     for (Timer timer: timers){
                         timer.cancel();
                     }
@@ -282,6 +295,7 @@ public class GamePane {
                             gameScreen.updateScore(((Alien) object1).getScore());
                             player.updateScore(((Alien) object1).getScore());
                             if (player.newLife()) {
+                                System.out.println("new life");
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object1).kill();
@@ -291,6 +305,7 @@ public class GamePane {
                             gameScreen.updateScore(((Alien) object2).getScore());
                             player.updateScore(((Alien) object2).getScore());
                             if (player.newLife()) {
+                                System.out.println("new life");
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object2).kill();
@@ -356,6 +371,7 @@ public class GamePane {
                         object1.updateSprite(temp[health]);
                     }
 
+                    //Alien hitting the barrier
                     if ((object1 instanceof Bullet && object2 instanceof SubBarrier && !((Bullet) object1).getPlayerShot())
                             || (object1 instanceof SubBarrier && object2 instanceof Bullet && !((Bullet) object2).getPlayerShot())) {
                         objects.remove(object2);

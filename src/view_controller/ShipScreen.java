@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import model.Player;
 import model.Utils;
 
 public class ShipScreen {
@@ -31,6 +32,8 @@ public class ShipScreen {
 
     private static final int WW = Window.getWidth();
     private static final int WH = Window.getHeight();
+
+    private Player player;
 
     public ShipScreen(StartScreen home) {
         this.home = home;
@@ -72,7 +75,7 @@ public class ShipScreen {
         defaultLabel.setAlignment(Pos.CENTER);
         pane.add(defaultLabel, 1, 1);
         
-        ImageView retroShip = new ImageView(Utils.readImage("originalShip.png"));
+        ImageView retroShip = new ImageView(Utils.readImage("greenShip.png"));
         retroLink = new Hyperlink();
         retroLink.setGraphic(retroShip);
         
@@ -83,7 +86,7 @@ public class ShipScreen {
         retroLabel.setAlignment(Pos.CENTER);
         pane.add(retroLabel, 1, 2);
         
-        ImageView otherShip = new ImageView(Utils.readImage("purpleShip.png"));
+        ImageView otherShip = new ImageView(Utils.readImage("blueShip.png"));
         otherLink = new Hyperlink();
         otherLink.setGraphic(otherShip);
         
@@ -94,7 +97,7 @@ public class ShipScreen {
         otherLabel.setAlignment(Pos.CENTER);
         pane.add(otherLabel, 1, 3);
         
-        ImageView otherShip2 = new ImageView(Utils.readImage("purpleShip.png"));
+        ImageView otherShip2 = new ImageView(Utils.readImage("redShip.png"));
         otherLink2 = new Hyperlink();
         otherLink2.setGraphic(otherShip2);
         
@@ -125,18 +128,18 @@ public class ShipScreen {
     private void registerHandlers() {
         defaultLink.setOnAction(event -> {
         	home.setShipImage("purpleShip.png");
-        	home.startGame();
+            home.startGame();
         });
         retroLink.setOnAction(event -> {
-        	home.setShipImage("originalShip.png");
+        	home.setShipImage("greenShip.png");
         	home.startGame();
         });
         otherLink.setOnAction(event -> {
-        	home.setShipImage("purpleShip.png");
+        	home.setShipImage("redShip.png");
         	home.startGame();
         });
         otherLink2.setOnAction(event -> {
-        	home.setShipImage("purpleShip.png");
+        	home.setShipImage("blueShip.png");
         	home.startGame();
         });
     }

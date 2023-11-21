@@ -198,6 +198,8 @@ public class StartScreen {
     public String getShipImage() {
     	return playerImage;
     }
+
+
     
     public void startGame() {
     	game = new GameScreen(stage, this);
