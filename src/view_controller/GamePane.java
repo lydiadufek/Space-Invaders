@@ -169,7 +169,6 @@ public class GamePane {
             // Handle key presses only if the game is not paused
 
             if (pressedKeys.contains(KeyCode.ESCAPE)) {
-                gameLoop().stop();
                 isPaused = true;
                 pauseGame();
                 showPausePopup();
@@ -263,11 +262,10 @@ public class GamePane {
                     gameScreen.newLevel();
                 }
 
-                if(isPaused) {
+                if(isPaused)
                     stop();
-                } else {
-                    start();
-                }
+
+                start();
                 lastNanoTime = currentNanoTime;
             }
         }.start();
