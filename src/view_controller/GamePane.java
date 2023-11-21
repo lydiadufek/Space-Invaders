@@ -90,7 +90,7 @@ public class GamePane {
         GamePane.random = new Random();
         setupKeypress();
 
-        isPaused = false;
+//        isPaused = false;
         alienVelocity = 3;
 
         canvas = new Canvas(WW, WH*0.929);
@@ -123,7 +123,7 @@ public class GamePane {
         System.out.println(player.getLives());
         setupKeypress();
 
-        isPaused = false;
+//        isPaused = false;
         regenerateAlienVelocity();
 
         canvas = new Canvas(WW, WH*0.929);
@@ -165,23 +165,25 @@ public class GamePane {
     }
 
     private void handleKeyPress() {
-        if (pressedKeys.contains(KeyCode.ESCAPE)) {
-            isPaused = !isPaused;
-            if (isPaused) {
+        if (!isPaused) {
+            // Handle key presses only if the game is not paused
+
+            if (pressedKeys.contains(KeyCode.ESCAPE)) {
+                gameLoop().stop();
+                isPaused = true;
                 pauseGame();
                 showPausePopup();
             }
-            return;
-        }
 
-        if (pressedKeys.contains(KeyCode.SPACE)) {
-            shoot();
-        }
-        if (pressedKeys.contains(KeyCode.LEFT)) {
-            moveLeft();
-        }
-        if (pressedKeys.contains(KeyCode.RIGHT)) {
-            moveRight();
+            if (pressedKeys.contains(KeyCode.SPACE)) {
+                shoot();
+            }
+            if (pressedKeys.contains(KeyCode.LEFT)) {
+                moveLeft();
+            }
+            if (pressedKeys.contains(KeyCode.RIGHT)) {
+                moveRight();
+            }
         }
     }
 
@@ -261,6 +263,11 @@ public class GamePane {
                     gameScreen.newLevel();
                 }
 
+                if(isPaused) {
+                    stop();
+                } else {
+                    start();
+                }
                 lastNanoTime = currentNanoTime;
             }
         }.start();
@@ -760,6 +767,8 @@ public class GamePane {
     }
     
     private void pauseGame() {
+        scene.setOnKeyPressed(null);
+        scene.setOnKeyReleased(null);
         isPaused = true;
         for (Timer timer : timers) {
             timer.cancel();
@@ -767,6 +776,7 @@ public class GamePane {
     }
     
     private void resumeGame() {
+
         isPaused = false;
         timers.clear();
 
@@ -782,6 +792,8 @@ public class GamePane {
         alienMovingTimer = new Timer();
         alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
         timers.add(alienMovingTimer);
+
+        setupKeypress();
     }
 
     public void drawAABB(Sprite object) {
