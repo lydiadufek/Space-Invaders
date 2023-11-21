@@ -26,6 +26,7 @@ import model.*;
 import java.util.*;
 
 import static java.lang.Math.min;
+import static model.Utils.readImage;
 
 
 public class GamePane {
@@ -78,6 +79,16 @@ public class GamePane {
     private final int ALIENS_PER_ROW = 9;
     private final int ALIEN_ROWS = 5;
     private final long SHOT_COOLDOWN = 200000000;
+
+    //subBarriers
+    private static SubBarrier barrier;
+    private static SubBarrier barrier1;
+    private static SubBarrier barrier2;
+    private static SubBarrier barrier3;
+    private static SubBarrier barrier4;
+    private static SubBarrier barrier5;
+    private static SubBarrier barrier6;
+    private static SubBarrier barrier7;
 
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
@@ -173,7 +184,6 @@ public class GamePane {
                 pauseGame();
                 showPausePopup();
             }
-
             if (pressedKeys.contains(KeyCode.SPACE)) {
                 shoot();
             }
@@ -246,6 +256,7 @@ public class GamePane {
                     }
                 }
 
+                //gameover screen
                 if (player.isDead()) {
                 	for (Timer timer: timers) timer.cancel();
                 	this.stop();
@@ -254,6 +265,7 @@ public class GamePane {
                     home.getStage().show();
                 }
 
+                //next level
                 if (allAliensDead()) {
                     for (Timer timer: timers){
                         timer.cancel();
@@ -265,8 +277,9 @@ public class GamePane {
                 if(isPaused)
                     stop();
 
-                start();
-                lastNanoTime = currentNanoTime;
+//                start(); //uhhhhhhhhhhh
+
+//                lastNanoTime = currentNanoTime;
             }
         }.start();
     }
@@ -579,7 +592,7 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-            //drawAABB(object);
+//            drawAABB(object);
         }
     }
 
@@ -647,17 +660,136 @@ public class GamePane {
     }
 
     private void drawBarriers() {
-        Barrier barrier = new Barrier(150, 80, canvas, objects, gc);
-        barrier.draw();
+//        Barrier barrier = new Barrier(150, 80, canvas, objects, gc);
+//        barrier.draw();
+        draw(150, 80);
 
-        Barrier barrier2 = new Barrier(300, 80, canvas, objects, gc);
-        barrier2.draw();
+//        Barrier barrier2 = new Barrier(300, 80, canvas, objects, gc);
+//        barrier2.draw();
+        draw(300, 80);
 
-        Barrier barrier3 = new Barrier(-75, 80, canvas, objects, gc);
-        barrier3.draw();
+//        Barrier barrier3 = new Barrier(-75, 80, canvas, objects, gc);
+//        barrier3.draw();
+        draw(-75, 80);
 
-        Barrier barrier4 = new Barrier(-245, 80, canvas, objects, gc);
-        barrier4.draw();
+//        Barrier barrier4 = new Barrier(-245, 80, canvas, objects, gc);
+//        barrier4.draw();
+        draw(-245, 80);
+
+    }
+
+    public void draw(int x, int y){
+        Image image = null;
+        Image image2 = null;
+        Image image3 = null;
+        Image image4 = null;
+        Image image5 = null;
+        Image[] temp = null;
+//        SubBarrier barrier = null;
+
+        //-------------------------------------------------
+        image = readImage("BottomLeftCorner-1.png");
+        image2 = readImage("BottomLeftCorner-2.png");
+        image3 = readImage("BottomLeftCorner-3.png");
+        image4 = readImage("BottomLeftCorner-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier == null) {
+            barrier = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - y);
+        }
+        objects.add(barrier);
+        barrier.drawFrame(gc);
+
+        //----------------------------------------------
+        image = readImage("TopLeftCorner-1.png");
+        image2 = readImage("TopLeftCorner-2.png");
+        image3 = readImage("TopLeftCorner-3.png");
+        image4 = readImage("TopLeftCorner-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier1 == null) {
+            barrier1 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
+        }
+        objects.add(barrier1);
+        barrier1.drawFrame(gc);
+
+        //----------------------------------------
+        image = readImage("TopFill-1.png");
+        image2 = readImage("TopFill-2.png");
+        image3 = readImage("TopFill-3.png");
+        image4 = readImage("TopFill-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier2 == null) {
+            barrier2 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x + 1 - image.getWidth()), canvas.getHeight() - image.getHeight() - (y + 15 + image.getHeight()));
+        }
+        objects.add(barrier2);
+        barrier2.drawFrame(gc);
+
+        //----------------------------------------
+        image = readImage("TopFill-1.png");
+        image2 = readImage("TopFill-2.png");
+        image3 = readImage("TopFill-3.png");
+        image4 = readImage("TopFill-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier3 == null) {
+            barrier3 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x + 1) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y + 15) + image.getHeight()));
+        }
+        objects.add(barrier3);
+        barrier3.drawFrame(gc);
+
+        //-------------------------------------------
+        image = readImage("BottomFill-1.png");
+        image2 = readImage("BottomFill-2.png");
+        image3 = readImage("BottomFill-3.png");
+        image4 = readImage("BottomFill-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier4 == null) {
+            barrier4 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x - 21), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
+        }
+        objects.add(barrier4);
+        barrier4.drawFrame(gc);
+
+        //-------------------------------------------
+        image = readImage("BottomFill-1.png");
+        image2 = readImage("BottomFill-2.png");
+        image3 = readImage("BottomFill-3.png");
+        image4 = readImage("BottomFill-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier5 == null) {
+            barrier5 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 21) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
+        }
+        objects.add(barrier5);
+        barrier5.drawFrame(gc);
+
+        //-----------------------------------------------
+        image = readImage("TopRightCorner-1.png");
+        image2 = readImage("TopRightCorner-2.png");
+        image3 = readImage("TopRightCorner-3.png");
+        image4 = readImage("TopRightCorner-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier6 == null) {
+            barrier6 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 25) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
+        }
+        objects.add(barrier6);
+        barrier6.drawFrame(gc);
+
+        //--------------------------------------------------
+        image = readImage("BottomRightCorner-1.png");
+        image2 = readImage("BottomRightCorner-2.png");
+        image3 = readImage("BottomRightCorner-3.png");
+        image4 = readImage("BottomRightCorner-4.png");
+        temp = new Image[]{image, image2, image3, image4, image5};
+
+        if(barrier7 == null) {
+            barrier7 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 43) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 20) + image.getWidth()));
+        }
+        objects.add(barrier7);
+        barrier7.drawFrame(gc);
     }
 
     private void startInvincibilityTimer() {
