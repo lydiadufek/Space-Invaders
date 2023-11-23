@@ -81,15 +81,13 @@ public class GamePane {
     private final long SHOT_COOLDOWN = 200000000;
 
     //subBarriers
-    private static SubBarrier barrier;
-    private static SubBarrier barrier1;
-    private static SubBarrier barrier2;
-    private static SubBarrier barrier3;
-    private static SubBarrier barrier4;
-    private static SubBarrier barrier5;
-    private static SubBarrier barrier6;
-    private static SubBarrier barrier7;
+    private static Barrier totalBarrier1;
+    private static Barrier totalBarrier2;
+    private static Barrier totalBarrier3;
+    private static Barrier totalBarrier4;
 
+
+    private boolean allDead; //hot key to change levels
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
@@ -101,7 +99,6 @@ public class GamePane {
         GamePane.random = new Random();
         setupKeypress();
 
-//        isPaused = false;
         alienVelocity = 3;
 
         canvas = new Canvas(WW, WH*0.929);
@@ -134,7 +131,6 @@ public class GamePane {
         System.out.println(player.getLives());
         setupKeypress();
 
-//        isPaused = false;
         regenerateAlienVelocity();
 
         canvas = new Canvas(WW, WH*0.929);
@@ -147,18 +143,10 @@ public class GamePane {
         coordTrack = WW/2;
         shipImage = home.getShipImage();
 
-        if(shipImage == "purpleShip.png") {
-            drawPlayer(shipImage, 20, 200000000, 3); //purpleShip
-        }else if(shipImage == "greenShip.png") {
-            drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
-        }else if(shipImage == "redShip.png") {
-            drawPlayer("redShip.png", 50, 800000000, 3); //red
-        } else {
-            drawPlayer("blueShip.png", 20, -10, 1); //blue
-        }
+        drawPlayer();
 
         drawAliens();
-        drawBarriers();
+        drawStaticBarrier();
         startTimers();
     }
 
@@ -192,6 +180,9 @@ public class GamePane {
             }
             if (pressedKeys.contains(KeyCode.RIGHT)) {
                 moveRight();
+            }
+            if (pressedKeys.contains(KeyCode.D)) {
+                allDead = true;
             }
         }
     }
@@ -266,12 +257,18 @@ public class GamePane {
                 }
 
                 //next level
-                if (allAliensDead()) {
+                if (allAliensDead() || allDead) {
                     for (Timer timer: timers){
                         timer.cancel();
                     }
                     this.stop();
                     gameScreen.newLevel();
+                }
+
+                if((levelNum+1) % 5 == 0) {
+                    //new formation
+                    alienMovingTimer.cancel();
+                    System.out.println("boss battle");
                 }
 
                 if(isPaused)
@@ -659,124 +656,38 @@ public class GamePane {
         }
     }
 
+    private void drawStaticBarrier() {
+        totalBarrier1.staticDraw(objects, gc);
+        totalBarrier2.staticDraw(objects, gc);
+        totalBarrier3.staticDraw(objects, gc);
+        totalBarrier4.staticDraw(objects, gc);
+
+        for (int i = 0; i < objects.size(); i++) {
+            Sprite object1 = objects.get(i);
+            if(object1 instanceof SubBarrier) {
+                object1.drawFrame(gc);
+            }
+        }
+    }
+
     private void drawBarriers() {
-        //TODO: model drawPlayer
-//        Barrier barrier = new Barrier(150, 80, canvas, objects, gc);
-//        barrier.draw();
-        draw(150, 80);
+        totalBarrier1 = new Barrier(150, 80, canvas, objects, gc);
+        totalBarrier1.draw();
+//        draw(150, 80);
 
-//        Barrier barrier2 = new Barrier(300, 80, canvas, objects, gc);
-//        barrier2.draw();
-        draw(300, 80);
+        totalBarrier2 = new Barrier(300, 80, canvas, objects, gc);
+        totalBarrier2.draw();
+//        draw(300, 80);
 
-//        Barrier barrier3 = new Barrier(-75, 80, canvas, objects, gc);
-//        barrier3.draw();
-        draw(-75, 80);
+        totalBarrier3 = new Barrier(-75, 80, canvas, objects, gc);
+        totalBarrier3.draw();
+//        draw(-75, 80);
 
-//        Barrier barrier4 = new Barrier(-245, 80, canvas, objects, gc);
-//        barrier4.draw();
-        draw(-245, 80);
-
+        totalBarrier4 = new Barrier(-245, 80, canvas, objects, gc);
+        totalBarrier4.draw();
+//        draw(-245, 80);
     }
 
-    public void draw(int x, int y){
-        Image image = null;
-        Image image2 = null;
-        Image image3 = null;
-        Image image4 = null;
-        Image image5 = null;
-        Image[] temp = null;
-//        SubBarrier barrier = null;
-
-        //-------------------------------------------------
-        image = readImage("BottomLeftCorner-1.png");
-        image2 = readImage("BottomLeftCorner-2.png");
-        image3 = readImage("BottomLeftCorner-3.png");
-        image4 = readImage("BottomLeftCorner-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - y);
-
-        objects.add(barrier);
-        barrier.drawFrame(gc);
-
-        //----------------------------------------------
-        image = readImage("TopLeftCorner-1.png");
-        image2 = readImage("TopLeftCorner-2.png");
-        image3 = readImage("TopLeftCorner-3.png");
-        image4 = readImage("TopLeftCorner-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier1 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - x, canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
-        objects.add(barrier1);
-        barrier1.drawFrame(gc);
-
-        //----------------------------------------
-        image = readImage("TopFill-1.png");
-        image2 = readImage("TopFill-2.png");
-        image3 = readImage("TopFill-3.png");
-        image4 = readImage("TopFill-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier2 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x + 1 - image.getWidth()), canvas.getHeight() - image.getHeight() - (y + 15 + image.getHeight()));
-        objects.add(barrier2);
-        barrier2.drawFrame(gc);
-
-        //----------------------------------------
-        image = readImage("TopFill-1.png");
-        image2 = readImage("TopFill-2.png");
-        image3 = readImage("TopFill-3.png");
-        image4 = readImage("TopFill-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier3 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x + 1) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y + 15) + image.getHeight()));
-        objects.add(barrier3);
-        barrier3.drawFrame(gc);
-
-        //-------------------------------------------
-        image = readImage("BottomFill-1.png");
-        image2 = readImage("BottomFill-2.png");
-        image3 = readImage("BottomFill-3.png");
-        image4 = readImage("BottomFill-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier4 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - (x - 21), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
-        objects.add(barrier4);
-        barrier4.drawFrame(gc);
-
-        //-------------------------------------------
-        image = readImage("BottomFill-1.png");
-        image2 = readImage("BottomFill-2.png");
-        image3 = readImage("BottomFill-3.png");
-        image4 = readImage("BottomFill-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier5 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 21) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 7) + image.getWidth()));
-        objects.add(barrier5);
-        barrier5.drawFrame(gc);
-
-        //-----------------------------------------------
-        image = readImage("TopRightCorner-1.png");
-        image2 = readImage("TopRightCorner-2.png");
-        image3 = readImage("TopRightCorner-3.png");
-        image4 = readImage("TopRightCorner-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier6 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 25) - image.getWidth() * 2), canvas.getHeight() - image.getHeight() - ((y - 9) + image.getHeight()));
-        objects.add(barrier6);
-        barrier6.drawFrame(gc);
-
-        //--------------------------------------------------
-        image = readImage("BottomRightCorner-1.png");
-        image2 = readImage("BottomRightCorner-2.png");
-        image3 = readImage("BottomRightCorner-3.png");
-        image4 = readImage("BottomRightCorner-4.png");
-        temp = new Image[]{image, image2, image3, image4, image5};
-
-        barrier7 = new SubBarrier(temp, (canvas.getWidth() / 2) - (image.getWidth() / 2) - ((x - 43) - image.getWidth()), canvas.getHeight() - image.getHeight() - ((y - 20) + image.getWidth()));
-        objects.add(barrier7);
-        barrier7.drawFrame(gc);
-    }
 
     private void startInvincibilityTimer() {
         Timer timer = new Timer();

@@ -85,6 +85,7 @@ public class Transition {
         label.setText("Level " + (GamePane.getLevelNum()+2));
 
         Window.changeScene(scene);
+        //TODO: does this have to be an animation timer?
         new AnimationTimer() {
             long lastNanoTime = System.nanoTime();
 
@@ -106,6 +107,5 @@ public class Transition {
             }
         }.start();
     }
-
 
 }

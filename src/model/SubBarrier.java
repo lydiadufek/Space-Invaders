@@ -45,5 +45,12 @@ public class SubBarrier extends Sprite {
     public int getAlienHealth() {
         return alienHealth;
     }
+
+    public void setPosition(double x, double y) {
+        System.out.println(x + " " + y);
+        this.x = x;
+        this.y = y;
+//        updateAABB();
+    }
 }
 
