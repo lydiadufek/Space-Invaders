@@ -123,7 +123,8 @@ public class GamePane {
             drawPlayer("blueShip.png", 20, -10, 1); //blue
         }
 
-        drawAliens();
+//        drawAliens();
+        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -148,7 +149,8 @@ public class GamePane {
 
         drawPlayer();
 
-        drawAliens();
+//        drawAliens();
+        drawBossBattle();
         drawStaticBarrier();
         startTimers();
     }
@@ -308,9 +310,10 @@ public class GamePane {
                     //Player hitting the Alien
                     if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())
                             || (object1 instanceof Bullet && object2 instanceof Alien && ((Bullet) object1).getPlayerShot())) {
-                        objects.remove(object1);
-                        objects.remove(object2);
+//                        objects.remove(object1);
+//                        objects.remove(object2);
                         if (object1 instanceof Alien) {
+                            objects.remove(object2);
                             gameScreen.updateScore(((Alien) object1).getScore());
                             player.updateScore(((Alien) object1).getScore());
                             if (player.newLife()) {
@@ -318,9 +321,13 @@ public class GamePane {
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object1).kill();
+                            if(!((Alien) object1).stillAlive()) {
+                                objects.remove(object1);
+                            }
                             alienSound.playSound();
                         }
                         if (object2 instanceof Alien) {
+                            objects.remove(object1);
                             gameScreen.updateScore(((Alien) object2).getScore());
                             player.updateScore(((Alien) object2).getScore());
                             if (player.newLife()) {
@@ -328,6 +335,9 @@ public class GamePane {
                                 gameScreen.addLifeIcon();
                             }
                             ((Alien) object2).kill();
+                            if(!((Alien) object2).stillAlive()) {
+                                objects.remove(object2);
+                            }
                         }
                     }
 

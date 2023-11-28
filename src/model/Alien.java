@@ -68,11 +68,11 @@ public class Alien extends Sprite {
     }
 
     public boolean stillAlive() {
-        return health != 0;
+        return health > 0;
     }
 
     public void kill() {
-        health = 0;
+        health--;
     }
 
     public void iAmBoss() {
