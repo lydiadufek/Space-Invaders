@@ -86,60 +86,31 @@ public class Transition {
         alienShip.changeVelocity(4, 1);
     }
 
-//    public void runTransition() {
-//        spawnAlienShip();
-//        label.setText("Level " + (GamePane.getLevelNum()+2));
-//
-//        Window.changeScene(scene);
-//        //TODO: does this have to be an animation timer?
-//        new AnimationTimer() {
-//            long lastNanoTime = System.nanoTime();
-//
-//            @Override
-//            public void handle(long currentNanoTime) {
-//                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-//
-//                alienShip.moveRight(gc);
-//                alienShip.drawFrame(gc);
-//
-//                if (alienShip.getX() > WW) {
-//                    this.stop();
-//                    Window.changeScene(home.getScene());
-//                    home.startNextLevel();
-//                }
-//
-//                lastNanoTime = currentNanoTime;
-//
-//            }
-//        }.start();
-//    }
-
     public void runTransition() {
         spawnAlienShip();
         label.setText("Level " + (GamePane.getLevelNum()+2));
 
         Window.changeScene(scene);
+        new AnimationTimer() {
+            long lastNanoTime = System.nanoTime();
 
-        executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> {
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            @Override
+            public void handle(long currentNanoTime) {
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-            alienShip.moveRight(gc);
-            alienShip.drawFrame(gc);
+                alienShip.moveRight(gc);
+                alienShip.drawFrame(gc);
 
-            if (alienShip.getX() > WW) {
-                executorService.shutdown(); // Stop the scheduled task
-                Platform.runLater(() -> {
+                if (alienShip.getX() > WW) {
+                    this.stop();
                     Window.changeScene(home.getScene());
                     home.startNextLevel();
-                });
+                }
+
+                lastNanoTime = currentNanoTime;
+
             }
-        }, 0, 16, TimeUnit.MILLISECONDS); // Adjust the period (16 ms for approximately 60 fps)
+        }.start();
     }
 
-    public void stopTransition() {
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdown();
-        }
-    }
 }
