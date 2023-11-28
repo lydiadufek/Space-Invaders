@@ -52,5 +52,10 @@ public class SubBarrier extends Sprite {
         this.y = y;
 //        updateAABB();
     }
+
+    @Override
+    public String toString() {
+        return "SubBarrier";
+    }
 }
 

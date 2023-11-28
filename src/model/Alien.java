@@ -73,4 +73,9 @@ public class Alien extends Sprite {
     public void kill() {
         health = 0;
     }
+
+    @Override
+    public String toString() {
+        return "Alien";
+    }
 }

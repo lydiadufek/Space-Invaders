@@ -155,4 +155,9 @@ public class Barrier {
     public ArrayList<SubBarrier> getPieces() {
         return pieces;
     }
+
+    @Override
+    public String toString() {
+        return "Barrier";
+    }
 }

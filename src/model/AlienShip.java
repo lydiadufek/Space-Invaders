@@ -63,4 +63,9 @@ public class AlienShip extends Sprite {
 
         return scoreAmount;
     }
+
+    @Override
+    public String toString() {
+        return "AlienShip";
+    }
 }

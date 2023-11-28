@@ -90,4 +90,10 @@ public abstract class Sprite {
         drawFrame(gc);
         updateAABB();
     }
+
+    @Override
+    public String toString() {
+        return "Sprite";
+    }
+
 }

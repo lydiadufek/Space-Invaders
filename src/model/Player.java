@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import view_controller.GamePane;
+import view_controller.Window;
 
 public class Player extends Sprite {
     private int lifeAmount;
@@ -12,6 +13,9 @@ public class Player extends Sprite {
     private long shootDelay;
 
     private GraphicsContext gc;
+
+    private final int WH = Window.getHeight();
+    private final int WW = Window.getWidth();
 
     public Player(Image image, double x, double y, int xVelocity, long shootDelay, int health) {
         super(image, x, y);
@@ -38,13 +42,19 @@ public class Player extends Sprite {
     }
 
     public void moveLeft(GraphicsContext gc) {
-        x = lerp(x,x - xVelocity, 0.7);
+        if (x - 1 < 0) {
+            return;
+        }
+        x = lerp(x, x - xVelocity, 0.7);
         drawFrame(gc);
         updateAABB();
     }
 
     public void moveRight(GraphicsContext gc) {
-        x = lerp(x,x + xVelocity, 0.7);
+        if (x + 1 + width > WW) {
+            return;
+        }
+        x = lerp(x, x + xVelocity, 0.7);
         drawFrame(gc);
         updateAABB();
     }
@@ -94,5 +104,10 @@ public class Player extends Sprite {
 
     public long getDelay() {
         return shootDelay;
+    }
+
+    @Override
+    public String toString() {
+        return "Player";
     }
 }

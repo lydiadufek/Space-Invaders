@@ -38,4 +38,9 @@ public class Bullet extends Sprite {
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
+
+    @Override
+    public String toString() {
+        return "Bullet";
+    }
 }
