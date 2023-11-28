@@ -135,7 +135,6 @@ public class GamePane {
 
     public GamePane() {
         GamePane.levelNum += 1;
-        System.out.println(player.getLives());
         setupKeypress();
 
         regenerateAlienVelocity();
@@ -655,9 +654,7 @@ public class GamePane {
 
     private void drawPlayer(String imageName, int xVelocity, long shootDelay, int health) {
         Image image = Utils.readImage(imageName);
-        if (player == null) {
-            player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight() - 10, xVelocity, shootDelay, health);
-        }
+        player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10, xVelocity, shootDelay, health);
         objects.add(player);
         player.drawFrame(gc);
     }

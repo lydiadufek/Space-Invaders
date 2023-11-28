@@ -38,7 +38,7 @@ public class StartScreen {
     private GridPane pane;
     private GridPane scoreTable;
     private Font font;
-    private Label scoreLabel;
+    private Hyperlink scoreLabel;
     private Hyperlink startLink;
     private String playerImage;
     
@@ -83,6 +83,12 @@ public class StartScreen {
         	stage.setScene(shipScreen.getScene());
         	stage.show();
         });
+        
+        scoreLabel.setOnAction(event -> {
+        	GameOver scores = new GameOver(this, 0);
+        	stage.setScene(scores.getScene());
+        	stage.show();
+        });
     }
 
     private void layoutGUI() {
@@ -97,10 +103,10 @@ public class StartScreen {
 
         font = Utils.getFont(40);
 
-        scoreLabel = new Label();
+        scoreLabel = new Hyperlink();
         setScore(-1);
         scoreLabel.setFont(font);
-        scoreLabel.setTextFill(Color.color(1, 1, 1));
+        scoreLabel.setTextFill(Color.color(0.5, 1, 0.5));
         pane.add(scoreLabel, 0, 1);
 
         Label nameLabel = new Label("Space Invaders!!");
