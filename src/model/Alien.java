@@ -27,34 +27,6 @@ public class Alien extends Sprite {
         isBoss = false;
     }
 
-    public void moveDown(GraphicsContext gc) {
-        y += yVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void moveUp(GraphicsContext gc) {
-        y -= yVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void moveLeft(GraphicsContext gc) {
-        x -= xVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void moveRight(GraphicsContext gc) {
-        x += xVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void updateAABB() {
-        this.AABB = new Rectangle(x, y, this.width, this.height);
-    }
-
     public int getScore() {
         return scoreAmount;
     }

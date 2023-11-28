@@ -254,8 +254,6 @@ public class GamePane {
 
                     double newX = alienShip.getX() - 1;
                     if (newX - (alienShip.getWidth() / 2) >= canvas.getWidth()) {
-                        System.out.println("hello");
-
                         alienShip.setActive(false);
                         objects.remove(alienShip);
                     }
@@ -305,10 +303,6 @@ public class GamePane {
             }
         }
         return true;
-    }
-
-    public static int getLevelNum() {
-        return levelNum;
     }
 
     private void detectAndHandleCollisions() {
@@ -643,7 +637,7 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-//            drawAABB(object);
+            //drawAABB(object);
         }
     }
 
@@ -722,7 +716,11 @@ public class GamePane {
         for (int i = 0; i < objects.size(); i++) {
             Sprite object1 = objects.get(i);
             if (object1 instanceof SubBarrier) {
-                object1.drawFrame(gc);
+                if(object1.getImage() == null) {
+                    objects.remove(object1);
+                } else {
+                    object1.drawFrame(gc);
+                }
             }
         }
     }
@@ -730,21 +728,16 @@ public class GamePane {
     private void drawBarriers() {
         totalBarrier1 = new Barrier(150, 80, canvas, objects, gc);
         totalBarrier1.draw();
-//        draw(150, 80);
 
         totalBarrier2 = new Barrier(300, 80, canvas, objects, gc);
         totalBarrier2.draw();
-//        draw(300, 80);
 
         totalBarrier3 = new Barrier(-75, 80, canvas, objects, gc);
         totalBarrier3.draw();
-//        draw(-75, 80);
 
         totalBarrier4 = new Barrier(-245, 80, canvas, objects, gc);
         totalBarrier4.draw();
-//        draw(-245, 80);
     }
-
 
     private void startInvincibilityTimer() {
         Timer timer = new Timer();
@@ -865,16 +858,12 @@ public class GamePane {
 
     public void startBossBattle() {
         notStarted = true;
-        // Clear existing objects
 
         objects.clear();
         drawPlayer();
         drawStaticBarrier();
 
-        // Draw the boss battle
         drawBossBattle();
-
-        // Additional setup or game logic for the boss battle can be added here
     }
 
     private void showPausePopup() {
@@ -994,11 +983,12 @@ public class GamePane {
         return player;
     }
 
-    public ArrayList<Sprite> getObjects() {
-        return objects;
-    }
-
     public ArrayList<Timer> getTimers() {
         return timers;
     }
+
+    public static int getLevelNum() {
+        return levelNum;
+    }
+
 }
