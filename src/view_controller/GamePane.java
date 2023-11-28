@@ -258,15 +258,6 @@ public class GamePane {
                     }
                 }
 
-                //gameover screen
-                if (player.isDead()) {
-                    for (Timer timer : timers) timer.cancel();
-                    this.stop();
-                    GameOver endScreen = new GameOver(home, gameScreen.getScore());
-                    home.getStage().setScene(endScreen.getScene());
-                    home.getStage().show();
-                }
-
                 //next level
                 if (allAliensDead() || allDead) {
                     transitioning = true;
@@ -277,6 +268,16 @@ public class GamePane {
                     gameScreen.newLevel();
                 } else {
                     transitioning = false;
+                }
+
+                //gameover screen
+                if (player.isDead()) {
+                    for (Timer timer : timers) timer.cancel();
+                    this.stop();
+                    transitioning = true;
+                    GameOver endScreen = new GameOver(home, gameScreen.getScore());
+                    home.getStage().setScene(endScreen.getScene());
+                    home.getStage().show();
                 }
 
                 //boss battle

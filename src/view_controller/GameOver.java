@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
@@ -109,7 +110,6 @@ public class GameOver {
     	newText.requestFocus();
         newText.setOnKeyPressed(event -> {
         	String code = event.getCode().getName();
-        	System.out.println(code);
         	if (code.length() == 1 && Character.isAlphabetic(code.charAt(0))) {
         		int i = 0;
         		while (newText.getText().charAt(i) != '_' && i < 3) i++;
