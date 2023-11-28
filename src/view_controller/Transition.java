@@ -1,6 +1,7 @@
 package view_controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -18,6 +19,9 @@ import model.Sprite;
 import model.Utils;
 
 import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Transition {
 
@@ -34,6 +38,8 @@ public class Transition {
 
     private Canvas canvas;
     private GraphicsContext gc;
+
+    private ScheduledExecutorService executorService;
 
     public Transition(GameScreen home) {
         this.home = home;
@@ -80,32 +86,60 @@ public class Transition {
         alienShip.changeVelocity(4, 1);
     }
 
+//    public void runTransition() {
+//        spawnAlienShip();
+//        label.setText("Level " + (GamePane.getLevelNum()+2));
+//
+//        Window.changeScene(scene);
+//        //TODO: does this have to be an animation timer?
+//        new AnimationTimer() {
+//            long lastNanoTime = System.nanoTime();
+//
+//            @Override
+//            public void handle(long currentNanoTime) {
+//                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+//
+//                alienShip.moveRight(gc);
+//                alienShip.drawFrame(gc);
+//
+//                if (alienShip.getX() > WW) {
+//                    this.stop();
+//                    Window.changeScene(home.getScene());
+//                    home.startNextLevel();
+//                }
+//
+//                lastNanoTime = currentNanoTime;
+//
+//            }
+//        }.start();
+//    }
+
     public void runTransition() {
         spawnAlienShip();
         label.setText("Level " + (GamePane.getLevelNum()+2));
 
         Window.changeScene(scene);
-        //TODO: does this have to be an animation timer?
-        new AnimationTimer() {
-            long lastNanoTime = System.nanoTime();
 
-            @Override
-            public void handle(long currentNanoTime) {
-                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(() -> {
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-                alienShip.moveRight(gc);
-                alienShip.drawFrame(gc);
+            alienShip.moveRight(gc);
+            alienShip.drawFrame(gc);
 
-                if (alienShip.getX() > WW) {
-                    this.stop();
+            if (alienShip.getX() > WW) {
+                executorService.shutdown(); // Stop the scheduled task
+                Platform.runLater(() -> {
                     Window.changeScene(home.getScene());
                     home.startNextLevel();
-                }
-
-                lastNanoTime = currentNanoTime;
-
+                });
             }
-        }.start();
+        }, 0, 16, TimeUnit.MILLISECONDS); // Adjust the period (16 ms for approximately 60 fps)
     }
 
+    public void stopTransition() {
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
+    }
 }

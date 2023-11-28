@@ -88,8 +88,10 @@ public class GamePane {
 
 
     private boolean allDead; //hot key to change levels
+    private boolean notStarted; //hot key to change levels
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
+        notStarted = true;
         GamePane.stage = stage;
         GamePane.scene = scene;
         GamePane.home = home;
@@ -127,6 +129,7 @@ public class GamePane {
     }
 
     public GamePane() {
+        notStarted = true;
         GamePane.levelNum += 1;
         System.out.println(player.getLives());
         setupKeypress();
@@ -265,9 +268,10 @@ public class GamePane {
                     gameScreen.newLevel();
                 }
 
-                if((levelNum+1) % 5 == 0) {
+                if((levelNum+1) % 5 == 0 && notStarted) {
                     //new formation
-                    alienMovingTimer.cancel();
+//                    alienMovingTimer.cancel();
+                    startBossBattle();
                     System.out.println("boss battle");
                 }
 
@@ -461,9 +465,11 @@ public class GamePane {
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
                 for (int j = aliens.length-1; j >= 0; j--) {
-                    if (aliens[j][i].stillAlive()) {
-                        bottomRowAliens.add(aliens[j][i]);
-                        break;
+                    if(aliens[j][i] != null && !aliens[i][j].getBoss()) {
+                        if (aliens[j][i].stillAlive()) {
+                            bottomRowAliens.add(aliens[j][i]);
+                            break;
+                        }
                     }
                 }
             }
@@ -620,7 +626,7 @@ public class GamePane {
             int shiftX;
             int shiftY;
 
-            //update the image and score dependin on the alien type
+            //update the image and score depending on the alien type
             if (i == 0) {
                 image = Utils.readImage("alien3-1.png");
                 scoreAmount = 50;
@@ -714,28 +720,107 @@ public class GamePane {
                 newImage = Utils.readImage("alien3-2.png");
             }
 
-            alien.updateSprite(newImage);
-            alien.updateAABB();
+            if (!alien.getBoss()) {
+                alien.updateSprite(newImage);
+                alien.updateAABB();
 
-            new AnimationTimer() {
-                long startTime = System.currentTimeMillis();
+                new AnimationTimer() {
+                    long startTime = System.currentTimeMillis();
 
-                @Override
-                public void handle(long now) {
-                    long elapsedTime = System.currentTimeMillis() - startTime;
+                    @Override
+                    public void handle(long now) {
+                        long elapsedTime = System.currentTimeMillis() - startTime;
 
-                    if (elapsedTime < 400) {
-                    } else if (elapsedTime >= 400) {
-                        alien.updateSprite(oldImage);
-                        alien.updateAABB();
+                        if (elapsedTime < 400) {
+                        } else if (elapsedTime >= 400) {
+                            alien.updateSprite(oldImage);
+                            alien.updateAABB();
 
-                        stop();
+                            stop();
+                        }
+                        drawFrame();
+
                     }
-                    drawFrame();
-
-                }
-            }.start();
+                }.start();
+            }
         }
+    }
+
+    private void drawBossBattle() {
+        int spacingX = 18;
+        int spacingY = 20;
+
+        Image bossImage = Utils.readImage("boss.png");
+
+        for (int i = 0; i < ALIEN_ROWS; i++) {
+            Image image;
+            int scoreAmount;
+            int type;
+            int interval;
+            int shiftX;
+            int shiftY;
+
+            //update the image and score depending on the alien type
+            if (i == 0) {
+                image = Utils.readImage("alien3-1.png");
+                scoreAmount = 50;
+                type = 3;
+                interval = 12;
+                shiftX = -47; shiftY = 0;
+            } else if (i == 1 || i == 2) {
+                image = Utils.readImage("alien2-1.png");
+                scoreAmount = 25;
+                type = 2;
+                interval = 6;
+                shiftX = -23; shiftY = -5;
+            } else {
+                image = Utils.readImage("alien1-1.png");
+                scoreAmount = 10;
+                type = 1;
+                interval = 0;
+                shiftX = 0; shiftY = -15;
+            }
+
+            double totalWidth = ALIENS_PER_ROW * image.getWidth();
+            double startX = (canvas.getWidth() - totalWidth - ALIENS_PER_ROW * spacingX) / 2;
+
+            for (int j = 0; j < ALIENS_PER_ROW; j++) {
+                double x = startX + j * (image.getWidth() + spacingX + interval) + shiftX;
+                double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
+
+                if(j==0 || j == ALIENS_PER_ROW - 1) {
+                    Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
+                    objects.add(alien);
+                    aliens[i][j] = alien;
+                    alien.drawFrame(gc);
+                } else {
+                    aliens[i][j] = null;
+                }
+
+                if(j == 1 && i == 0) {
+                    Alien alien = new Alien(bossImage, (int) x, (int) y, 10, scoreAmount, type);
+                    alien.iAmBoss();
+                    objects.add(alien);
+                    aliens[i][j] = alien;
+                    alien.drawFrame(gc);
+                    notStarted = false;
+                }
+            }
+        }
+    }
+
+    public void startBossBattle() {
+        notStarted = true;
+        // Clear existing objects
+
+        objects.clear();
+        drawPlayer();
+        drawStaticBarrier();
+
+        // Draw the boss battle
+        drawBossBattle();
+
+        // Additional setup or game logic for the boss battle can be added here
     }
 
     private void showPausePopup() {
