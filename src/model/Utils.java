@@ -5,8 +5,13 @@ import javafx.scene.text.Font;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Random;
+
+import static view_controller.GamePane.getLevelNum;
 
 public class Utils {
+    public static final Random random = new Random();
+
     public static Font getFont(int size) {
         FileInputStream fontInputStream;
         try {
@@ -26,6 +31,20 @@ public class Utils {
             throw new RuntimeException(e);
         }
         return new Image(imagePath);
+    }
+
+    public static int generateShotInterval() {
+        int levelNum = getLevelNum();
+        if (levelNum < 10) {
+            int maxTime = (-110 * levelNum) + 2100;
+            return random.nextInt(300, maxTime);
+        } else {
+            return random.nextInt(300, 1000);
+        }
+    }
+
+    public static long generateRandomAlienShipDelay() {
+        return random.nextInt(60000, 100000);
     }
 
 }
