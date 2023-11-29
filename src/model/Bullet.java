@@ -4,6 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
+import java.time.Instant;
+
 public class Bullet extends Sprite {
     private int damage;
     private boolean playerShot;
@@ -57,16 +59,16 @@ public class Bullet extends Sprite {
             directionX /= distanceToPlayer;
             directionY /= distanceToPlayer;
 
-            double newX = x + directionX * 3;
-            double newY = y + directionY * 3;
+            double newX = x + directionX * 2; //speed
+            double newY = y + directionY * 3; //speed
 
             x = newX;
             y = newY;
         }
     }
 
-    public void updateAABB() {
-        this.AABB = new Rectangle(x, y, this.width, this.height);
+    public void updateAABB(int add) {
+        this.AABB = new Rectangle(x, y, this.width + add, this.height + add);
     }
 
     public void setX(double x) {

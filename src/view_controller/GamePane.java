@@ -76,8 +76,8 @@ public class GamePane {
     private boolean transitioning;
 
     private Set<KeyCode> pressedKeys;
-
     private String alienTravelDirection = "right";
+    private Alien boss;
 
     private Canvas canvas;
     private GraphicsContext gc;
@@ -94,9 +94,6 @@ public class GamePane {
     private static Barrier totalBarrier4;
 
     private boolean allDead; //hot key to change levels
-
-    private Alien boss;
-    private TranslateTransition translateTransition;
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
@@ -123,17 +120,17 @@ public class GamePane {
         shipImage = home.getShipImage();
 
         if (shipImage == "purpleShip.png") {
-            drawPlayer(shipImage, 20, 200000000, 3); //purpleShip
+            drawPlayer(shipImage, 20, 350000000, 3); //purpleShip
         } else if (shipImage == "greenShip.png") {
-            drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+            drawPlayer("greenShip.png", 15, 400000000, 4); //greenShip
         } else if (shipImage == "redShip.png") {
-            drawPlayer("redShip.png", 50, 800000000, 3); //red
+            drawPlayer("redShip.png", 40, 800000000, 3); //red
         } else {
-            drawPlayer("blueShip.png", 20, -10, 1); //blue
+            drawPlayer("blueShip.png", 20, 150000000, 1); //blue
         }
 
-//        drawAliens();
-        drawBossBattle();
+        drawAliens();
+//        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -179,7 +176,6 @@ public class GamePane {
     private void handleKeyPress() {
         if (!isPaused) {
             // Handle key presses only if the game is not paused
-
             if (pressedKeys.contains(KeyCode.ESCAPE)) {
                 isPaused = true;
                 pauseGame();
@@ -199,7 +195,6 @@ public class GamePane {
             }
             if (pressedKeys.contains(KeyCode.F)) {
                 bossShoot(boss);
-                translateTransition.play();
             }
         }
     }
@@ -214,7 +209,6 @@ public class GamePane {
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
         timers.add(alienShootingTimer);
 
-        //it needs to move across the screen first
         alienShipTimer = new Timer();
         alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, generateRandomAlienShipDelay());
         timers.add(alienShipTimer);
@@ -225,7 +219,7 @@ public class GamePane {
 
         bossShootingTimer = new Timer();
         GamePane.shotInterval = generateShotInterval();
-        alienShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 1000);
+        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 500);
         timers.add(bossShootingTimer);
     }
 
@@ -235,8 +229,6 @@ public class GamePane {
 
             @Override
             public void handle(long currentNanoTime) {
-//                double elapsedTime = (currentNanoTime - lastNanoTime) / 1e9;
-
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 //bullet mechanics
@@ -245,7 +237,7 @@ public class GamePane {
                     if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
                         ((Bullet) object).move(gc);
                         if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
-                            objects.remove(i);
+                            objects.remove(object);
                         }
                     } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
                         ((Bullet) object).moveHoming(gc, player);
@@ -301,8 +293,6 @@ public class GamePane {
                 if (isPaused) stop();
 
                 if(!transitioning) start();
-
-//                lastNanoTime = currentNanoTime;
             }
         }.start();
     }
@@ -629,25 +619,11 @@ public class GamePane {
     }
 
     public void bossShoot(Sprite object) {
-        Image image = Utils.readImage("bullet.png");
+        Image image = Utils.readImage("bossBullet.png");
         Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() + 200);
         bullet.setBossShot();
-
-        // Create a TranslateTransition for the bullet
-        translateTransition = new TranslateTransition(Duration.seconds(2), bullet.getAABB());
-        translateTransition.setToX(player.getX());
-        translateTransition.setToY(player.getY());
-
-        // Set up an event handler to remove the bullet from objects when the animation ends
-        translateTransition.setOnFinished(event -> objects.remove(bullet));
-
-        // Add the bullet to the list of objects
         objects.add(bullet);
-
-        // Play the translation animation
     }
-
-
 
     public void moveLeft() {
         double newX = player.getX() - 1;
