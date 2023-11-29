@@ -69,7 +69,7 @@ public class ShipScreen {
         defaultLink.setGraphic(defaultShip);
         
         pane.add(defaultLink, 0, 1);
-        Label defaultLabel = new Label("Default Ship: 3 Lives");
+        Label defaultLabel = new Label("Purple Ship: \nDefualt Speeds, 3 Lives");
         defaultLabel.setTextFill(Color.color(1, 1, 1));
         defaultLabel.setFont(font);
         defaultLabel.setAlignment(Pos.CENTER);
@@ -80,7 +80,7 @@ public class ShipScreen {
         retroLink.setGraphic(retroShip);
         
         pane.add(retroLink, 0, 2);
-        Label retroLabel = new Label("Original Ship: Slower Speed");
+        Label retroLabel = new Label("Retro Ship: \nSlower Movement, Defualt Bullet Speed, 4 Lives");
         retroLabel.setTextFill(Color.color(1, 1, 1));
         retroLabel.setFont(font);
         retroLabel.setAlignment(Pos.CENTER);
@@ -91,18 +91,18 @@ public class ShipScreen {
         otherLink.setGraphic(otherShip);
         
         pane.add(otherLink, 0, 3);
-        Label otherLabel = new Label("Jett Fighter: Fast Bullet Speed, 1 Life");
+        Label otherLabel = new Label("Jett Fighter: \nDefault Movement, Fast Bullet Speed, 1 Life");
         otherLabel.setTextFill(Color.color(1, 1, 1));
         otherLabel.setFont(font);
         otherLabel.setAlignment(Pos.CENTER);
         pane.add(otherLabel, 1, 3);
-        
+
         ImageView otherShip2 = new ImageView(Utils.readImage("redShip.png"));
         otherLink2 = new Hyperlink();
         otherLink2.setGraphic(otherShip2);
         
         pane.add(otherLink2, 0, 4);
-        Label otherLabel2 = new Label("Pink Alien Ship: Fast Movement, Slow Bullet Speed");
+        Label otherLabel2 = new Label("Alien Ship: \nFast Movement, Slow Bullet Speed, 3 Lives");
         otherLabel2.setTextFill(Color.color(1, 1, 1));
         otherLabel2.setFont(font);
         otherLabel2.setAlignment(Pos.CENTER);
