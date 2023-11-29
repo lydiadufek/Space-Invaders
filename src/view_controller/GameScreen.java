@@ -121,7 +121,7 @@ public class GameScreen {
         for (int i = 0; i < MAX_LIVES; i++) {
             livesBox.getChildren().add(new ImageView(heartObj));
         }
-        for (int i = starting_lives; i <= MAX_LIVES; i++) {
+        for (int i = starting_lives+1; i <= MAX_LIVES; i++) {
             livesBox.getChildren().get(i).setVisible(false);
         }
         topBar.setRight(livesBox);
@@ -141,12 +141,12 @@ public class GameScreen {
     }
 
     protected void removeLifeIcon() {
-        livesBox.getChildren().get(currentLives-1).setVisible(false);
+        livesBox.getChildren().get(currentLives).setVisible(false);
         currentLives--;
     }
 
     protected void addLifeIcon() {
-        livesBox.getChildren().get(currentLives-1).setVisible(true);
+        livesBox.getChildren().get(currentLives).setVisible(true);
         currentLives++;
     }
 
