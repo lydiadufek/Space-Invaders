@@ -63,6 +63,9 @@ public class GamePane {
     private Timer alienMovingTimer;
 
     private int coordTrack;
+
+    private int borderRight;
+    private int borderLeft;
     private double alienVelocity;
     private long lastShotTime;
 
@@ -102,6 +105,8 @@ public class GamePane {
         setupKeypress();
 
         alienVelocity = 3;
+        borderRight = 80;
+        borderLeft = 65;
         notStarted = true;
         transitioning = false;
 
@@ -139,14 +144,14 @@ public class GamePane {
         regenerateAlienVelocity();
         notStarted = true;
 
-        canvas = new Canvas(WW, WH * 0.929);
+        canvas = new Canvas(WW, WH*0.929);
         gc = canvas.getGraphicsContext2D();
 
         objects = new ArrayList<>();
         aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
         timers = new ArrayList<>();
 
-        coordTrack = WW / 2;
+        coordTrack = WW/2;
         shipImage = home.getShipImage();
 
         drawPlayer();
@@ -194,7 +199,7 @@ public class GamePane {
     }
 
     private void regenerateAlienVelocity() {
-        alienVelocity = min((0.3) * ((double) levelNum) + 3, 10);
+        alienVelocity = min( (0.3) * ((double) levelNum) + 3, 10 );
     }
 
     private void startTimers() {
@@ -217,7 +222,7 @@ public class GamePane {
         timers.add(bossShootingTimer);
     }
 
-    public void gameLoop() {
+	public void gameLoop() {
         new AnimationTimer() {
             long lastNanoTime = System.nanoTime();
 
@@ -237,7 +242,7 @@ public class GamePane {
                     } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
                         ((Bullet) object).moveHoming(gc, player);
                         if (((Bullet) object).getToClose()) {
-                            iterator.remove(); //TODO: fix this shit
+                            iterator.remove();
                             System.out.println("i need to be removed");
                         }
                     }
@@ -259,17 +264,13 @@ public class GamePane {
                         objects.remove(alienShip);
                     }
                 }
-
                 //next level
                 if (allAliensDead() || allDead) {
-                    transitioning = true;
-                    for (Timer timer : timers) {
+                    for (Timer timer: timers){
                         timer.cancel();
                     }
                     this.stop();
                     gameScreen.newLevel();
-                } else {
-                    transitioning = false;
                 }
 
                 //gameover screen
@@ -297,7 +298,7 @@ public class GamePane {
     }
 
     private boolean allAliensDead() {
-        for (Sprite sprite : objects) {
+        for (Sprite sprite: objects) {
             if (sprite instanceof Alien) {
                 return false;
             }
@@ -409,7 +410,7 @@ public class GamePane {
 
     private static int generateShotInterval() {
         if (levelNum < 10) {
-            int maxTime = (-110 * levelNum) + 2100;
+            int maxTime = (-110*levelNum) + 2100;
             return random.nextInt(300, maxTime);
         } else {
             return random.nextInt(300, 1000);
@@ -425,9 +426,9 @@ public class GamePane {
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
             ArrayList<Alien> boss = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
-                for (int j = aliens.length - 1; j >= 0; j--) {
-                    if (aliens[j][i] != null) {
-                        if (!aliens[j][i].getBoss()) {
+                for (int j = aliens.length-1; j >= 0; j--) {
+                    if(aliens[j][i] != null) {
+                        if(!aliens[j][i].getBoss()) {
                             if (aliens[j][i].stillAlive()) {
                                 bottomRowAliens.add(aliens[j][i]);
                                 break;
@@ -455,29 +456,32 @@ public class GamePane {
     }
 
     private class moveAllAliens extends TimerTask {
-        @Override
+    	@Override
         public void run() {
             for (Sprite object : new ArrayList<>(objects)) {
                 if (object instanceof Alien alien) {
                     updateAlienSprites(alien);
                     alien.changeVelocity(alienVelocity, 10);
-                    if (alienTravelDirection.equals("left")) {
-                        alien.moveLeft(gc);
-                    }
-                    if (alienTravelDirection.equals("right")) {
-                        alien.moveRight(gc);
-                    }
+                    
+                    
 
-                    if (coordTrack > (WW / 2 + 80)) {
-                        alien.moveDown(gc);
+	    			if (coordTrack > (WW/2 + borderRight)) {
+	    				alien.moveDown(gc);
                         alienTravelDirection = "left";
                     }
-                    if (coordTrack < (WW / 2 - 80)) {
-                        alien.moveDown(gc);
+	    			else if (coordTrack < (WW/2 - borderLeft)) {
+	    				alien.moveDown(gc);
                         alienTravelDirection = "right";
+                    } else {
+                    	if (alienTravelDirection.equals("left")) {
+    	    				alien.moveLeft(gc);
+                        }
+    	    			if (alienTravelDirection.equals("right")) {
+    	    				alien.moveRight(gc);
+                        }
                     }
-
-                    if (alien.getY() >= player.getY()) {
+                    
+                    if(alien.getY() >= player.getY()) {
                         player.setDead();
                         objects.remove(player);
                     }
@@ -498,8 +502,8 @@ public class GamePane {
 
             ArrayList<Alien> boss = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
-                for (int j = aliens.length - 1; j >= 0; j--) {
-                    if (aliens[j][i] != null) {
+                for (int j = aliens.length-1; j >= 0; j--) {
+                    if(aliens[j][i] != null) {
                         if (aliens[j][i].getBoss()) {
                             boss.add(aliens[j][i]);
                         }
@@ -560,7 +564,7 @@ public class GamePane {
 
     public void alienShoot(Sprite object) {
         Image image = Utils.readImage("bullet.png");
-        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() - 10);
+        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY()-10);
         objects.add(bullet);
     }
 
@@ -727,22 +731,19 @@ public class GamePane {
                 scoreAmount = 50;
                 type = 3;
                 interval = 12;
-                shiftX = -47;
-                shiftY = 0;
+                shiftX = -47; shiftY = 0;
             } else if (i == 1 || i == 2) {
                 image = Utils.readImage("alien2-1.png");
                 scoreAmount = 25;
                 type = 2;
                 interval = 6;
-                shiftX = -23;
-                shiftY = -5;
+                shiftX = -23; shiftY = -5;
             } else {
                 image = Utils.readImage("alien1-1.png");
                 scoreAmount = 10;
                 type = 1;
                 interval = 0;
-                shiftX = 0;
-                shiftY = -15;
+                shiftX = 0; shiftY = -15;
             }
 
             double totalWidth = ALIENS_PER_ROW * image.getWidth();
@@ -752,7 +753,7 @@ public class GamePane {
                 double x = startX + j * (image.getWidth() + spacingX + interval) + shiftX;
                 double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
 
-                if (j == 0 || j == 1 || j == 2 || j == ALIENS_PER_ROW - 1 || j == ALIENS_PER_ROW - 2 || j == ALIENS_PER_ROW - 3) {
+                if(j==0 || j == 1 || j==2 || j == ALIENS_PER_ROW - 1 || j == ALIENS_PER_ROW - 2 || j == ALIENS_PER_ROW - 3 ) {
                     Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
                     objects.add(alien);
                     aliens[i][j] = alien;
@@ -761,7 +762,7 @@ public class GamePane {
                     aliens[i][j] = null;
                 }
 
-                if (j == 3 && i == 0) {
+                if(j == 3 && i == 0) {
                     Alien alien = new Alien(bossImage, (int) x, (int) y, 10, scoreAmount, type);
                     boss = alien;
                     alien.iAmBoss();
@@ -802,7 +803,7 @@ public class GamePane {
         label.setFont(font);
         label.setTextFill(Color.WHITE);
         pausePane.setCenter(label);
-
+        
         Button resumeBtn = new Button("Resume");
         resumeBtn.setFont(font);
         resumeBtn.setOnAction(e -> {
@@ -821,7 +822,7 @@ public class GamePane {
             home.getStage().setScene(home.getScene());
             home.getStage().show();
         });
-
+        
 
         pausePane.setLeft(resumeBtn);
         pausePane.setRight(quitBtn);
@@ -830,7 +831,7 @@ public class GamePane {
         BorderPane.setMargin(resumeBtn, new Insets(10, 10, 10, 10));
         BorderPane.setMargin(quitBtn, new Insets(0, 10, 10, 0));
 
-        Scene pauseScene = new Scene(pausePane, 550, 500);
+        Scene pauseScene = new Scene(pausePane,550, 500);
         pauseStage.setScene(pauseScene);
         pauseStage.setTitle("Pause");
         pauseStage.initModality(Modality.APPLICATION_MODAL); // cannot touch other window stuff w this
@@ -838,7 +839,7 @@ public class GamePane {
 
         pauseStage.showAndWait();
     }
-
+    
     private void pauseGame() {
         scene.setOnKeyPressed(null);
         scene.setOnKeyReleased(null);
@@ -847,7 +848,7 @@ public class GamePane {
             timer.cancel();
         }
     }
-
+    
     private void resumeGame() {
         isPaused = false;
         timers.clear();
@@ -907,5 +908,4 @@ public class GamePane {
     public static int getLevelNum() {
         return levelNum;
     }
-
 }
