@@ -129,8 +129,8 @@ public class GamePane {
 
         }
 
-//        drawAliens();
-        drawBossBattle();
+        drawAliens();
+//        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -155,7 +155,6 @@ public class GamePane {
         drawPlayer();
 
         drawAliens();
-//        drawBossBattle();
         drawStaticBarrier();
         startTimers();
     }
