@@ -1,6 +1,7 @@
 package view_controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -18,6 +19,9 @@ import model.Sprite;
 import model.Utils;
 
 import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Transition {
 
@@ -34,6 +38,8 @@ public class Transition {
 
     private Canvas canvas;
     private GraphicsContext gc;
+
+    private ScheduledExecutorService executorService;
 
     public Transition(GameScreen home) {
         this.home = home;
@@ -85,7 +91,6 @@ public class Transition {
         label.setText("Level " + (GamePane.getLevelNum()+2));
 
         Window.changeScene(scene);
-        //TODO: does this have to be an animation timer?
         new AnimationTimer() {
             long lastNanoTime = System.nanoTime();
 

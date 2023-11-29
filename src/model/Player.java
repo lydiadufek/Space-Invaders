@@ -66,6 +66,10 @@ public class Player extends Sprite {
     public void setDead() {
         lifeAmount = 0;
     }
+    
+    public void setAlive() {
+    	lifeAmount = 3;
+    }
 
     public void updateLives() {
         lifeAmount--;

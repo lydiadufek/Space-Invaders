@@ -10,6 +10,7 @@ public class Alien extends Sprite {
     private int scoreAmount;
     private boolean isShooting;
     private int type;
+    private boolean isBoss;
 
     public Alien(Image image, int x, int y, int health, int scoreAmount, int type) {
         super(image, x, y);
@@ -23,35 +24,7 @@ public class Alien extends Sprite {
 
         xVelocity = 15;
         yVelocity = 15;
-
-    }
-
-    public void moveDown(GraphicsContext gc) {
-        y += yVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void moveUp(GraphicsContext gc) {
-        y -= yVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void moveLeft(GraphicsContext gc) {
-        x -= xVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void moveRight(GraphicsContext gc) {
-        x += xVelocity;
-        drawFrame(gc);
-        updateAABB();
-    }
-
-    public void updateAABB() {
-        this.AABB = new Rectangle(x, y, this.width, this.height);
+        isBoss = false;
     }
 
     public int getScore() {
@@ -67,11 +40,19 @@ public class Alien extends Sprite {
     }
 
     public boolean stillAlive() {
-        return health != 0;
+        return health > 0;
     }
 
     public void kill() {
-        health = 0;
+        health--;
+    }
+
+    public void iAmBoss() {
+        isBoss = true;
+    }
+
+    public boolean getBoss() {
+        return isBoss;
     }
 
     @Override
