@@ -126,8 +126,8 @@ public class GamePane {
 
         }
 
-        drawAliens();
-//        drawBossBattle();
+//        drawAliens();
+        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -226,15 +226,20 @@ public class GamePane {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 //bullet mechanics
-                for (int i = objects.size() - 1; i >= 0; i--) {
-                    Sprite object = objects.get(i);
+                Iterator<Sprite> iterator = objects.iterator(); //maybe this will help?
+                while (iterator.hasNext()) {
+                    Sprite object = iterator.next();
                     if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
                         ((Bullet) object).move(gc);
                         if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
-                            objects.remove(object);
+                            iterator.remove();
                         }
                     } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
                         ((Bullet) object).moveHoming(gc, player);
+                        if (((Bullet) object).getToClose()) {
+                            iterator.remove(); //TODO: fix this shit
+                            System.out.println("i need to be removed");
+                        }
                     }
                 }
 
@@ -310,8 +315,8 @@ public class GamePane {
                 if (isCollided(object1.getAABB(), object2.getAABB())) {
                     //Player hitting the Alien
                     if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())) {
-                        objects.remove(object1);
-                        objects.remove(object2);
+                        alienSound.playSound();
+                        objects.remove(object2); //bullet
                         gameScreen.updateScore(((Alien) object1).getScore());
                         player.updateScore(((Alien) object1).getScore());
                         if (player.newLife()) {
@@ -319,14 +324,16 @@ public class GamePane {
                             gameScreen.addLifeIcon();
                         }
                         ((Alien) object1).kill();
-                        alienSound.playSound();
+                        if(!((Alien) object1).stillAlive()) {
+                            objects.remove(object1); //alien
+                        }
                     }
 
                     //Bullet hitting the Player
                     if (!playerIsInvincible) {
                         if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())) {
-                            handlePlayerBeingShot((Player) object2, (Bullet) object1);
                             deathSound.playSound();
+                            handlePlayerBeingShot((Player) object2, (Bullet) object1);
                         }
                     }
 
@@ -340,8 +347,8 @@ public class GamePane {
                     if ((object1 instanceof AlienShip && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())) {
                     	ufoSound.playSound();
                         alienShip.setActive(false);
-                        objects.remove(object1);
-                        objects.remove(object2);
+                        objects.remove(object1); //alien ship
+                        objects.remove(object2); //bullet
 
                         gameScreen.updateScore(((AlienShip) object1).getScore());
                         player.updateScore(((AlienShip) object1).getScore());

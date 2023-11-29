@@ -10,11 +10,13 @@ public class Bullet extends Sprite {
     private int damage;
     private boolean playerShot;
     private boolean bossShot;
+    private boolean toClose;
     private GraphicsContext gc;
 
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
         this.playerShot = playerShot;
+        toClose = false;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -64,7 +66,17 @@ public class Bullet extends Sprite {
 
             x = newX;
             y = newY;
+
+            double distanceToPlayerX = Math.abs(player.getX() - x);
+            if (distanceToPlayerX <= 1) {
+                toClose = true;
+                return;
+            }
         }
+    }
+
+    public boolean getToClose() {
+        return toClose;
     }
 
     public void updateAABB(int add) {
