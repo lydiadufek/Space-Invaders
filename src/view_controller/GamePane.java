@@ -1,9 +1,12 @@
 package view_controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,6 +25,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.*;
 import java.util.*;
 
@@ -91,6 +95,9 @@ public class GamePane {
 
     private boolean allDead; //hot key to change levels
 
+    private Alien boss;
+    private TranslateTransition translateTransition;
+
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
         GamePane.scene = scene;
@@ -125,10 +132,8 @@ public class GamePane {
             drawPlayer("blueShip.png", 20, -10, 1); //blue
         }
 
-        drawAliens();
-//        drawBossBattle();
-        System.out.println(aliens.toString());
-
+//        drawAliens();
+        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -192,6 +197,10 @@ public class GamePane {
             if (pressedKeys.contains(KeyCode.D)) {
                 allDead = true;
             }
+            if (pressedKeys.contains(KeyCode.F)) {
+                bossShoot(boss);
+                translateTransition.play();
+            }
         }
     }
 
@@ -216,7 +225,7 @@ public class GamePane {
 
         bossShootingTimer = new Timer();
         GamePane.shotInterval = generateShotInterval();
-        alienShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 500, 500);
+        alienShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 1000);
         timers.add(bossShootingTimer);
     }
 
@@ -233,11 +242,13 @@ public class GamePane {
                 //bullet mechanics
                 for (int i = objects.size() - 1; i >= 0; i--) {
                     Sprite object = objects.get(i);
-                    if (object instanceof Bullet) {
+                    if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
                         ((Bullet) object).move(gc);
                         if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
                             objects.remove(i);
                         }
+                    } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
+                        ((Bullet) object).moveHoming(gc, player);
                     }
                 }
 
@@ -541,7 +552,6 @@ public class GamePane {
             } else {
                 coordTrack += alienVelocity;
             }
-
         }
     }
 
@@ -550,7 +560,6 @@ public class GamePane {
         public void run() {
             GamePane.shotInterval = generateShotInterval();
 
-            // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> boss = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
                 for (int j = aliens.length - 1; j >= 0; j--) {
@@ -562,10 +571,11 @@ public class GamePane {
                 }
             }
 
-            // have them shoot later
             Platform.runLater(() -> {
                 for (Alien alien : boss) {
-                    alienShoot(alien);
+                    if(alien.stillAlive()) {
+                        bossShoot(alien);
+                    }
                 }
             });
         }
@@ -617,6 +627,27 @@ public class GamePane {
         Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() - 10);
         objects.add(bullet);
     }
+
+    public void bossShoot(Sprite object) {
+        Image image = Utils.readImage("bullet.png");
+        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() + 200);
+        bullet.setBossShot();
+
+        // Create a TranslateTransition for the bullet
+        translateTransition = new TranslateTransition(Duration.seconds(2), bullet.getAABB());
+        translateTransition.setToX(player.getX());
+        translateTransition.setToY(player.getY());
+
+        // Set up an event handler to remove the bullet from objects when the animation ends
+        translateTransition.setOnFinished(event -> objects.remove(bullet));
+
+        // Add the bullet to the list of objects
+        objects.add(bullet);
+
+        // Play the translation animation
+    }
+
+
 
     public void moveLeft() {
         double newX = player.getX() - 1;
@@ -844,6 +875,7 @@ public class GamePane {
 
                 if (j == 3 && i == 0) {
                     Alien alien = new Alien(bossImage, (int) x, (int) y, 10, scoreAmount, type);
+                    boss = alien;
                     alien.iAmBoss();
                     objects.add(alien);
                     aliens[i][j] = alien;

@@ -7,6 +7,8 @@ import javafx.scene.shape.Rectangle;
 public class Bullet extends Sprite {
     private int damage;
     private boolean playerShot;
+    private boolean bossShot;
+    private GraphicsContext gc;
 
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
@@ -14,6 +16,7 @@ public class Bullet extends Sprite {
     }
 
     public void drawFrame(GraphicsContext gc) {
+        this.gc = gc;
         gc.drawImage(image, x, y);
         updateAABB();
     }
@@ -22,8 +25,16 @@ public class Bullet extends Sprite {
         playerShot = true;
     }
 
+    public void setBossShot() {
+        bossShot = true;
+    }
+
     public boolean getPlayerShot() {
         return playerShot;
+    }
+
+    public boolean getBossShot() {
+        return bossShot;
     }
 
     public void move(GraphicsContext gc) {
@@ -35,7 +46,38 @@ public class Bullet extends Sprite {
         y += yVelocity;
     }
 
+    public void moveHoming(GraphicsContext gc, Player player) {
+        this.gc = gc;
+        double directionX = player.getX() - x;
+        double directionY = player.getY() - y;
+
+        double distanceToPlayer = Math.sqrt(directionX * directionX + directionY * directionY);
+
+        if (distanceToPlayer > 0) {
+            directionX /= distanceToPlayer;
+            directionY /= distanceToPlayer;
+
+            double newX = x + directionX * 3;
+            double newY = y + directionY * 3;
+
+            x = newX;
+            y = newY;
+        }
+    }
+
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
+    }
+
+    public void setX(double x) {
+        this.x = x;
+        updateAABB();
+        drawFrame(gc);
+    }
+
+    public void setY(double y) {
+        this.y = y;
+        updateAABB();
+        drawFrame(gc);
     }
 }
