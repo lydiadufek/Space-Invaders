@@ -10,13 +10,13 @@ public class Bullet extends Sprite {
     private int damage;
     private boolean playerShot;
     private boolean bossShot;
-    private boolean toClose;
+    private boolean tooClose;
     private GraphicsContext gc;
 
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
         this.playerShot = playerShot;
-        toClose = false;
+        tooClose = false;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -61,22 +61,22 @@ public class Bullet extends Sprite {
             directionX /= distanceToPlayer;
             directionY /= distanceToPlayer;
 
-            double newX = x + directionX * 2; //speed
-            double newY = y + directionY * 3; //speed
+            double newX = x + directionX * 0.5; //speed
+            double newY = y + directionY * 2; //speed
 
             x = newX;
             y = newY;
 
             double distanceToPlayerX = Math.abs(player.getX() - x);
             if (distanceToPlayerX <= 1) {
-                toClose = true;
+                tooClose = true;
                 return;
             }
         }
     }
 
-    public boolean getToClose() {
-        return toClose;
+    public boolean getTooClose() {
+        return tooClose;
     }
 
     public void updateAABB(int add) {

@@ -122,12 +122,12 @@ public class GamePane {
 
         switch (shipImage) {
             case "purpleShip.png" ->
-                    drawPlayer(shipImage, 20, 200000000, 3); //purpleShip
+                    drawPlayer(shipImage, 20, 350000000, 3); //purpleShip
             case "greenShip.png" ->
-                    drawPlayer("greenShip.png", 15, 200000000, 4); //greenShip
+                    drawPlayer("greenShip.png", 15, 350000000, 4); //greenShip
             case "redShip.png" ->
                     drawPlayer("redShip.png", 50, 800000000, 3); //red
-            default -> drawPlayer("blueShip.png", 20, -10, 1); //blue
+            default -> drawPlayer("blueShip.png", 20, 200000000, 1); //blue
 
         }
 
@@ -202,6 +202,10 @@ public class GamePane {
         alienVelocity = min( (0.3) * ((double) levelNum) + 3, 10 );
     }
 
+    private void regenerateAlienVelocityBoss() {
+        alienVelocity = min( (0.3) * ((double) levelNum) + 15, 10 );
+    }
+
     private void startTimers() {
         alienShootingTimer = new Timer();
         GamePane.shotInterval = generateShotInterval();
@@ -241,8 +245,8 @@ public class GamePane {
                         }
                     } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
                         ((Bullet) object).moveHoming(gc, player);
-                        if (((Bullet) object).getToClose()) {
-                            iterator.remove();
+                        if (((Bullet) object).getTooClose()) {
+                            iterator.remove(); //TODO: fix this shit
                             System.out.println("i need to be removed");
                         }
                     }
@@ -264,13 +268,17 @@ public class GamePane {
                         objects.remove(alienShip);
                     }
                 }
+
                 //next level
                 if (allAliensDead() || allDead) {
+                    transitioning = true;
                     for (Timer timer: timers){
                         timer.cancel();
                     }
                     this.stop();
                     gameScreen.newLevel();
+                } else {
+                    transitioning = false;
                 }
 
                 //gameover screen
@@ -715,7 +723,7 @@ public class GamePane {
         int spacingX = 18;
         int spacingY = 20;
 
-        Image bossImage = Utils.readImage("boss1.png");
+        Image bossImage = Utils.readImage("image.png");
 
         for (int i = 0; i < ALIEN_ROWS; i++) {
             Image image;
@@ -777,6 +785,7 @@ public class GamePane {
 
     public void startBossBattle() {
         notStarted = true;
+        regenerateAlienVelocityBoss();
 
         objects.clear();
         drawPlayer();
