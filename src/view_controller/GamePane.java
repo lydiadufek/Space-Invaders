@@ -320,17 +320,17 @@ public class GamePane {
                             && object2 instanceof Bullet
                             && ((Bullet) object2).getPlayerShot())) {
 
+                        alienSound.playSound();
                         ((Alien) object1).hit();
 
-                        if (!((Alien) object1).stillAlive()) objects.remove(object1);
-                        
-                        objects.remove(object2);
-                        gameScreen.updateScore(((Alien) object1).getScore());
-                        player.updateScore(((Alien) object1).getScore());
-                        if (player.getNewLife()) {
-                            gameScreen.addLifeIcon();
+                        if (!((Alien) object1).stillAlive()) {
+                            objects.remove(object1);
+                            gameScreen.updateScore(((Alien) object1).getScore());
+                            player.updateScore(((Alien) object1).getScore());
+
+                            if (player.getNewLife()) gameScreen.addLifeIcon();
                         }
-                        alienSound.playSound();
+                        objects.remove(object2);
                     }
 
                     // Bullet hitting the Player
@@ -599,7 +599,7 @@ public class GamePane {
     }
 
     private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i, boolean bossLevel) {
-        Image bossImage = Utils.readImage("image.png");
+        Image bossImage = Utils.readImage("bossImage.png");
         int spacingX = 18;
         int spacingY = 20;
 
@@ -621,7 +621,7 @@ public class GamePane {
                 }
 
                 if (j == 3 && i == 0) {
-                    boss = new Alien(bossImage, (int) x, (int) y, 10, scoreAmount, type);
+                    boss = new Alien(bossImage, (int) x, (int) y, 20, 250, type);
                     boss.iAmBoss();
                     objects.add(boss);
                     aliens[i][j] = boss;
