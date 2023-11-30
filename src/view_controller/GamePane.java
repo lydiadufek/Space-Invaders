@@ -603,6 +603,8 @@ public class GamePane {
     }
 
     private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i, boolean bossLevel) {
+        Image bossImage = Utils.readImage("bossImage.png");
+
         int spacingX = 18;
         int spacingY = 20;
 
@@ -614,7 +616,6 @@ public class GamePane {
             double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
 
             if (bossLevel) {
-                Image bossImage = new Image("bossImage.png");
                 if (j <= 2 || j >= ALIENS_PER_ROW - 3) {
                     Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
                     objects.add(alien);
