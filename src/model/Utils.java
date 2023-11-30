@@ -1,3 +1,10 @@
+/**
+ * Purpose: This file essentially holds all of our "utility" methods such as
+ *          reading an image, font reading, checking AABB collisions, and random
+ *          intervals. Methods that do not to be so apparent essentially.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import javafx.geometry.Insets;

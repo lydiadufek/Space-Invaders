@@ -7,7 +7,6 @@
  *
  * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
  */
-
 package model;
 
 import javafx.scene.image.Image;

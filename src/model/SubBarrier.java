@@ -1,5 +1,3 @@
-package model;
-
 /**
  * Purpose: This file holds the functionality for the Sub barriers. The damage
  *          is changed here so that we can determine what image to change to. The
@@ -8,6 +6,7 @@ package model;
  *
  * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
  */
+package model;
 
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
