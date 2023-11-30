@@ -1,3 +1,8 @@
+/**
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Purpose: GameScreen displays the player, alien, and barriers. The animations
+ * of the items are controlled by GamePane.
+ */
 package view_controller;
 
 import javafx.geometry.Insets;
@@ -16,138 +21,135 @@ import java.util.Timer;
 
 public class GameScreen {
 
-    // static variables
-    private static final int WW = Window.getWidth();
-    private static final int WH = Window.getHeight();
-    private static Transition transitionScreen;
+	// static variables
+	private static final int WW = Window.getWidth();
+	private static final int WH = Window.getHeight();
+	private static Transition transitionScreen;
 
-    // instance variables
-    private BorderPane root;
-    private BorderPane topBar;
+	// instance variables
+	private BorderPane root;
+	private BorderPane topBar;
 
-    private Label scoreNum;
-    private HBox livesBox;
+	private Label scoreNum;
+	private HBox livesBox;
 
-    private GamePane gamePane;
-    private Scene scene;
+	private GamePane gamePane;
+	private Scene scene;
 
-    private int currentLives;
-    
-    // constants
-    private final int MAX_LIVES = 5;
-    private int starting_lives;
+	private int currentLives;
 
-    public GameScreen(Stage stage, StartScreen home) {
+	// constants
+	private final int MAX_LIVES = 5;
+	private int starting_lives;
 
-        root = new BorderPane();
-        scene = new Scene(root, WW, WH);
-        transitionScreen = new Transition(this);
+	public GameScreen(Stage stage, StartScreen home) {
 
-        gamePane = new GamePane(stage, scene, home, this);
-        starting_lives = GamePane.getPlayer().getLives();
+		root = new BorderPane();
+		scene = new Scene(root, WW, WH);
+		transitionScreen = new Transition(this);
 
-        setBackground();
-        setupTopBar();
+		gamePane = new GamePane(stage, scene, home, this);
+		starting_lives = GamePane.getPlayer().getLives();
 
-        root.setCenter(gamePane.getCanvas());
+		setBackground();
+		setupTopBar();
 
-        currentLives = starting_lives;
+		root.setCenter(gamePane.getCanvas());
 
-        gamePane.gameLoop();
-    }
+		currentLives = starting_lives;
 
-    public void newLevel() {
-        transitionScreen.runTransition();
-    }
+		gamePane.gameLoop();
+	}
 
-    public void startNextLevel() {
-        gamePane = new GamePane();
-        root.setCenter(gamePane.getCanvas());
-        gamePane.gameLoop();
-    }
+	public void newLevel() {
+		transitionScreen.runTransition();
+	}
 
-    public Scene getScene() {
-        return scene;
-    }
+	public void startNextLevel() {
+		gamePane = new GamePane();
+		root.setCenter(gamePane.getCanvas());
+		gamePane.gameLoop();
+	}
 
-    private void setBackground() {
-        Image image = Utils.readImage("game-background.jpg");
-        BackgroundImage bgImage = new BackgroundImage(image,
-                BackgroundRepeat.REPEAT,
-                BackgroundRepeat.REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-        Background bg = new Background(bgImage);
-        root.setBackground(bg);
-    }
+	public Scene getScene() {
+		return scene;
+	}
 
-    private void setupTopBar() {
-        topBar = new BorderPane();
-        HBox scoreBox = new HBox();
-        scoreBox.setSpacing(10);
+	private void setBackground() {
+		Image image = Utils.readImage("game-background.jpg");
+		BackgroundImage bgImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+				BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+		Background bg = new Background(bgImage);
+		root.setBackground(bg);
+	}
 
-        livesBox = new HBox();
-        livesBox.setSpacing(5);
+	private void setupTopBar() {
+		topBar = new BorderPane();
+		HBox scoreBox = new HBox();
+		scoreBox.setSpacing(10);
 
-        Font font = Utils.getFont(25);
+		livesBox = new HBox();
+		livesBox.setSpacing(5);
 
-        // initialize score label
-        Label scoreLabel = new Label("  SCORE");
-        scoreLabel.setFont(font);
-        scoreLabel.setTextFill(Color.WHITE);
+		Font font = Utils.getFont(25);
 
-        // initialize score number label
-        scoreNum = new Label("0");
-        scoreNum.setFont(font);
-        scoreNum.setTextFill(Color.LIMEGREEN);
+		// initialize score label
+		Label scoreLabel = new Label("  SCORE");
+		scoreLabel.setFont(font);
+		scoreLabel.setTextFill(Color.WHITE);
 
-        scoreBox.getChildren().addAll(scoreLabel, scoreNum);
-        topBar.setLeft(scoreBox);
-        topBar.setPadding(new Insets(10, 10, 10, 10));
+		// initialize score number label
+		scoreNum = new Label("0");
+		scoreNum.setFont(font);
+		scoreNum.setTextFill(Color.LIMEGREEN);
 
-        setLivesDisplay();
+		scoreBox.getChildren().addAll(scoreLabel, scoreNum);
+		topBar.setLeft(scoreBox);
+		topBar.setPadding(new Insets(10, 10, 10, 10));
 
-        root.setTop(topBar);
-    }
+		setLivesDisplay();
 
-    private void setLivesDisplay() {
-        Font font = Utils.getFont(25);
-        Label livesLabel = new Label("LIVES ");
-        livesLabel.setFont(font);
-        livesLabel.setTextFill(Color.WHITE);
-        livesBox.getChildren().add(livesLabel);
+		root.setTop(topBar);
+	}
 
-        Image heartObj = Utils.readImage("heart2.png");
-        for (int i = 0; i < MAX_LIVES; i++) {
-            livesBox.getChildren().add(new ImageView(heartObj));
-        }
-        for (int i = starting_lives+1; i <= MAX_LIVES; i++) {
-            livesBox.getChildren().get(i).setVisible(false);
-        }
-        topBar.setRight(livesBox);
-    }
+	private void setLivesDisplay() {
+		Font font = Utils.getFont(25);
+		Label livesLabel = new Label("LIVES ");
+		livesLabel.setFont(font);
+		livesLabel.setTextFill(Color.WHITE);
+		livesBox.getChildren().add(livesLabel);
 
-    public void updateScore(int score) {
-        int originalScore = Integer.parseInt(scoreNum.getText());
-        scoreNum.setText(String.valueOf(originalScore + score));
-    }
-    
-    public int getScore() {
-    	return Integer.parseInt(scoreNum.getText());
-    }
-    
-    public ArrayList<Timer> getTimers() {
-    	return gamePane.getTimers();
-    }
+		Image heartObj = Utils.readImage("heart2.png");
+		for (int i = 0; i < MAX_LIVES; i++) {
+			livesBox.getChildren().add(new ImageView(heartObj));
+		}
+		for (int i = starting_lives + 1; i <= MAX_LIVES; i++) {
+			livesBox.getChildren().get(i).setVisible(false);
+		}
+		topBar.setRight(livesBox);
+	}
 
-    protected void removeLifeIcon() {
-        livesBox.getChildren().get(currentLives).setVisible(false);
-        currentLives--;
-    }
+	public void updateScore(int score) {
+		int originalScore = Integer.parseInt(scoreNum.getText());
+		scoreNum.setText(String.valueOf(originalScore + score));
+	}
 
-    protected void addLifeIcon() {
-        livesBox.getChildren().get(currentLives).setVisible(true);
-        currentLives++;
-    }
+	public int getScore() {
+		return Integer.parseInt(scoreNum.getText());
+	}
+
+	public ArrayList<Timer> getTimers() {
+		return gamePane.getTimers();
+	}
+
+	protected void removeLifeIcon() {
+		livesBox.getChildren().get(currentLives).setVisible(false);
+		currentLives--;
+	}
+
+	protected void addLifeIcon() {
+		livesBox.getChildren().get(currentLives).setVisible(true);
+		currentLives++;
+	}
 
 }
