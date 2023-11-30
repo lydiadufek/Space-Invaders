@@ -1,3 +1,8 @@
+/*
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Purpose: Window.java sets up the stage and window size. The start screen is called
+ * and displayed - essentially the Space Invaders launchpad.
+ */
 package view_controller;
 
 import javafx.application.Application;

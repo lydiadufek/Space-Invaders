@@ -1,3 +1,9 @@
+/**
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Purpose: StartScreen controls the main menu where the player can access the current
+ * seralized highscores and start the game by selecting the start button. The points for
+ * each alien and the instructions are displayed.
+ */
 package view_controller;
 
 import java.io.FileInputStream;

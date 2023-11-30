@@ -1,3 +1,8 @@
+/**
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Purpose: GameOver is the screen where players insert the three letter names for
+ * the top 5 highest scores (serialized).
+ */
 package view_controller;
 
 import java.io.FileInputStream;

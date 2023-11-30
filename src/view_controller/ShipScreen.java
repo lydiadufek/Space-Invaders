@@ -1,3 +1,8 @@
+/**
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Purpose: ShipScreen controls the selection of what type of ship the player wants to
+ * select along with what the different attributes for each ship are
+ */
 package view_controller;
 
 import java.util.ArrayList;
