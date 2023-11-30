@@ -57,27 +57,26 @@ public class GamePane {
     private final Alien[][] aliens;
     private final ArrayList<Timer> timers;
 
+    private Set<KeyCode> pressedKeys;
+
     private final Canvas canvas;
     private final GraphicsContext gc;
 
     private AlienShip alienShip;
+    private Alien boss;
 
     private Timer alienShipTimer;
 
     private int coordTrack;
-
     private int alienVelocity;
-
     private long lastShotTime;
+    private char alienTravelDirection;
 
     private boolean playerIsInvincible;
     private boolean isPaused;
     private boolean notStarted;
     private boolean transitioning;
-
-    private Set<KeyCode> pressedKeys;
-    private char alienTravelDirection;
-    private Alien boss;
+    private boolean allDead; // hot key to change levels (D)
 
     // constants
     private final int ALIENS_PER_ROW = 9;
@@ -88,8 +87,6 @@ public class GamePane {
     private static Barrier totalBarrier2;
     private static Barrier totalBarrier3;
     private static Barrier totalBarrier4;
-
-    private boolean allDead; // hot key to change levels (D)
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
@@ -199,9 +196,7 @@ public class GamePane {
 
                 // boss battle
                 if ((levelNum + 1) % 5 == 0 && notStarted) {
-                    // new formation?
                     startBossBattle();
-                    System.out.println("boss battle");
                 }
 
                 if (isPaused) stop();
@@ -309,7 +304,6 @@ public class GamePane {
     public void shoot() {
         if (!player.isDead()) {
             long currentTime = System.nanoTime();
-            System.out.println(lastShotTime);
             long elapsedSinceLastShot = currentTime - lastShotTime;
 
             if (elapsedSinceLastShot > player.getDelay()) {
@@ -344,8 +338,6 @@ public class GamePane {
         player.updateLives();
         gameScreen.removeLifeIcon();
 
-        // reset the player to the center of the screen
-
         // invincibility time frame
         startInvincibilityTimer();
         playerIsInvincible = true;
@@ -376,7 +368,7 @@ public class GamePane {
                 if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
                     objects.remove(object);
                 }
-            } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
+            } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) { //bullet from boss
                 ((Bullet) object).moveHoming(gc, player);
             }
         }
@@ -407,7 +399,7 @@ public class GamePane {
 
     private void handleKeyPress() {
         if (!isPaused) {
-            // Handle key presses only if the game is not paused
+            // handle key presses only if the game is not paused
             if (pressedKeys.contains(KeyCode.ESCAPE)) {
                 isPaused = true;
                 pauseGame();
@@ -514,7 +506,6 @@ public class GamePane {
 
             if (alienTravelDirection == 'l') coordTrack -= alienVelocity;
             else coordTrack += alienVelocity;
-
         }
     }
 
@@ -583,7 +574,6 @@ public class GamePane {
                     double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
                     player.setX(middleX);
                     player.drawFrame(gc);
-
                     player.updateSprite(oldImage);
                     player.updateAABB();
                     stop();
@@ -664,7 +654,6 @@ public class GamePane {
                     boss.drawFrame(gc);
                     notStarted = false;
                 }
-
             } else {
                 Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
                 objects.add(alien);
@@ -702,11 +691,9 @@ public class GamePane {
                         if (elapsedTime >= 400) {
                             alien.updateSprite(oldImage);
                             alien.updateAABB();
-
                             stop();
                         }
                         drawFrame();
-
                     }
                 }.start();
             }
@@ -715,7 +702,7 @@ public class GamePane {
 
     private void drawBossBattle() {
         for (int i = 0; i < ALIEN_ROWS; i++) {
-            // update the image and score depending on the alien type
+            // update the image and score depending on the alien type and initiate boss battle
             if (i == 0) {
                 drawAlienRow(Utils.readImage("alien3-1.png"),
                         50, 3, 12, -47, 0, i, true);
