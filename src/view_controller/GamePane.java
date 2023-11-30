@@ -320,17 +320,17 @@ public class GamePane {
                             && object2 instanceof Bullet
                             && ((Bullet) object2).getPlayerShot())) {
 
+                        alienSound.playSound();
                         ((Alien) object1).hit();
 
-                        if (!((Alien) object1).stillAlive()) objects.remove(object1);
-                        
-                        objects.remove(object2);
-                        gameScreen.updateScore(((Alien) object1).getScore());
-                        player.updateScore(((Alien) object1).getScore());
-                        if (player.getNewLife()) {
-                            gameScreen.addLifeIcon();
+                        if (!((Alien) object1).stillAlive()) {
+                            objects.remove(object1);
+                            gameScreen.updateScore(((Alien) object1).getScore());
+                            player.updateScore(((Alien) object1).getScore());
+
+                            if (player.getNewLife()) gameScreen.addLifeIcon();
                         }
-                        alienSound.playSound();
+                        objects.remove(object2);
                     }
 
                     // Bullet hitting the Player
@@ -589,16 +589,17 @@ public class GamePane {
         for (int i = 0; i < ALIEN_ROWS; i++) {
             // update the image and score depending on the alien type
             if (i == 0) {
-                drawAlienRow(Utils.readImage("alien3-1.png"), 50, 3, 12, -47, 0, i);
+                drawAlienRow(Utils.readImage("alien3-1.png"), 50, 3, 12, -47, 0, i, false);
             } else if (i == 1 || i == 2) {
-                drawAlienRow(Utils.readImage("alien2-1.png"), 25, 2, 6, -23, -5, i);
+                drawAlienRow(Utils.readImage("alien2-1.png"), 25, 2, 6, -23, -5, i, false);
             } else {
-                drawAlienRow(Utils.readImage("alien1-1.png"), 10, 1, 0, 0, -15, i);
+                drawAlienRow(Utils.readImage("alien1-1.png"), 10, 1, 0, 0, -15, i, false);
             }
         }
     }
 
-    private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i) {
+    private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i, boolean bossLevel) {
+        Image bossImage = Utils.readImage("bossImage.png");
         int spacingX = 18;
         int spacingY = 20;
 
@@ -609,24 +610,44 @@ public class GamePane {
             double x = startX + j * (image.getWidth() + spacingX + interval) + shiftX;
             double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
 
-            Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
-            objects.add(alien);
-            aliens[i][j] = alien;
-            alien.drawFrame(gc);
-        } 
+            if (bossLevel) {
+                if (j == 0 || j == 1 || j == 2 || j == ALIENS_PER_ROW - 1 || j == ALIENS_PER_ROW - 2 || j == ALIENS_PER_ROW - 3) {
+                    Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
+                    objects.add(alien);
+                    aliens[i][j] = alien;
+                    alien.drawFrame(gc);
+                } else {
+                    aliens[i][j] = null;
+                }
+
+                if (j == 3 && i == 0) {
+                    boss = new Alien(bossImage, (int) x, (int) y, 20, 250, type);
+                    boss.iAmBoss();
+                    objects.add(boss);
+                    aliens[i][j] = boss;
+                    boss.drawFrame(gc);
+                    notStarted = false;
+                }
+            } else {
+                Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
+                objects.add(alien);
+                aliens[i][j] = alien;
+                alien.drawFrame(gc);
+            }
+        }
     }
 
     private void drawBarriers() {
-        totalBarrier1 = new Barrier(150, 80, canvas, objects, gc);
+        totalBarrier1 = new Barrier(135, 80, canvas, objects, gc);
         totalBarrier1.draw();
 
         totalBarrier2 = new Barrier(300, 80, canvas, objects, gc);
         totalBarrier2.draw();
 
-        totalBarrier3 = new Barrier(-75, 80, canvas, objects, gc);
+        totalBarrier3 = new Barrier(-70, 80, canvas, objects, gc);
         totalBarrier3.draw();
 
-        totalBarrier4 = new Barrier(-245, 80, canvas, objects, gc);
+        totalBarrier4 = new Barrier(-235, 80, canvas, objects, gc);
         totalBarrier4.draw();
     }
 
@@ -699,64 +720,18 @@ public class GamePane {
     }
 
     private void drawBossBattle() {
-        int spacingX = 18;
-        int spacingY = 20;
-
-        Image bossImage = Utils.readImage("image.png");
-
         for (int i = 0; i < ALIEN_ROWS; i++) {
-            Image image;
-            int scoreAmount;
-            int type;
-            int interval;
-            int shiftX;
-            int shiftY;
-
-            //update the image and score depending on the alien type
+            // update the image and score depending on the alien type
             if (i == 0) {
-                image = Utils.readImage("alien3-1.png");
-                scoreAmount = 50;
-                type = 3;
-                interval = 12;
-                shiftX = -47; shiftY = 0;
+                drawAlienRow(Utils.readImage("alien3-1.png"),
+                                50, 3, 12, -47, 0, i, true);
+
             } else if (i == 1 || i == 2) {
-                image = Utils.readImage("alien2-1.png");
-                scoreAmount = 25;
-                type = 2;
-                interval = 6;
-                shiftX = -23; shiftY = -5;
+                drawAlienRow(Utils.readImage("alien2-1.png"),
+                                25, 2, 6, -23, -5, i, true);
             } else {
-                image = Utils.readImage("alien1-1.png");
-                scoreAmount = 10;
-                type = 1;
-                interval = 0;
-                shiftX = 0; shiftY = -15;
-            }
-
-            double totalWidth = ALIENS_PER_ROW * image.getWidth();
-            double startX = (canvas.getWidth() - totalWidth - ALIENS_PER_ROW * spacingX) / 2;
-
-            for (int j = 0; j < ALIENS_PER_ROW; j++) {
-                double x = startX + j * (image.getWidth() + spacingX + interval) + shiftX;
-                double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
-
-                if(j==0 || j == 1 || j==2 || j == ALIENS_PER_ROW - 1 || j == ALIENS_PER_ROW - 2 || j == ALIENS_PER_ROW - 3 ) {
-                    Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
-                    objects.add(alien);
-                    aliens[i][j] = alien;
-                    alien.drawFrame(gc);
-                } else {
-                    aliens[i][j] = null;
-                }
-
-                if (j == 3 && i == 0) {
-                    boss = new Alien(bossImage, (int) x, (int) y, 10, scoreAmount, type);
-                    boss.iAmBoss();
-                    objects.add(boss);
-                    aliens[i][j] = boss;
-                    boss.drawFrame(gc);
-                    notStarted = false;
-                }
+                drawAlienRow(Utils.readImage("alien1-1.png"),
+                                10, 1, 0, 0, -15, i, true);
             }
         }
     }
