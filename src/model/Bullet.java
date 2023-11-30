@@ -1,3 +1,12 @@
+/**
+ * Purpose: This file holds the functionality for the bullets. A bullet can be
+ *          spawned by 3 different entities: player, alien, and boss (alien). The boss
+ *          has a different movement (moveHoming) where as the others just use move. A different
+ *          velocity is applied depending on if a player shot or an alien shot so that the bullet
+ *          can either move up or down. There are booleans attached to who shot.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import javafx.scene.canvas.GraphicsContext;

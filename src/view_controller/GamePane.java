@@ -124,8 +124,8 @@ public class GamePane {
             default -> drawPlayer("blueShip.png", 20, 200000000, 1); //blue
         }
 
-//        drawAliens();
-        drawBossBattle();
+        drawAliens();
+//        drawBossBattle();
         drawBarriers();
         startTimers();
     }

@@ -1,3 +1,12 @@
+/**
+ * Purpose: This file holds the functionality for the Player. Lerp is applied
+ *          to the movement so that it appears more smooth, and less jumpy at faster
+ *          speeds. The health, movement, and image is changed depending on what ship
+ *          the player decided to play as. The death, health, and score is also updated
+ *          accordingly.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import javafx.scene.canvas.GraphicsContext;

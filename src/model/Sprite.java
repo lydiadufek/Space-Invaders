@@ -1,3 +1,10 @@
+/**
+ * Purpose: This file holds the parent class for all of the sprites in the game. That
+ *          includes the player, bullet, barriers, aliens, and alienship. The classes
+ *          that all sprites inerent are created here
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import javafx.scene.Node;

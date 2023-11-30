@@ -1,8 +1,9 @@
 /**
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
  * Purpose: Transition is the script that runs in between switching levels - it
- * shows the level number the game is transitioning to and plays the ufo animation
- * before switching scenes
+ * 			shows the level number the game is transitioning to and plays the ufo animation
+ * 			before switching scenes
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
  */
 package view_controller;
 

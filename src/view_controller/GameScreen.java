@@ -1,7 +1,8 @@
 /**
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
  * Purpose: GameScreen displays the player, alien, and barriers. The animations
- * of the items are controlled by GamePane.
+ * 			of the items are controlled by GamePane.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
  */
 package view_controller;
 

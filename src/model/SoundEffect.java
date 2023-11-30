@@ -1,3 +1,10 @@
+/**
+ * Purpose: This file holds the sound effect functionality. A media player
+ * 			is created when a sound needs to be played and an URI is created
+ * 			of the file string at the same time.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import java.io.File;

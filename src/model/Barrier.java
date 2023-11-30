@@ -1,3 +1,12 @@
+/**
+ * Purpose: This file holds the functionality for the Barrier. One barrier
+ *          is composed of different sub barriers pieces to make up "one" barrier.
+ *          This makes it easier to break down the barrier into parts to show damage
+ *          depending on where a hit was detected. The barrier is also static so there are
+ *          two different draw methods for such.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import javafx.scene.canvas.Canvas;
