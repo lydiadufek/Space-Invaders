@@ -37,8 +37,7 @@ public class GamePane {
 
     private static int levelNum;
     private static int shotInterval;
-    private static int bossShotInterval;
-    
+
     // sounds
     private static final SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
     private static final SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
@@ -587,18 +586,17 @@ public class GamePane {
 
     private void drawAliens() {
         for (int i = 0; i < ALIEN_ROWS; i++) {
-            // update the image and score depending on the alien type
             if (i == 0) {
-                drawAlienRow(Utils.readImage("alien3-1.png"), 50, 3, 12, -47, 0, i);
+                drawAlienRow(Utils.readImage("alien3-1.png"), 50, 3, 12, -47, 0, i, false);
             } else if (i == 1 || i == 2) {
-                drawAlienRow(Utils.readImage("alien2-1.png"), 25, 2, 6, -23, -5, i);
+                drawAlienRow(Utils.readImage("alien2-1.png"), 25, 2, 6, -23, -5, i, false);
             } else {
-                drawAlienRow(Utils.readImage("alien1-1.png"), 10, 1, 0, 0, -15, i);
+                drawAlienRow(Utils.readImage("alien1-1.png"), 10, 1, 0, 0, -15, i, false);
             }
         }
     }
 
-    private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i) {
+    private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i, boolean bossLevel) {
         int spacingX = 18;
         int spacingY = 20;
 
@@ -609,11 +607,33 @@ public class GamePane {
             double x = startX + j * (image.getWidth() + spacingX + interval) + shiftX;
             double y = 60 + (i * (image.getHeight() + spacingY)) + shiftY;
 
-            Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
-            objects.add(alien);
-            aliens[i][j] = alien;
-            alien.drawFrame(gc);
-        } 
+            if (bossLevel) {
+                Image bossImage = new Image("bossImage.png");
+                if (j <= 2 || j >= ALIENS_PER_ROW - 3) {
+                    Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
+                    objects.add(alien);
+                    aliens[i][j] = alien;
+                    alien.drawFrame(gc);
+                } else {
+                    aliens[i][j] = null;
+                }
+
+                if (i == 0 && j == 3) {
+                    boss = new Alien(bossImage, (int) x, (int) y, 20, 250, type);
+                    boss.iAmBoss();
+                    objects.add(boss);
+                    aliens[i][j] = boss;
+                    boss.drawFrame(gc);
+                    notStarted = false;
+                }
+
+            } else {
+                Alien alien = new Alien(image, (int) x, (int) y, 1, scoreAmount, type);
+                objects.add(alien);
+                aliens[i][j] = alien;
+                alien.drawFrame(gc);
+            }
+        }
     }
 
     private void drawBarriers() {
@@ -664,7 +684,7 @@ public class GamePane {
             Image oldImage = alien.getImage();
             Image newImage = null;
 
-            // Different image depending on the type of alien
+            // different image depending on the type of alien
             if (alien.getType() == 1) {
                 newImage = Utils.readImage("alien1-2.png");
             } else if (alien.getType() == 2) {
