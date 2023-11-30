@@ -1,3 +1,8 @@
+/**
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Purpose: GameOver is the screen where players insert the three letter names for
+ * the top 5 highest scores (serialized).
+ */
 package view_controller;
 
 import java.io.FileInputStream;
@@ -7,26 +12,32 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import model.Utils;
 
 public class GameOver {
     private GridPane root;
     private Scene scene;
     private StartScreen home;
-    private Hyperlink gameOver;
+    private Label gameOver;
     private int score;
     private String[] scores;
     private Text newText;
     private int scoreIndex;
+    private FadeTransition fadeTransition;
+	private Hyperlink backButton;
 
     private static final int WW = Window.getWidth();
     private static final int WH = Window.getHeight();
@@ -61,7 +72,7 @@ public class GameOver {
     }
 
     private void setupGUI() {
-    	gameOver = new Hyperlink("HIGH SCORES");
+    	gameOver = new Label("HIGH SCORES");
     	Font font = Utils.getFont(100);
         gameOver.setFont(font);
         gameOver.setTextFill(Color.color(0.5, 1, 0.5));
@@ -77,8 +88,13 @@ public class GameOver {
         	root.add(label, 0, i + 4);
         	if (i == scoreIndex) newText = label;
         }
+        
+        backButton = new Hyperlink("Home");
+        backButton.setFont(font);
+        backButton.setTextFill(Color.color(0.5, 1, 0.5));
+        root.add(backButton, 0, 9);
         root.setAlignment(Pos.BASELINE_CENTER);
-        root.setVgap(40);
+        root.setVgap(35);
     }
     
     private void setScores() {
@@ -108,6 +124,11 @@ public class GameOver {
 
     private void registerHandlers() {
     	newText.requestFocus();
+    	fadeTransition = new FadeTransition(Duration.seconds(0.9), newText);
+    	fadeTransition.setCycleCount(Animation.INDEFINITE);
+    	fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.0);
+    	fadeTransition.play();
         newText.setOnKeyPressed(event -> {
         	String code = event.getCode().getName();
         	if (code.length() == 1 && Character.isAlphabetic(code.charAt(0))) {
@@ -128,7 +149,8 @@ public class GameOver {
         	}
         });
         
-        gameOver.setOnAction(event -> {
+        backButton.setOnAction(event -> {
+        	fadeTransition.stop();
             newText.setText(newText.getText().replace('_', 'A'));
             if (scoreIndex < 5) scores[scoreIndex] = newText.getText();
     		try {
