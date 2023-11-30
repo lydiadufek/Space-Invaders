@@ -4,19 +4,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
-import java.time.Instant;
+import static java.lang.Math.min;
 
 public class Bullet extends Sprite {
-    private int damage;
     private boolean playerShot;
     private boolean bossShot;
-    private boolean toClose;
     private GraphicsContext gc;
 
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
-        this.playerShot = playerShot;
-        toClose = false;
+        this.playerShot = false;
     }
 
     public void drawFrame(GraphicsContext gc) {
@@ -59,24 +56,12 @@ public class Bullet extends Sprite {
 
         if (distanceToPlayer > 0) {
             directionX /= distanceToPlayer;
-            directionY /= distanceToPlayer;
 
             double newX = x + directionX * 2; //speed
-            double newY = y + directionY * 3; //speed
 
             x = newX;
-            y = newY;
-
-            double distanceToPlayerX = Math.abs(player.getX() - x);
-            if (distanceToPlayerX <= 1) {
-                toClose = true;
-                return;
-            }
+            y += (yVelocity*2);
         }
-    }
-
-    public boolean getToClose() {
-        return toClose;
     }
 
     public void updateAABB(int add) {

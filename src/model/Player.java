@@ -96,7 +96,7 @@ public class Player extends Sprite {
         return score;
     }
 
-    public boolean newLife() {
+    public boolean getNewLife() {
         if(scoreReset >= 1500) {
             scoreReset = 0;
             lifeAmount++;

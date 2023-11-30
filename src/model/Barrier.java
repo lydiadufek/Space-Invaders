@@ -147,9 +147,9 @@ public class Barrier {
     }
 
     public void staticDraw(ArrayList<Sprite> objects, GraphicsContext gc){
-        for (int i = 0; i < pieces.size(); i++) {
-            if(pieces.get(i).getImage() != null)
-                objects.add(pieces.get(i));
+        for (SubBarrier piece : pieces) {
+            if (piece.getImage() != null)
+                objects.add(piece);
         }
     }
 

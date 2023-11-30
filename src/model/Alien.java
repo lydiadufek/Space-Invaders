@@ -1,8 +1,6 @@
 package model;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Rectangle;
 
 public class Alien extends Sprite {
     private int startingPositionX, startingPositionY;
@@ -43,7 +41,7 @@ public class Alien extends Sprite {
         return health > 0;
     }
 
-    public void kill() {
+    public void hit() {
         health--;
     }
 
