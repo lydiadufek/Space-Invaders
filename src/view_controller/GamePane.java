@@ -37,6 +37,7 @@ public class GamePane {
 
     private static int levelNum;
     private static int shotInterval;
+    private static int bossShotInterval;
     
     // sounds
     private static final SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
@@ -58,7 +59,7 @@ public class GamePane {
     private Timer alienShipTimer;
 
     private int coordTrack;
-    private double alienVelocity;
+    private final int alienVelocity;
     private long lastShotTime;
 
     private boolean playerIsInvincible;
@@ -73,7 +74,6 @@ public class GamePane {
     // constants
     private final int ALIENS_PER_ROW = 9;
     private final int ALIEN_ROWS = 5;
-    private final long SHOT_COOLDOWN = 200000000;
 
     // subBarriers
     private static Barrier totalBarrier1;
@@ -92,7 +92,7 @@ public class GamePane {
         GamePane.levelNum = 0;
         setupKeypress();
 
-        alienVelocity = 3;
+        alienVelocity = 4;
         notStarted = true;
         transitioning = false;
         alienTravelDirection = 'r';
@@ -109,9 +109,9 @@ public class GamePane {
 
         switch (shipImage) {
             case "purpleShip.png" ->
-                    drawPlayer(shipImage, 20, 200000000, 3);
+                    drawPlayer(shipImage, 20, 400000000, 3);
             case "greenShip.png" ->
-                    drawPlayer("greenShip.png", 15, 200000000, 4);
+                    drawPlayer("greenShip.png", 15, 400000000, 4);
             case "redShip.png" ->
                     drawPlayer("redShip.png", 50, 800000000, 3);
             default -> drawPlayer("blueShip.png", 20, -10, 1);
@@ -281,7 +281,7 @@ public class GamePane {
         timers.add(alienMovingTimer);
 
         Timer bossShootingTimer = new Timer();
-        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 1000);
+        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 800);
         timers.add(bossShootingTimer);
     }
 
@@ -478,9 +478,9 @@ public class GamePane {
                 }
             }
             if (alienTravelDirection == 'l') {
-                coordTrack -= (int) alienVelocity;
+                coordTrack -= alienVelocity;
             } else {
-                coordTrack += (int) alienVelocity;
+                coordTrack += alienVelocity;
             }
         }
     }

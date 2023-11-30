@@ -23,7 +23,7 @@ public class AlienShip extends Sprite {
         this.startingPositionY = y;
         this.scoreAmount = scoreAmount;
 
-        xVelocity = 1;
+        xVelocity = 2;
 
     }
 

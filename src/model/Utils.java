@@ -60,8 +60,12 @@ public class Utils {
         return random.nextInt(60000, 100000);
     }
 
-    public static double regenerateAlienVelocity() {
-        return min((0.3) * ((double) getLevelNum()) + 3, 10);
+    public static int generateRandomBossShootDelay() {
+        return random.nextInt(600, 1500);
+    }
+
+    public static int regenerateAlienVelocity() {
+        return min(getLevelNum() + 5, 15);
     }
 
     public static boolean allAliensDead(ArrayList<Sprite> objects) {
