@@ -88,7 +88,7 @@ public class GamePane {
     private static Barrier totalBarrier3;
     private static Barrier totalBarrier4;
 
-    private boolean allDead; // hot key to change levels
+    private boolean allDead; // hot key to change levels (D)
 
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
@@ -155,64 +155,7 @@ public class GamePane {
         startTimers();
     }
 
-    private void setupKeypress() {
-        pressedKeys = new HashSet<>();
-
-        // user input
-        scene.setOnKeyPressed(keyEvent -> {
-            pressedKeys.add(keyEvent.getCode());
-            handleKeyPress();
-        });
-
-        scene.setOnKeyReleased(keyEvent ->
-                pressedKeys.remove(keyEvent.getCode())
-        );
-    }
-
-    private void handleKeyPress() {
-        if (!isPaused) {
-            // Handle key presses only if the game is not paused
-            if (pressedKeys.contains(KeyCode.ESCAPE)) {
-                isPaused = true;
-                pauseGame();
-                showPausePopup();
-            }
-            if (pressedKeys.contains(KeyCode.SPACE)) {
-                shoot();
-            }
-            if (pressedKeys.contains(KeyCode.LEFT)) {
-                player.moveLeft(gc);
-            }
-            if (pressedKeys.contains(KeyCode.RIGHT)) {
-                player.moveRight(gc);
-            }
-            if (pressedKeys.contains(KeyCode.D)) {
-                allDead = true;
-            }
-            if (pressedKeys.contains(KeyCode.F)) {
-                bossShoot(boss);
-            }
-        }
-    }
-
-    public void startBossBattle() {
-        notStarted = true;
-        objects.clear();
-
-        drawPlayer();
-        drawStaticBarrier();
-        drawBossBattle();
-    }
-
-    public void drawFrame() {
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        for (Sprite object : objects) {
-            object.drawFrame(gc);
-            //drawAABB(object);
-        }
-    }
-
+    //------MECHANICS------
     public void gameLoop() {
         new AnimationTimer() {
 
@@ -259,51 +202,6 @@ public class GamePane {
 
             }
         }.start();
-    }
-
-    private void moveOrDespawnAlienShip() {
-        // checking the alien ship
-        if (alienShip != null && alienShip.isActive()) {
-            alienShip.moveAcrossScreen(gc);
-
-            double newX = alienShip.getX() - 1;
-            if (newX - (alienShip.getWidth() / 2) >= canvas.getWidth()) {
-                alienShip.setActive(false);
-                objects.remove(alienShip);
-            }
-        }
-    }
-
-    private void startTimers() {
-        Timer alienShootingTimer = new Timer();
-        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, Utils.generateShotInterval());
-        timers.add(alienShootingTimer);
-
-        alienShipTimer = new Timer();
-        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, Utils.generateRandomAlienShipDelay());
-        timers.add(alienShipTimer);
-
-        Timer alienMovingTimer = new Timer();
-        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
-        timers.add(alienMovingTimer);
-
-        Timer bossShootingTimer = new Timer();
-        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 800);
-        timers.add(bossShootingTimer);
-    }
-
-    private void moveBullets() {
-        for (int i = objects.size() - 1; i >= 0; i--) {
-            Sprite object = objects.get(i);
-            if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
-                ((Bullet) object).move(gc);
-                if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
-                    objects.remove(object);
-                }
-            } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
-                ((Bullet) object).moveHoming(gc, player);
-            }
-        }
     }
 
     private void detectAndHandleCollisions() {
@@ -401,6 +299,37 @@ public class GamePane {
         return retVal;
     }
 
+    public void shoot() {
+        if (!player.isDead()) {
+            long currentTime = System.nanoTime();
+            System.out.println(lastShotTime);
+            long elapsedSinceLastShot = currentTime - lastShotTime;
+
+            if (elapsedSinceLastShot > player.getDelay()) {
+                shootSound.playSound();
+                Image image = Utils.readImage("bullet.png");
+                Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
+                bullet.setPlayerShot();
+                objects.add(bullet);
+
+                lastShotTime = currentTime;
+            }
+        }
+    }
+
+    public void alienShoot(Sprite object) {
+        Image image = Utils.readImage("bullet.png");
+        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY()-10);
+        objects.add(bullet);
+    }
+
+    public void bossShoot(Sprite object) {
+        Image image = Utils.readImage("bossBullet.png");
+        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() + 200);
+        bullet.setBossShot();
+        objects.add(bullet);
+    }
+
     private void handlePlayerBeingShot(Player player, Bullet bullet) {
         objects.remove(bullet);
 
@@ -417,6 +346,101 @@ public class GamePane {
         if (player.isDead()) {
             objects.remove(player);
         }
+    }
+
+    private void moveOrDespawnAlienShip() {
+        // checking the alien ship
+        if (alienShip != null && alienShip.isActive()) {
+            alienShip.moveAcrossScreen(gc);
+
+            double newX = alienShip.getX() - 1;
+            if (newX - (alienShip.getWidth() / 2) >= canvas.getWidth()) {
+                alienShip.setActive(false);
+                objects.remove(alienShip);
+            }
+        }
+    }
+
+    private void moveBullets() {
+        for (int i = objects.size() - 1; i >= 0; i--) {
+            Sprite object = objects.get(i);
+            if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
+                ((Bullet) object).move(gc);
+                if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
+                    objects.remove(object);
+                }
+            } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
+                ((Bullet) object).moveHoming(gc, player);
+            }
+        }
+    }
+
+    public void startBossBattle() {
+        notStarted = true;
+        objects.clear();
+
+        drawPlayer();
+        drawStaticBarrier();
+        drawBossBattle();
+    }
+
+    private void setupKeypress() {
+        pressedKeys = new HashSet<>();
+
+        // user input
+        scene.setOnKeyPressed(keyEvent -> {
+            pressedKeys.add(keyEvent.getCode());
+            handleKeyPress();
+        });
+
+        scene.setOnKeyReleased(keyEvent ->
+                pressedKeys.remove(keyEvent.getCode())
+        );
+    }
+
+    private void handleKeyPress() {
+        if (!isPaused) {
+            // Handle key presses only if the game is not paused
+            if (pressedKeys.contains(KeyCode.ESCAPE)) {
+                isPaused = true;
+                pauseGame();
+                showPausePopup();
+            }
+            if (pressedKeys.contains(KeyCode.SPACE)) {
+                shoot();
+            }
+            if (pressedKeys.contains(KeyCode.LEFT)) {
+                player.moveLeft(gc);
+            }
+            if (pressedKeys.contains(KeyCode.RIGHT)) {
+                player.moveRight(gc);
+            }
+            if (pressedKeys.contains(KeyCode.D)) {
+                allDead = true;
+            }
+            if (pressedKeys.contains(KeyCode.F)) {
+                bossShoot(boss);
+            }
+        }
+    }
+
+    //------TIMERS AND ANIMATIONS------
+    private void startTimers() {
+        Timer alienShootingTimer = new Timer();
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, Utils.generateShotInterval());
+        timers.add(alienShootingTimer);
+
+        alienShipTimer = new Timer();
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, Utils.generateRandomAlienShipDelay());
+        timers.add(alienShipTimer);
+
+        Timer alienMovingTimer = new Timer();
+        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
+        timers.add(alienMovingTimer);
+
+        Timer bossShootingTimer = new Timer();
+        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 800);
+        timers.add(bossShootingTimer);
     }
 
     private class RandomAlienShots extends TimerTask {
@@ -527,44 +551,54 @@ public class GamePane {
         }
     }
 
-    private void spawnAlienShip() {
-        Image image = Utils.readImage("AlienShip.png");
-        alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
-        alienShip.getScore();
-        alienShip.setActive(true);
-        objects.add(alienShip);
-        alienShip.drawFrame(gc);
+    private void startInvincibilityTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                playerIsInvincible = false;
+            }
+        }, 2000); // invincibility length
+        timers.add(timer);
     }
 
-    public void shoot() {
-        if (!player.isDead()) {
-            long currentTime = System.nanoTime();
-            System.out.println(lastShotTime);
-            long elapsedSinceLastShot = currentTime - lastShotTime;
+    private void playerDeathAnimation() {
+        Image oldImage = player.getImage();
+        Image newImage = Utils.readImage("shipDeath.png");
+        new AnimationTimer() {
+            final long startTime = System.currentTimeMillis();
+            @Override
+            public void handle(long now) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                player.updateSprite(newImage);
 
-            if (elapsedSinceLastShot > player.getDelay()) {
-                shootSound.playSound();
-                Image image = Utils.readImage("bullet.png");
-                Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
-                bullet.setPlayerShot();
-                objects.add(bullet);
+                if (elapsedTime >= 400) {
+                    double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
+                    player.setX(middleX);
+                    player.drawFrame(gc);
 
-                lastShotTime = currentTime;
+                    player.updateSprite(oldImage);
+                    player.updateAABB();
+                    stop();
+                }
+                drawFrame();
             }
+        }.start();
+    }
+    
+    //------DRAWING TO FRAME------
+    public void drawFrame() {
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        for (Sprite object : objects) {
+            object.drawFrame(gc);
+            //drawAABB(object);
         }
     }
 
-    public void alienShoot(Sprite object) {
-        Image image = Utils.readImage("bullet.png");
-        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY()-10);
-        objects.add(bullet);
-    }
-
-    public void bossShoot(Sprite object) {
-        Image image = Utils.readImage("bossBullet.png");
-        Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() + 200);
-        bullet.setBossShot();
-        objects.add(bullet);
+    public void drawAABB(Sprite object) {
+        gc.setStroke(Color.WHITE);
+        gc.strokeRect(object.getAABB().getX(), object.getAABB().getY(), object.getAABB().getWidth(), object.getAABB().getHeight());
     }
 
     private void drawPlayer() {
@@ -633,49 +667,6 @@ public class GamePane {
         }
     }
 
-    private void drawBarriers() {
-        totalBarrier1 = new Barrier(135, 80, canvas, objects, gc);
-        totalBarrier1.draw();
-
-        totalBarrier2 = new Barrier(300, 80, canvas, objects, gc);
-        totalBarrier2.draw();
-
-        totalBarrier3 = new Barrier(-70, 80, canvas, objects, gc);
-        totalBarrier3.draw();
-
-        totalBarrier4 = new Barrier(-235, 80, canvas, objects, gc);
-        totalBarrier4.draw();
-    }
-
-    private void drawStaticBarrier() {
-        totalBarrier1.staticDraw(objects, gc);
-        totalBarrier2.staticDraw(objects, gc);
-        totalBarrier3.staticDraw(objects, gc);
-        totalBarrier4.staticDraw(objects, gc);
-
-        for (int i = 0; i < objects.size(); i++) {
-            Sprite object1 = objects.get(i);
-            if (object1 instanceof SubBarrier) {
-                if (object1.getImage() == null) {
-                    objects.remove(object1);
-                } else {
-                    object1.drawFrame(gc);
-                }
-            }
-        }
-    }
-
-    private void startInvincibilityTimer() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                playerIsInvincible = false;
-            }
-        }, 2000); // invincibility length
-        timers.add(timer);
-    }
-
     private void updateAlienSprites(Sprite object) {
         if (object instanceof Alien alien) {
             Image oldImage = alien.getImage();
@@ -715,30 +706,6 @@ public class GamePane {
         }
     }
 
-    private void playerDeathAnimation() {
-        Image oldImage = player.getImage();
-        Image newImage = Utils.readImage("shipDeath.png");
-        new AnimationTimer() {
-            final long startTime = System.currentTimeMillis();
-            @Override
-            public void handle(long now) {
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                player.updateSprite(newImage);
-
-                if (elapsedTime >= 400) {
-                    double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
-                    player.setX(middleX);
-                    player.drawFrame(gc);
-
-                    player.updateSprite(oldImage);
-                    player.updateAABB();
-                    stop();
-                }
-                drawFrame();
-            }
-        }.start();
-    }
-
     private void drawBossBattle() {
         for (int i = 0; i < ALIEN_ROWS; i++) {
             // update the image and score depending on the alien type
@@ -756,6 +723,48 @@ public class GamePane {
         }
     }
 
+    private void spawnAlienShip() {
+        Image image = Utils.readImage("AlienShip.png");
+        alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
+        alienShip.getScore();
+        alienShip.setActive(true);
+        objects.add(alienShip);
+        alienShip.drawFrame(gc);
+    }
+
+    private void drawBarriers() {
+        totalBarrier1 = new Barrier(135, 80, canvas, objects, gc);
+        totalBarrier1.draw();
+
+        totalBarrier2 = new Barrier(300, 80, canvas, objects, gc);
+        totalBarrier2.draw();
+
+        totalBarrier3 = new Barrier(-70, 80, canvas, objects, gc);
+        totalBarrier3.draw();
+
+        totalBarrier4 = new Barrier(-235, 80, canvas, objects, gc);
+        totalBarrier4.draw();
+    }
+
+    private void drawStaticBarrier() {
+        totalBarrier1.staticDraw(objects, gc);
+        totalBarrier2.staticDraw(objects, gc);
+        totalBarrier3.staticDraw(objects, gc);
+        totalBarrier4.staticDraw(objects, gc);
+
+        for (int i = 0; i < objects.size(); i++) {
+            Sprite object1 = objects.get(i);
+            if (object1 instanceof SubBarrier) {
+                if (object1.getImage() == null) {
+                    objects.remove(object1);
+                } else {
+                    object1.drawFrame(gc);
+                }
+            }
+        }
+    }
+
+    //------PAUSE SCREEN------
     private void showPausePopup() {
         Stage pauseStage = new Stage();
         BorderPane pausePane = new BorderPane();
@@ -826,11 +835,7 @@ public class GamePane {
         setupKeypress();
     }
 
-    public void drawAABB(Sprite object) {
-        gc.setStroke(Color.WHITE);
-        gc.strokeRect(object.getAABB().getX(), object.getAABB().getY(), object.getAABB().getWidth(), object.getAABB().getHeight());
-    }
-
+    //------GETTERS------
     public Canvas getCanvas() { return canvas; }
 
     public ArrayList<Timer> getTimers() { return timers; }
