@@ -339,6 +339,7 @@ public class GamePane {
                                 && object2 instanceof Player
                                 && !((Bullet) object1).getPlayerShot())) {
 
+                            playerDeathAnimation();
                             handlePlayerBeingShot((Player) object2, (Bullet) object1);
                             deathSound.playSound();
                         }
@@ -408,9 +409,6 @@ public class GamePane {
         gameScreen.removeLifeIcon();
 
         // reset the player to the center of the screen
-        double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
-        player.setX(middleX);
-        player.drawFrame(gc);
 
         // invincibility time frame
         startInvincibilityTimer();
@@ -717,6 +715,30 @@ public class GamePane {
                 }.start();
             }
         }
+    }
+
+    private void playerDeathAnimation() {
+        Image oldImage = player.getImage();
+        Image newImage = Utils.readImage("shipDeath.png");
+        new AnimationTimer() {
+            final long startTime = System.currentTimeMillis();
+            @Override
+            public void handle(long now) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                player.updateSprite(newImage);
+
+                if (elapsedTime >= 400) {
+                    double middleX = canvas.getWidth() / 2 - player.getImage().getWidth() / 2;
+                    player.setX(middleX);
+                    player.drawFrame(gc);
+
+                    player.updateSprite(oldImage);
+                    player.updateAABB();
+                    stop();
+                }
+                drawFrame();
+            }
+        }.start();
     }
 
     private void drawBossBattle() {
