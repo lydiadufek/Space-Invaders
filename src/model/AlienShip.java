@@ -18,22 +18,48 @@ public class AlienShip extends Sprite {
     private final Random random;
     private boolean isActive;
 
+    /**
+     * Creates an alien ship. Initializes tbe velocity to 2.
+     *
+     * @param image
+     * @param x
+     * @param y
+     */
     public AlienShip(Image image, int x, int y) {
         super(image, x, y);
         random = new Random();
         xVelocity = 2;
     }
 
+    /**
+     * This is used to move the alien ship horizonally across
+     * the screen
+     * @param gc
+     */
     public void moveAcrossScreen(GraphicsContext gc) {
         x += xVelocity;
         drawFrame(gc);
         updateAABB();
     }
 
+    /**
+     * This is used to set a boolean to active if the aien ship
+     * is currently on the screen
+     * @param active
+     */
     public void setActive(boolean active) { isActive = active; }
 
+    /**
+     * The getter for the boolean if the alien ship is on the screen
+     * @return boolean
+     */
     public boolean isActive() { return isActive; }
 
+    /**
+     * This creates a randomized score when the player hits the ship.
+     * Scores vary from 50 - 300.
+     * @return randomized int
+     */
     public int getScore() {
         int x = random.nextInt(1, 5);
 
@@ -48,6 +74,10 @@ public class AlienShip extends Sprite {
         return scoreAmount;
     }
 
+    /**
+     * String value of type of object
+     * @return string
+     */
     @Override
     public String toString() { return "AlienShip"; }
 }

@@ -50,7 +50,7 @@ public class GamePane {
     private static final SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
     private static final SoundEffect ufoSound = new SoundEffect("ufoHit.mp3");
     private static final SoundEffect alienSound = new SoundEffect("alienDieNoise.mp3");
-    private static final SoundEffect bossSound = new SoundEffect("eenWails.mp3");
+    private static final SoundEffect bossSound = new SoundEffect("eenWailsNew.mp3");
 
     // instance variables
     private final ArrayList<Sprite> objects;
@@ -412,9 +412,9 @@ public class GamePane {
                 player.moveRight(gc);
             }
             // debug shortcuts
-//            if (pressedKeys.contains(KeyCode.D)) {
-//                allDead = true;
-//            }
+            if (pressedKeys.contains(KeyCode.D)) {
+                allDead = true;
+            }
 //            if (pressedKeys.contains(KeyCode.F)) {
 //                bossShoot(boss);
 //            }

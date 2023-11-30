@@ -35,6 +35,16 @@ public class Barrier {
     private static SubBarrier barrier6;
     private static SubBarrier barrier7;
 
+    /**
+     * Creates a barrier object. With set position. Initilaizes the objects array and gc.
+     * A piece array is created to make redrawing easieer since they are static
+     *
+     * @param x
+     * @param y
+     * @param canvas
+     * @param objects
+     * @param gc
+     */
     public Barrier(double x, double y, Canvas canvas, ArrayList<Sprite> objects, GraphicsContext gc) {
         this.x = x;
         this.y = y;
@@ -45,6 +55,10 @@ public class Barrier {
         pieces = new ArrayList<>();
     }
 
+    /**
+     * This draws the barrier, combining the sub barriers to create one barrier
+     * object. All sub barriers are created here
+     */
     public void draw(){
         Image image = null;
         Image image2 = null;
@@ -166,6 +180,11 @@ public class Barrier {
         pieces.add(barrier7);
     }
 
+    /**
+     * Static version of the barriers. This forms each barrier by adding each piece to
+     * the objects array. This is to redraw each sub barrier
+     * @param objects
+     */
     public void staticDraw(ArrayList<Sprite> objects){
         for (SubBarrier piece : pieces) {
             if (piece.getImage() != null)
@@ -173,6 +192,10 @@ public class Barrier {
         }
     }
 
+    /**
+     * Returns string type of object
+     * @return String
+     */
     @Override
     public String toString() { return "Barrier"; }
 }
