@@ -1,3 +1,13 @@
+/**
+ * Purpose: This file holds the functionality for the Aliens. Each alien has
+ *          a different type that determines score amount, health, sprite image,
+ *          and starting positions. The boss is also controlled here and has
+ *          attributes that makes it easier to find and differentiate between
+ *          the different aliens.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
+
 package model;
 
 import javafx.scene.image.Image;

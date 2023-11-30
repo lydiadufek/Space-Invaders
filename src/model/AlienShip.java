@@ -1,10 +1,18 @@
+/**
+ * Purpose: This file holds the functionality for the Alien Ship that
+ *          flys by in a randomized interval. When the player hits the
+ *          ship, a random score is determined. There are also attributes
+ *          to determine when the ship is active or not so we can tell when
+ *          to spawn a new one or not.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ */
 package model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import java.util.*;
-
 
 public class AlienShip extends Sprite {
     private Random random;
