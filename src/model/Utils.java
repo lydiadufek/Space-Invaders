@@ -3,29 +3,19 @@
  *          reading an image, font reading, checking AABB collisions, and random
  *          intervals. Methods that do not to be so apparent essentially.
  *
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  */
+
 package model;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import view_controller.Window;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
 
 import static java.lang.Math.min;
 import static view_controller.GamePane.getLevelNum;
@@ -65,10 +55,6 @@ public class Utils {
 
     public static long generateRandomAlienShipDelay() {
         return random.nextInt(60000, 100000);
-    }
-
-    public static int generateRandomBossShootDelay() {
-        return random.nextInt(600, 1500);
     }
 
     public static int regenerateAlienVelocity() {

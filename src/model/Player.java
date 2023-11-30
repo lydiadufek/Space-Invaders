@@ -5,14 +5,13 @@
  *          the player decided to play as. The death, health, and score is also updated
  *          accordingly.
  *
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  */
+
 package model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Rectangle;
-import view_controller.GamePane;
 import view_controller.Window;
 
 public class Player extends Sprite {
@@ -40,10 +39,6 @@ public class Player extends Sprite {
         gc.drawImage(image, x, y);
     }
 
-    public void shoot(Bullet bullet, GraphicsContext gc, Player player, GamePane pane) {
-        bullet.move(gc);
-    }
-
     public void setX(double x) {
         this.x = x;
         updateAABB();
@@ -54,7 +49,7 @@ public class Player extends Sprite {
         if (x - 1 < 0) {
             return;
         }
-        x = lerp(x, x - xVelocity, 0.7);
+        x = lerp(x, x - xVelocity);
         drawFrame(gc);
         updateAABB();
     }
@@ -63,50 +58,30 @@ public class Player extends Sprite {
         if (x + 1 + width > WW) {
             return;
         }
-        x = lerp(x, x + xVelocity, 0.7);
+        x = lerp(x, x + xVelocity);
         drawFrame(gc);
         updateAABB();
     }
 
-    private double lerp(double start, double end, double t) {
-        return start + t * (end - start);
+    private double lerp(double start, double end) {
+        return start + 0.7 * (end - start);
     }
 
-    public void setDead() {
-        lifeAmount = 0;
-    }
-    
-    public void setAlive() {
-    	lifeAmount = 3;
-    }
+    public void setDead() { lifeAmount = 0; }
 
-    public void updateLives() {
-        lifeAmount--;
-    }
+    public void updateLives() { lifeAmount--; }
 
-    public void updateAABB() {
-        this.AABB = new Rectangle(x, y, this.width, this.height);
-    }
-
-    public boolean isDead() {
-        return lifeAmount==0;
-    }
+    public boolean isDead() { return lifeAmount==0; }
 
     public void updateScore(int amount) {
         score += amount;
         scoreReset += amount;
     }
 
-    public int getLives() {
-        return lifeAmount;
-    }
-
-    public int getScore() {
-        return score;
-    }
+    public int getLives() { return lifeAmount; }
 
     public boolean getNewLife() {
-        if(scoreReset >= 1500) {
+        if (scoreReset >= 1500) {
             scoreReset = 0;
             lifeAmount++;
             return true;
@@ -115,12 +90,8 @@ public class Player extends Sprite {
         }
     }
 
-    public long getDelay() {
-        return shootDelay;
-    }
+    public long getDelay() { return shootDelay; }
 
     @Override
-    public String toString() {
-        return "Player";
-    }
+    public String toString() { return "Player"; }
 }

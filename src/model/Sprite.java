@@ -1,19 +1,17 @@
 /**
- * Purpose: This file holds the parent class for all of the sprites in the game. That
- *          includes the player, bullet, barriers, aliens, and alienship. The classes
- *          that all sprites inerent are created here
+ * Purpose: This file holds the parent class for all of the sprites in the game, which
+ *          includes the player, bullet, barriers, aliens, and alienship. The methods
+ *          that all sprites inherent are created here
  *
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  */
+
 package model;
 
-import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 
 public abstract class Sprite {
     protected Image image;
@@ -35,32 +33,20 @@ public abstract class Sprite {
         this.AABB = new Rectangle(x, y, this.width, this.height);
     }
 
-    public Image getImage() {
-        return image;
-    }
+    public Image getImage() { return image; }
 
-    public double getX() {
-        return x;
-    }
+    public double getX() { return x; }
 
-    public double getY() {
-        return y;
-    }
+    public double getY() { return y; }
 
-    public double getWidth() {
-        return width;
-    }
+    public double getWidth() { return width; }
 
-    public double getHeight() {
-        return height;
-    }
+    public double getHeight() { return height; }
+
+    public Rectangle getAABB() { return AABB; }
 
     public void updateAABB() {
         this.AABB = new Rectangle(x, y, this.width, this.height);
-    }
-
-    public Rectangle getAABB() {
-        return AABB;
     }
 
     public void changeVelocity(double velocityX, double velocityY) {
@@ -70,11 +56,6 @@ public abstract class Sprite {
 
     public void drawFrame(GraphicsContext gc) {
         gc.drawImage(image, x, y);
-    }
-
-    public void update() {
-        x += xVelocity;
-        y += yVelocity;
     }
 
     public void updateSprite(Image newImage) {
@@ -100,8 +81,6 @@ public abstract class Sprite {
     }
 
     @Override
-    public String toString() {
-        return "Sprite";
-    }
+    public String toString() { return "Sprite"; }
 
 }
