@@ -56,18 +56,15 @@ public class GamePane {
     private final ArrayList<Sprite> objects;
     private final Alien[][] aliens;
     private final ArrayList<Timer> timers;
-
-    private Set<KeyCode> pressedKeys;
-
     private final Canvas canvas;
     private final GraphicsContext gc;
+    private final int alienVelocity;
 
+    private Set<KeyCode> pressedKeys;
     private AlienShip alienShip;
-
     private Timer alienShipTimer;
 
     private int coordTrack;
-    private final int alienVelocity;
     private long lastShotTime;
     private char alienTravelDirection;
 
@@ -87,6 +84,14 @@ public class GamePane {
     private static Barrier totalBarrier3;
     private static Barrier totalBarrier4;
 
+    /**
+     * Constructor for the start of a new game. Sets up references to the stage and scene,
+     * as well as starting from level 0. Runs the game.
+     * @param stage The stage of the window
+     * @param scene The current scene the pane exist on
+     * @param home The home screen pane object
+     * @param gameScreen The game screen pane object
+     */
     public GamePane(Stage stage, Scene scene, StartScreen home, GameScreen gameScreen) {
         GamePane.stage = stage;
         GamePane.scene = scene;
@@ -127,6 +132,10 @@ public class GamePane {
         startTimers();
     }
 
+    /**
+     * Constructor for a new level in the game. One is added to the level and
+     * the game restarts.
+     */
     public GamePane() {
         GamePane.levelNum += 1;
         setupKeypress();
@@ -157,9 +166,19 @@ public class GamePane {
     }
 
     //------MECHANICS------
+
+    /**
+     * The main loop of the game. Handles moving bullets, detecting collisions,
+     * drawing the frame, and changing the level when necessary.
+     */
     public void gameLoop() {
         new AnimationTimer() {
 
+            /**
+             * The main loop of the game. Handles moving bullets, detecting collisions,
+             * drawing the frame, and changing the level when necessary.
+             * @param currentNanoTime The current time. Necessary for gameLoop override
+             */
             @Override
             public void handle(long currentNanoTime) {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -203,6 +222,10 @@ public class GamePane {
         }.start();
     }
 
+    /**
+     * Handles all collisions between objects. Checks whether they have collided
+     * and takes the correct action when they do.
+     */
     private void detectAndHandleCollisions() {
         for (int i = 0; i < objects.size(); i++) {
             for (int j = i + 1; j < objects.size(); j++) {
@@ -285,7 +308,13 @@ public class GamePane {
         }
     }
 
-    // orders the two in alphabetical order
+    /**
+     * Orders the two sprites in alphabetical order so that they are in a
+     * known order for detectAndHandleCollisions.
+     * @param object1 The first sprite to be ordered
+     * @param object2 The second sprite to be ordered
+     * @return Array of the two aliens in alphabetical order
+     */
     public static Sprite[] orderSprites(Sprite object1, Sprite object2) {
         Sprite[] retVal = new Sprite[2];
         if (object1.toString().compareTo(object2.toString()) < 0) {
@@ -298,6 +327,10 @@ public class GamePane {
         return retVal;
     }
 
+    /**
+     * Lets the player shoot bullets. Checks that enough time has passed and
+     * shoots if it has.
+     */
     public void shoot() {
         if (!player.isDead()) {
             long currentTime = System.nanoTime();
@@ -315,12 +348,20 @@ public class GamePane {
         }
     }
 
+    /**
+     * Lets the aliens shoot bullets. Spawns a bullet at the alien's location.
+     * @param object The alien that is shooting
+     */
     public void alienShoot(Sprite object) {
         Image image = Utils.readImage("bullet.png");
         Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY()-10);
         objects.add(bullet);
     }
 
+    /**
+     * Lets the boss shoot bullets. Spawns a bullet at the boss's location.
+     * @param object The boss object that is shooting
+     */
     public void bossShoot(Sprite object) {
         Image image = Utils.readImage("bossBullet.png");
         Bullet bullet = new Bullet(image, object.getX() + object.getWidth() / 2 - (image.getWidth() / 2), object.getY() + 200);
@@ -328,6 +369,12 @@ public class GamePane {
         objects.add(bullet);
     }
 
+    /**
+     * Handles when the player is shot by a bullet. Removes a life, restarts
+     * player at the center of the screen, and starts invincibility.
+     * @param player The player object
+     * @param bullet The bullet that shot the player
+     */
     private void handlePlayerBeingShot(Player player, Bullet bullet) {
         objects.remove(bullet);
 
@@ -344,6 +391,10 @@ public class GamePane {
         }
     }
 
+    /**
+     * Moves the alien ship across the screen if it exists, or removes it if
+     * it's gone too far.
+     */
     private void moveOrDespawnAlienShip() {
         // checking the alien ship
         if (alienShip != null && alienShip.isActive()) {
@@ -357,6 +408,10 @@ public class GamePane {
         }
     }
 
+    /**
+     * Moves all of the bullets one frame. Player bullets move up and alien
+     * bullets move down.
+     */
     private void moveBullets() {
         for (int i = objects.size() - 1; i >= 0; i--) {
             Sprite object = objects.get(i);
@@ -371,6 +426,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Starts the boss battle.
+     */
     public void startBossBattle() {
         notStarted = true;
         objects.clear();
@@ -380,6 +438,9 @@ public class GamePane {
         drawBossBattle();
     }
 
+    /**
+     * Sets up the key input
+     */
     private void setupKeypress() {
         pressedKeys = new HashSet<>();
 
@@ -394,6 +455,9 @@ public class GamePane {
         );
     }
 
+    /**
+     * Handles what each key does on input.
+     */
     private void handleKeyPress() {
         if (!isPaused) {
             // handle key presses only if the game is not paused
@@ -422,6 +486,10 @@ public class GamePane {
     }
 
     //------TIMERS AND ANIMATIONS------
+
+    /**
+     * Starts timers that run the game in even increments
+     */
     private void startTimers() {
         Timer alienShootingTimer = new Timer();
         alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, Utils.generateShotInterval());
@@ -440,7 +508,13 @@ public class GamePane {
         timers.add(bossShootingTimer);
     }
 
+    /**
+     * Class to handle running the random alien shooting.
+     */
     private class RandomAlienShots extends TimerTask {
+        /**
+         * Runs random alien shooting
+         */
         @Override
         public void run() {
             // getting the bottom row of aliens (the ones that can shoot)
@@ -475,7 +549,13 @@ public class GamePane {
         }
     }
 
+    /**
+     * Class to move all aliens in regular intervals
+     */
     private class moveAllAliens extends TimerTask {
+        /**
+         * Moves all of the aliens one time increment
+         */
         @Override
         public void run() {
             for (Sprite object : new ArrayList<>(objects)) {
@@ -506,7 +586,13 @@ public class GamePane {
         }
     }
 
+    /**
+     * Class to handle the boss shooting at player
+     */
     private class RandomBossShots extends TimerTask {
+        /*
+         * Makes the boss shooting the player
+         */
         @Override
         public void run() {
             ArrayList<Alien> boss = new ArrayList<>();
@@ -530,7 +616,13 @@ public class GamePane {
         }
     }
 
+    /**
+     * Class to handle the alien ship flying across the screen
+     */
     private class AlienShipTimer extends TimerTask {
+        /**
+         * Makes the alien ship fly across the screen
+         */
         @Override
         public void run() {
             if (alienShip == null
@@ -546,6 +638,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Starts the player invincibility after a player death
+     */
     private void startInvincibilityTimer() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -557,6 +652,9 @@ public class GamePane {
         timers.add(timer);
     }
 
+    /**
+     * Handles the player death animation
+     */
     private void playerDeathAnimation() {
         Image oldImage = player.getImage();
         Image newImage = Utils.readImage("shipDeath.png");
@@ -581,6 +679,10 @@ public class GamePane {
     }
     
     //------DRAWING TO FRAME------
+
+    /**
+     * Draws a frame of the game
+     */
     public void drawFrame() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -589,12 +691,18 @@ public class GamePane {
         }
     }
 
+    /**
+     * Draws the player when the player already exists
+     */
     private void drawPlayer() {
         player.setX((canvas.getWidth() / 2) - (player.getImage().getWidth() / 2));
         objects.add(player);
         player.drawFrame(gc);
     }
 
+    /**
+     * Draws the player when the player doesn't already exists
+     */
     private void drawPlayer(String imageName, int xVelocity, long shootDelay, int health) {
         Image image = Utils.readImage(imageName);
         player = new Player(image, (canvas.getWidth() / 2) - (image.getWidth() / 2), canvas.getHeight() - image.getHeight()-10, xVelocity, shootDelay, health);
@@ -602,6 +710,9 @@ public class GamePane {
         player.drawFrame(gc);
     }
 
+    /**
+     * Draws all aliens on the screen
+     */
     private void drawAliens() {
         for (int i = 0; i < ALIEN_ROWS; i++) {
             if (i == 0) {
@@ -614,6 +725,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Draws one row of aliens on the screen
+     */
     private void drawAlienRow(Image image, int scoreAmount, int type, int interval, int shiftX, int shiftY, int i, boolean bossLevel) {
         Image bossImage = Utils.readImage("bossImage.png");
 
@@ -654,6 +768,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Updates all of the aliens
+     */
     private void updateAlienSprites(Sprite object) {
         if (object instanceof Alien alien) {
             Image oldImage = alien.getImage();
@@ -691,6 +808,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Draws the boss battle screen
+     */
     private void drawBossBattle() {
         for (int i = 0; i < ALIEN_ROWS; i++) {
             // update the image and score depending on the alien type and initiate boss battle
@@ -708,6 +828,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Spawns the alien ship at the top of the screen
+     */
     private void spawnAlienShip() {
         Image image = Utils.readImage("AlienShip.png");
         alienShip = new AlienShip(image, ((int) -image.getWidth()), 10);
@@ -717,6 +840,9 @@ public class GamePane {
         alienShip.drawFrame(gc);
     }
 
+    /**
+     * Draws all of the barriers
+     */
     private void drawBarriers() {
         totalBarrier1 = new Barrier(135, 80, canvas, objects, gc);
         totalBarrier1.draw();
@@ -731,6 +857,9 @@ public class GamePane {
         totalBarrier4.draw();
     }
 
+    /**
+     * Draws the static portion of the barriers
+     */
     private void drawStaticBarrier() {
         totalBarrier1.staticDraw(objects);
         totalBarrier2.staticDraw(objects);
@@ -750,6 +879,10 @@ public class GamePane {
     }
 
     //------PAUSE SCREEN------
+
+    /**
+     * Handles the pause screen popup. Creates a new stage for it
+     */
     private void showPausePopup() {
         Stage pauseStage = new Stage();
         BorderPane pausePane = new BorderPane();
@@ -804,6 +937,9 @@ public class GamePane {
         pauseStage.showAndWait();
     }
 
+    /**
+     * Handles pausing the game
+     */
     private void pauseGame() {
         scene.setOnKeyPressed(null);
         scene.setOnKeyReleased(null);
@@ -813,6 +949,9 @@ public class GamePane {
         }
     }
 
+    /**
+     * Handles resuming the game
+     */
     private void resumeGame() {
         isPaused = false;
         timers.clear();
