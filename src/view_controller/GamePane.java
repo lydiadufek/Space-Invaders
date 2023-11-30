@@ -1,11 +1,11 @@
 /**
- * * Purpose: This main purpose is to store the game's main mechanics. It handles the game loop,
+ * Purpose: This main purpose is to store the game's main mechanics. It handles the game loop,
  *          collision detection, key presses, and animation states. This class also draws all objects
  *          on to the screen adn deals with the interactions with each object. There is also next level
  *          capabilites in which the aliens increase in difficulty, movement spedd increases, and there
  *          is a boss level every 5 levels. This pane redirects the player to the correct pages when they die.
  *
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  */
 package view_controller;
 
@@ -43,9 +43,7 @@ public class GamePane {
     private static StartScreen home;
     private static GameScreen gameScreen;
     private static Player player;
-
     private static int levelNum;
-    private static int shotInterval;
 
     // sounds
     private static final SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
@@ -57,7 +55,6 @@ public class GamePane {
     private final ArrayList<Sprite> objects;
     private final Alien[][] aliens;
     private final ArrayList<Timer> timers;
-    private final String shipImage;
 
     private final Canvas canvas;
     private final GraphicsContext gc;
@@ -68,8 +65,6 @@ public class GamePane {
 
     private int coordTrack;
 
-    private int borderRight;
-    private int borderLeft;
     private int alienVelocity;
 
     private long lastShotTime;
@@ -105,8 +100,6 @@ public class GamePane {
         setupKeypress();
 
         alienVelocity = 4;
-        borderRight = 80;
-        borderLeft = 65;
 
         notStarted = true;
         transitioning = false;
@@ -120,7 +113,7 @@ public class GamePane {
         timers = new ArrayList<>();
 
         coordTrack = WW / 2;
-        shipImage = home.getShipImage();
+        String shipImage = home.getShipImage();
 
         switch (shipImage) {
             case "purpleShip.png" ->
@@ -154,7 +147,7 @@ public class GamePane {
         timers = new ArrayList<>();
 
         coordTrack = WW/2;
-        shipImage = home.getShipImage();
+        String shipImage = home.getShipImage();
 
         drawPlayer();
         drawAliens();
@@ -211,6 +204,51 @@ public class GamePane {
     }
 
     //---MECHANICS---
+    private void moveOrDespawnAlienShip() {
+        // checking the alien ship
+        if (alienShip != null && alienShip.isActive()) {
+            alienShip.moveAcrossScreen(gc);
+
+            double newX = alienShip.getX() - 1;
+            if (newX - (alienShip.getWidth() / 2) >= canvas.getWidth()) {
+                alienShip.setActive(false);
+                objects.remove(alienShip);
+            }
+        }
+    }
+
+    private void startTimers() {
+        Timer alienShootingTimer = new Timer();
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, Utils.generateShotInterval());
+        timers.add(alienShootingTimer);
+
+        alienShipTimer = new Timer();
+        alienShipTimer.scheduleAtFixedRate(new AlienShipTimer(), 10000, Utils.generateRandomAlienShipDelay());
+        timers.add(alienShipTimer);
+
+        Timer alienMovingTimer = new Timer();
+        alienMovingTimer.scheduleAtFixedRate(new moveAllAliens(), 500, 1000);
+        timers.add(alienMovingTimer);
+
+        Timer bossShootingTimer = new Timer();
+        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 800);
+        timers.add(bossShootingTimer);
+    }
+
+    private void moveBullets() {
+        for (int i = objects.size() - 1; i >= 0; i--) {
+            Sprite object = objects.get(i);
+            if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
+                ((Bullet) object).move(gc);
+                if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
+                    objects.remove(object);
+                }
+            } else if (object instanceof Bullet && ((Bullet) object).getBossShot()) {
+                ((Bullet) object).moveHoming(gc, player);
+            }
+        }
+    }
+
     private void detectAndHandleCollisions() {
         for (int i = 0; i < objects.size(); i++) {
             for (int j = i + 1; j < objects.size(); j++) {
@@ -451,8 +489,6 @@ public class GamePane {
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
-            GamePane.shotInterval = Utils.generateShotInterval();
-
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
             ArrayList<Alien> boss = new ArrayList<>();
@@ -494,11 +530,11 @@ public class GamePane {
                     updateAlienSprites(alien);
                     alien.changeVelocity(alienVelocity, 10);
 
-	    			if (coordTrack > (WW/2 + borderRight)) {
+	    			if (coordTrack > (WW/2 + 80)) {
 	    				alien.moveDown(gc);
                         alienTravelDirection = 'l';
                     }
-	    			else if (coordTrack < (WW/2 - borderLeft)) {
+	    			else if (coordTrack < (WW/2 - 65)) {
 	    				alien.moveDown(gc);
                         alienTravelDirection = 'r';
                     }
@@ -520,8 +556,6 @@ public class GamePane {
     private class RandomBossShots extends TimerTask {
         @Override
         public void run() {
-            GamePane.shotInterval = Utils.generateShotInterval();
-
             ArrayList<Alien> boss = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
                 for (int j = aliens.length - 1; j >= 0; j--) {
@@ -589,6 +623,22 @@ public class GamePane {
             @Override
             public void run() {
                 playerIsInvincible = false;
+            }
+
+    public void shoot() {
+        if (!player.isDead()) {
+            long currentTime = System.nanoTime();
+            System.out.println(lastShotTime);
+            long elapsedSinceLastShot = currentTime - lastShotTime;
+
+            if (elapsedSinceLastShot > player.getDelay()) {
+                shootSound.playSound();
+                Image image = Utils.readImage("bullet.png");
+                Bullet bullet = new Bullet(image, player.getX() + player.getWidth() / 2 - (image.getWidth() / 2), player.getY() - 10);
+                bullet.setPlayerShot();
+                objects.add(bullet);
+
+                lastShotTime = currentTime;
             }
         }, 2000); // invincibility length
         timers.add(timer);
