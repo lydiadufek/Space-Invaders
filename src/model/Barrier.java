@@ -166,7 +166,7 @@ public class Barrier {
         pieces.add(barrier7);
     }
 
-    public void staticDraw(ArrayList<Sprite> objects, GraphicsContext gc){
+    public void staticDraw(ArrayList<Sprite> objects){
         for (SubBarrier piece : pieces) {
             if (piece.getImage() != null)
                 objects.add(piece);

@@ -37,7 +37,7 @@ public class Bullet extends Sprite {
 
     public boolean getBossShot() { return bossShot; }
 
-    public void move(GraphicsContext gc) {
+    public void move() {
         if (playerShot) yVelocity = -10;  // Player's bullets move upward
         else yVelocity = 5;   // Alien's bullets move downward
 

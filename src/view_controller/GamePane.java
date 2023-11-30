@@ -63,12 +63,11 @@ public class GamePane {
     private final GraphicsContext gc;
 
     private AlienShip alienShip;
-    private Alien boss;
 
     private Timer alienShipTimer;
 
     private int coordTrack;
-    private int alienVelocity;
+    private final int alienVelocity;
     private long lastShotTime;
     private char alienTravelDirection;
 
@@ -76,7 +75,7 @@ public class GamePane {
     private boolean isPaused;
     private boolean notStarted;
     private boolean transitioning;
-    private boolean allDead; // hot key to change levels (D)
+    private boolean allDead;
 
     // constants
     private final int ALIENS_PER_ROW = 9;
@@ -117,14 +116,13 @@ public class GamePane {
             case "purpleShip.png" ->
                     drawPlayer(shipImage, 20, 350000000, 3); //purpleShip
             case "greenShip.png" ->
-                    drawPlayer("greenShip.png", 15, 350000000, 4); //greenShip
+                    drawPlayer(shipImage, 15, 350000000, 4); //greenShip
             case "redShip.png" ->
-                    drawPlayer("redShip.png", 50, 800000000, 3); //red
-            default -> drawPlayer("blueShip.png", 20, 200000000, 1); //blue
+                    drawPlayer(shipImage, 50, 800000000, 3); //red
+            default -> drawPlayer(shipImage, 20, 200000000, 1); //blue
         }
 
         drawAliens();
-//        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -151,7 +149,6 @@ public class GamePane {
         }
 
         coordTrack = WW/2;
-        String shipImage = home.getShipImage();
 
         drawPlayer();
         drawAliens();
@@ -364,7 +361,7 @@ public class GamePane {
         for (int i = objects.size() - 1; i >= 0; i--) {
             Sprite object = objects.get(i);
             if (object instanceof Bullet && !((Bullet) object).getBossShot()) {
-                ((Bullet) object).move(gc);
+                ((Bullet) object).move();
                 if (object.getX() < 0 || object.getX() > canvas.getWidth() || object.getY() < 0 || object.getY() > canvas.getHeight()) {
                     objects.remove(object);
                 }
@@ -414,12 +411,13 @@ public class GamePane {
             if (pressedKeys.contains(KeyCode.RIGHT)) {
                 player.moveRight(gc);
             }
-            if (pressedKeys.contains(KeyCode.D)) {
-                allDead = true;
-            }
-            if (pressedKeys.contains(KeyCode.F)) {
-                bossShoot(boss);
-            }
+            // debug shortcuts
+//            if (pressedKeys.contains(KeyCode.D)) {
+//                allDead = true;
+//            }
+//            if (pressedKeys.contains(KeyCode.F)) {
+//                bossShoot(boss);
+//            }
         }
     }
 
@@ -447,7 +445,6 @@ public class GamePane {
         public void run() {
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
-            ArrayList<Alien> boss = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
                 for (int j = aliens.length - 1; j >= 0; j--) {
                     if (aliens[j][i] != null) {
@@ -589,13 +586,7 @@ public class GamePane {
 
         for (Sprite object : objects) {
             object.drawFrame(gc);
-            //drawAABB(object);
         }
-    }
-
-    public void drawAABB(Sprite object) {
-        gc.setStroke(Color.WHITE);
-        gc.strokeRect(object.getAABB().getX(), object.getAABB().getY(), object.getAABB().getWidth(), object.getAABB().getHeight());
     }
 
     private void drawPlayer() {
@@ -647,7 +638,7 @@ public class GamePane {
                 }
 
                 if (i == 0 && j == 3) {
-                    boss = new Alien(bossImage, (int) x, (int) y, 20, 250, type);
+                    Alien boss = new Alien(bossImage, (int) x, (int) y, 20, 250, type);
                     boss.iAmBoss();
                     objects.add(boss);
                     aliens[i][j] = boss;
@@ -741,10 +732,10 @@ public class GamePane {
     }
 
     private void drawStaticBarrier() {
-        totalBarrier1.staticDraw(objects, gc);
-        totalBarrier2.staticDraw(objects, gc);
-        totalBarrier3.staticDraw(objects, gc);
-        totalBarrier4.staticDraw(objects, gc);
+        totalBarrier1.staticDraw(objects);
+        totalBarrier2.staticDraw(objects);
+        totalBarrier3.staticDraw(objects);
+        totalBarrier4.staticDraw(objects);
 
         for (int i = 0; i < objects.size(); i++) {
             Sprite object1 = objects.get(i);
