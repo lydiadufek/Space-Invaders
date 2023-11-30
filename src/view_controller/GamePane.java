@@ -1,10 +1,11 @@
 /**
- * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  * Purpose: This main purpose is to store the game's main mechanics. It handles the game loop,
  *          collision detection, key presses, and animation states. This class also draws all objects
  *          on to the screen adn deals with the interactions with each object. There is also next level
  *          capabilites in which the aliens increase in difficulty, movement spedd increases, and there
  *          is a boss level every 5 levels. This pane redirects the player to the correct pages when they die.
+ *
+ * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  */
 package view_controller;
 
