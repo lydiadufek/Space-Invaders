@@ -7,14 +7,13 @@ import javafx.scene.shape.Rectangle;
 import static java.lang.Math.min;
 
 public class Bullet extends Sprite {
-    private int damage;
     private boolean playerShot;
     private boolean bossShot;
     private GraphicsContext gc;
 
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
-        this.playerShot = playerShot;
+        this.playerShot = false;
     }
 
     public void drawFrame(GraphicsContext gc) {
