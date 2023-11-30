@@ -19,22 +19,36 @@ public class SoundEffect {
 	private Media media;
 	private MediaPlayer mediaPlayer;
 	
-	 public SoundEffect(String fileName) {
+	/**
+	 * Constructor for the sound effect 
+	 * @param fileName the name of the sound file
+	 */
+	public SoundEffect(String fileName) {
        path = "lib/" + fileName;
 	 }
 	 
-	 public URI getSongURI() {
+	/**
+	 * Returns the song's URI 
+	 * @return the song's URI
+	 */
+	public URI getSongURI() {
        File file = new File(path);
        return file.toURI();
 	 }
 	 
-	 public void playSound() {
+	/**
+	 * Plays the sound 
+	 */
+	public void playSound() {
 		 media = new Media(getSongURI().toString());
 		 mediaPlayer = new MediaPlayer(media);
 		 mediaPlayer.play();
 	 }
 	 
-	 public void stopSound() {
+	/**
+	 * Stops any sound being played 
+	 */
+	public void stopSound() {
 		 if (mediaPlayer != null) {
 			 mediaPlayer.stop();
 		 }
