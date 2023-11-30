@@ -50,6 +50,7 @@ public class GamePane {
     private static final SoundEffect deathSound = new SoundEffect("deathExplosion.mp3");
     private static final SoundEffect ufoSound = new SoundEffect("ufoHit.mp3");
     private static final SoundEffect alienSound = new SoundEffect("alienDieNoise.mp3");
+    private static final SoundEffect bossSound = new SoundEffect("eenWails.mp3");
 
     // instance variables
     private final ArrayList<Sprite> objects;
@@ -145,6 +146,12 @@ public class GamePane {
         objects = new ArrayList<>();
         aliens = new Alien[ALIEN_ROWS][ALIENS_PER_ROW];
         timers = new ArrayList<>();
+        
+        if ((levelNum + 1) % 5 == 0 && !player.isDead()) {
+        	bossSound.playSound();
+        } else {
+        	bossSound.stopSound();
+        }
 
         coordTrack = WW/2;
         String shipImage = home.getShipImage();

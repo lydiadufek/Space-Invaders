@@ -17,6 +17,8 @@ import javafx.scene.media.MediaPlayer;
 public class SoundEffect {
 	private String path;
 	private String fileName;
+	private Media media;
+	private MediaPlayer mediaPlayer;
 	
 	 public SoundEffect(String fileName) {
        path = "lib/" + fileName;
@@ -29,9 +31,15 @@ public class SoundEffect {
 	 }
 	 
 	 public void playSound() {
-		 Media media = new Media(getSongURI().toString());
-		    MediaPlayer mediaPlayer = new MediaPlayer(media);
+		 media = new Media(getSongURI().toString());
+		    mediaPlayer = new MediaPlayer(media);
 		    mediaPlayer.play();
+	 }
+	 
+	 public void stopSound() {
+		 if (mediaPlayer != null) {
+			 mediaPlayer.stop();
+		 }
 	 }
 
 }
