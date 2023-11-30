@@ -43,6 +43,9 @@ public class GameScreen {
 	private final int MAX_LIVES = 5;
 	private int starting_lives;
 
+	/**
+	 * GameScreen() constructor method creates setup for the playing menu
+	 */
 	public GameScreen(Stage stage, StartScreen home) {
 
 		root = new BorderPane();
@@ -62,20 +65,34 @@ public class GameScreen {
 		gamePane.gameLoop();
 	}
 
+	/**
+	 * newLevel() runs the transition animation screen for a new level
+	 * calling the transitionScreen method
+	 */
 	public void newLevel() {
 		transitionScreen.runTransition();
 	}
 
+	/**
+	 * startNextLevel() opens a new GamePane with new aliens and level
+	 * parameters - essentially starts the next level
+	 */
 	public void startNextLevel() {
 		gamePane = new GamePane();
 		root.setCenter(gamePane.getCanvas());
 		gamePane.gameLoop();
 	}
 
+	/**
+	 * getScene() getter for the GameScreen scene
+	 */
 	public Scene getScene() {
 		return scene;
 	}
 
+	/**
+	 * setBackground() reads in the background image file and sets it to the pane
+	 */
 	private void setBackground() {
 		Image image = Utils.readImage("game-background.jpg");
 		BackgroundImage bgImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
@@ -84,6 +101,9 @@ public class GameScreen {
 		root.setBackground(bg);
 	}
 
+	/*
+	 * setupTopBar() sets up the GUI look of the score at the top of the screen
+	 */
 	private void setupTopBar() {
 		topBar = new BorderPane();
 		HBox scoreBox = new HBox();
@@ -113,6 +133,10 @@ public class GameScreen {
 		root.setTop(topBar);
 	}
 
+	/**
+	 * setLivesDisplay() sets up the GUI look of the lives at the top of the screen
+	 * plus the number of heart images representing the current life status
+	 */
 	private void setLivesDisplay() {
 		Font font = Utils.getFont(25);
 		Label livesLabel = new Label("LIVES ");
@@ -130,24 +154,41 @@ public class GameScreen {
 		topBar.setRight(livesBox);
 	}
 
+	/**
+	 * updateScore() sets the score label to the numeric counter of the score value
+	 */
 	public void updateScore(int score) {
 		int originalScore = Integer.parseInt(scoreNum.getText());
 		scoreNum.setText(String.valueOf(originalScore + score));
 	}
 
+	/**
+	 * getScore() is a getter for the current score
+	 */
 	public int getScore() {
 		return Integer.parseInt(scoreNum.getText());
 	}
 
+	/**
+	 * getTimers() is a getter for the gameloop timers that keep the game running until
+	 * interrupted
+	 */
 	public ArrayList<Timer> getTimers() {
 		return gamePane.getTimers();
 	}
 
+	/**
+	 * removeLifeIcon() handles when the player dies, loses a life from their life count
+	 * and updates the image
+	 */
 	protected void removeLifeIcon() {
 		livesBox.getChildren().get(currentLives).setVisible(false);
 		currentLives--;
 	}
 
+	/**
+	 * addLifeIcon() handles when the player gets an extra life 
+	 */
 	protected void addLifeIcon() {
 		livesBox.getChildren().get(currentLives).setVisible(true);
 		currentLives++;

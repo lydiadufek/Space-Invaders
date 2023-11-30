@@ -51,6 +51,9 @@ public class StartScreen {
 	private static final int WW = Window.getWidth();
 	private static final int WH = Window.getHeight();
 
+	/**
+	 * StartScreen() constructor method sets up the GUI and window specs
+	 */
 	public StartScreen(Stage stage) {
 		this.stage = stage;
 		System.out.println("space invaders!!");
@@ -75,14 +78,24 @@ public class StartScreen {
 		});
 	}
 
+	/**
+	 * getScene() getter method that returns the scene of the StartScreen
+	 */
 	public Scene getScene() {
 		return scene;
 	}
 
+	/**
+	 * getStage() getter method that returns the stage the menu lies on
+	 */
 	public Stage getStage() {
 		return stage;
 	}
 
+	/**
+	 * registerHandlers() handles the hyperlink buttons that start the game and go to the
+	 * highscores screen on the menu
+	 */
 	private void registerHandlers() {
 		startLink.setOnAction(event -> {
 			stage.setScene(shipScreen.getScene());
@@ -96,6 +109,10 @@ public class StartScreen {
 		});
 	}
 
+	/**
+	 * layoutGUI() sets up the display and graphics of the menu screen along with the scores of each alien
+	 * and the instruction on how to play the game
+	 */
 	private void layoutGUI() {
 		Image image = Utils.readImage("game-background.jpg");
 		BackgroundImage bgImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
@@ -182,6 +199,10 @@ public class StartScreen {
 		pane.setVgap(35);
 	}
 
+	/**
+	 * setScore() reads in the scores from the serialized file and sets them to what is in highscore
+	 * screen
+	 */
 	public void setScore(int score) {
 		if (score < 0) {
 			try {
@@ -198,14 +219,24 @@ public class StartScreen {
 		}
 	}
 
+	/**
+	 * setShipImage() sets the playerImage that will be used in the game to the ship 
+	 * selected from the ShipScreen menu
+	 */
 	public void setShipImage(String image) {
 		playerImage = image;
 	}
 
+	/**
+	 * getShipImage() getter method for the ship image selected
+	 */
 	public String getShipImage() {
 		return playerImage;
 	}
 
+	/**
+	 * startGame() is the function that calls the game to start when that button is selected
+	 */
 	public void startGame() {
 		game = new GameScreen(stage, this);
 		stage.setScene(game.getScene());

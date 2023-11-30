@@ -40,6 +40,12 @@ public class GameOver {
 	private static final int WW = Window.getWidth();
 	private static final int WH = Window.getHeight();
 
+	/**
+	 * GameOver() constructor method that reads in the serialized scores and sets up the pane
+	 * for display
+	 * params: StartScreen home is the main menu screen
+	 * int score is the score of the current game that ended
+	 */
 	public GameOver(StartScreen home, int score) {
 		this.home = home;
 		this.score = score;
@@ -66,10 +72,16 @@ public class GameOver {
 
 	}
 
+	/**
+	 * getScene() is a getter for this scene to display across files
+	 */
 	public Scene getScene() {
 		return scene;
 	}
 
+	/**
+	 * setupGUI() handles all of the labeling and graphics for the high score menu
+	 */
 	private void setupGUI() {
 		gameOver = new Label("HIGH SCORES");
 		Font font = Utils.getFont(100);
@@ -97,6 +109,9 @@ public class GameOver {
 		root.setVgap(35);
 	}
 
+	/**
+	 * setScores() updates the score name and number onto the screen for display
+	 */
 	private void setScores() {
 		int i = 0;
 		while (i < 5 && score <= Integer.parseInt(scores[i].substring(6)))
@@ -113,6 +128,9 @@ public class GameOver {
 		}
 	}
 
+	/**
+	 * setBackground() reads in the game background image and sets it to the stage background
+	 */
 	private void setBackground() {
 		Image image = Utils.readImage("game-background.jpg");
 		BackgroundImage bgImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
@@ -121,6 +139,10 @@ public class GameOver {
 		root.setBackground(bg);
 	}
 
+	/**
+	 * registerHandlers() handles the key inputs for naming new high scores along with
+	 * setting up the blinking animation on the updating scores
+	 */
 	private void registerHandlers() {
 		newText.requestFocus();
 		fadeTransition = new FadeTransition(Duration.seconds(0.9), newText);

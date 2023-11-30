@@ -35,6 +35,9 @@ public class Transition {
 	private Canvas canvas;
 	private GraphicsContext gc;
 
+	/**
+	 * Transition() is the constructor method for the transition screen between levels
+	 */
 	public Transition(GameScreen home) {
 		this.home = home;
 		root = new BorderPane();
@@ -47,10 +50,16 @@ public class Transition {
 		setupGUI();
 	}
 
+	/**
+	 * getScene() is the getter method for the transition scene
+	 */
 	public Scene getScene() {
 		return scene;
 	}
 
+	/**
+	 * setBackground() reads ijn the background image file and sets it to the scene
+	 */
 	private void setBackground() {
 		Image image = Utils.readImage("game-background.jpg");
 		BackgroundImage bgImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
@@ -70,6 +79,10 @@ public class Transition {
 		root.setBottom(canvas);
 	}
 
+	/**
+	 * spawnAlienShip() reads in the image file for the alien ship that will fly across
+	 * the screen and adds it to the canvas
+	 */
 	private void spawnAlienShip() {
 		Image image = Utils.readImage("AlienShip.png");
 		alienShip = new AlienShip(image, ((int) -image.getWidth()), 200);
@@ -77,6 +90,10 @@ public class Transition {
 		alienShip.changeVelocity(4, 1);
 	}
 
+	/**
+	 * runTransition() runs the animation sequence of the ship moving across the screen ad
+	 * handles the incrementing of the level
+	 */
 	public void runTransition() {
 		spawnAlienShip();
 		label.setText("Level " + (GamePane.getLevelNum() + 2));

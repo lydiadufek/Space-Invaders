@@ -33,6 +33,10 @@ public class Window extends Application {
         Window.stage.show();
     }
 
+    /**
+     * setGame sets up the timers foundations for the game and stops all timers running
+     * @param game
+     */
     public static void setGame(GameScreen game) {
         Window.game = game;
         Window.stage.setOnCloseRequest(event -> {
@@ -43,22 +47,42 @@ public class Window extends Application {
         });
     }
 
+    /**
+     * getGame() is a getter method for the gameScreen that starts the game
+     * @return
+     */
     public static GameScreen getGame() {
         return game;
     }
 
+    /**
+     * getWidth() is getter method for the width of the window 
+     * @return
+     */
     public static int getWidth() {
         return WINDOW_WIDTH;
     }
 
+    /**
+     * getHeight() is the getter method for the height of the window
+     * @return
+     */
     public static int getHeight() {
         return WINDOW_HEIGHT;
     }
 
+    /**
+     * getStage() is getter method for the stage that holds all panes
+     * @return
+     */
     public static Stage getStage() {
         return stage;
     }
 
+    /**
+     * changeScene() is method to switch between any scene
+     * @param scene
+     */
     public synchronized static void changeScene(Scene scene) {
         stage.setScene(scene);
         stage.show();

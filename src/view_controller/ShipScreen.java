@@ -33,6 +33,9 @@ public class ShipScreen {
 	private static final int WW = Window.getWidth();
 	private static final int WH = Window.getHeight();
 
+	/**
+	 * ShipScreen() constructor sets up the screen for ship selection
+	 */
 	public ShipScreen(StartScreen home) {
 		this.home = home;
 		pane = new GridPane();
@@ -50,10 +53,16 @@ public class ShipScreen {
 
 	}
 
+	/**
+	 * getScene() is a getter for the ShipScreen
+	 */
 	public Scene getScene() {
 		return scene;
 	}
 
+	/**
+	 * setupGUI() handles the setting up of the labels and images for the display
+	 */
 	private void setupGUI() {
 		Label label = new Label("Select a Ship!");
 		Font font = Utils.getFont(30);
@@ -112,6 +121,10 @@ public class ShipScreen {
 		root.setCenter(pane);
 	}
 
+	
+	/**
+	 * setBackground() reads in the image file for the background and sets it to the pane
+	 */
 	private void setBackground() {
 		Image image = Utils.readImage("game-background.jpg");
 		BackgroundImage bgImage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
@@ -120,6 +133,10 @@ public class ShipScreen {
 		pane.setBackground(bg);
 	}
 
+	/**
+	 * registerHandlers() handles the hyperlink actions so that when one ship image is selected, that 
+	 * ship gets set to the image used when using the 'player' object
+	 */
 	private void registerHandlers() {
 		defaultLink.setOnAction(event -> {
 			home.setShipImage("purpleShip.png");
