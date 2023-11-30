@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
-import java.time.Instant;
+import static java.lang.Math.min;
 
 public class Bullet extends Sprite {
     private int damage;
@@ -57,13 +57,11 @@ public class Bullet extends Sprite {
 
         if (distanceToPlayer > 0) {
             directionX /= distanceToPlayer;
-            directionY /= distanceToPlayer;
 
             double newX = x + directionX * 2; //speed
-            double newY = y + directionY * 3; //speed
 
             x = newX;
-            y = newY;
+            y += (yVelocity*2);
         }
     }
 

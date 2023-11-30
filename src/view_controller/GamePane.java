@@ -18,14 +18,11 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 import java.util.*;
-
-import static java.lang.Math.min;
 
 public class GamePane {
     // static variables
@@ -120,8 +117,8 @@ public class GamePane {
             default -> drawPlayer("blueShip.png", 20, -10, 1);
         }
 
-        drawAliens();
-//        drawBossBattle();
+//        drawAliens();
+        drawBossBattle();
         drawBarriers();
         startTimers();
     }
@@ -130,7 +127,7 @@ public class GamePane {
         GamePane.levelNum += 1;
         setupKeypress();
 
-        regenerateAlienVelocity();
+        alienVelocity = Utils.regenerateAlienVelocity();
         notStarted = true;
         alienTravelDirection = 'r';
 
@@ -218,19 +215,10 @@ public class GamePane {
                 detectAndHandleCollisions();
                 drawFrame();
 
-                // checking the alien ship
-                if (alienShip != null && alienShip.isActive()) {
-                    alienShip.moveAcrossScreen(gc);
-
-                    double newX = alienShip.getX() - 1;
-                    if (newX - (alienShip.getWidth() / 2) >= canvas.getWidth()) {
-                        alienShip.setActive(false);
-                        objects.remove(alienShip);
-                    }
-                }
+                moveOrDespawnAlienShip();
 
                 // next level
-                if (allAliensDead() || allDead) {
+                if (Utils.allAliensDead(objects) || allDead) {
                     transitioning = true;
                     for (Timer timer : timers) {
                         timer.cancel();
@@ -265,8 +253,17 @@ public class GamePane {
         }.start();
     }
 
-    private void regenerateAlienVelocity() {
-        alienVelocity = min((0.3) * ((double) levelNum) + 3, 10);
+    private void moveOrDespawnAlienShip() {
+        // checking the alien ship
+        if (alienShip != null && alienShip.isActive()) {
+            alienShip.moveAcrossScreen(gc);
+
+            double newX = alienShip.getX() - 1;
+            if (newX - (alienShip.getWidth() / 2) >= canvas.getWidth()) {
+                alienShip.setActive(false);
+                objects.remove(alienShip);
+            }
+        }
     }
 
     private void startTimers() {
@@ -284,7 +281,7 @@ public class GamePane {
         timers.add(alienMovingTimer);
 
         Timer bossShootingTimer = new Timer();
-        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 500);
+        bossShootingTimer.scheduleAtFixedRate(new RandomBossShots(), 1000, 1000);
         timers.add(bossShootingTimer);
     }
 
@@ -302,15 +299,6 @@ public class GamePane {
         }
     }
 
-    private boolean allAliensDead() {
-        for (Sprite sprite: objects) {
-            if (sprite instanceof Alien) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void detectAndHandleCollisions() {
         for (int i = 0; i < objects.size(); i++) {
             for (int j = i + 1; j < objects.size(); j++) {
@@ -318,9 +306,13 @@ public class GamePane {
                 Sprite object1 = orderedSprites[0];
                 Sprite object2 = orderedSprites[1];
 
-                if (isCollided(object1.getAABB(), object2.getAABB())) {
+                if (Utils.isCollided(object1.getAABB(), object2.getAABB())) {
+
                     // Bullet hitting the Alien
-                    if ((object1 instanceof Alien && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())) {
+                    if ((object1 instanceof Alien
+                            && object2 instanceof Bullet
+                            && ((Bullet) object2).getPlayerShot())) {
+
                         ((Alien) object1).hit();
 
                         if (!((Alien) object1).stillAlive()) objects.remove(object1);
@@ -336,20 +328,28 @@ public class GamePane {
 
                     // Bullet hitting the Player
                     if (!playerIsInvincible) {
-                        if ((object1 instanceof Bullet && object2 instanceof Player && !((Bullet) object1).getPlayerShot())) {
+                        if ((object1 instanceof Bullet
+                                && object2 instanceof Player
+                                && !((Bullet) object1).getPlayerShot())) {
+
                             handlePlayerBeingShot((Player) object2, (Bullet) object1);
                             deathSound.playSound();
                         }
                     }
 
                     // Bullets hitting each other
-                    if (object1 instanceof Bullet && object2 instanceof Bullet) {
+                    if (object1 instanceof Bullet
+                            && object2 instanceof Bullet) {
+
                         objects.remove(object1);
                         objects.remove(object2);
                     }
 
                     // Bullet hitting the AlienShip
-                    if ((object1 instanceof AlienShip && object2 instanceof Bullet && ((Bullet) object2).getPlayerShot())) {
+                    if ((object1 instanceof AlienShip
+                            && object2 instanceof Bullet
+                            && ((Bullet) object2).getPlayerShot())) {
+
                     	ufoSound.playSound();
                         alienShip.setActive(false);
                         objects.remove(object1);
@@ -363,7 +363,9 @@ public class GamePane {
                     }
 
                     // Bullet hitting the barrier
-                    if ((object1 instanceof Bullet && object2 instanceof SubBarrier)) {
+                    if ((object1 instanceof Bullet
+                            && object2 instanceof SubBarrier)) {
+
                         objects.remove(object1);
                         ((SubBarrier) object2).receiveDamagePlayer();
                         Image[] temp = ((SubBarrier) object2).getPlayerDamageImages();
@@ -830,30 +832,11 @@ public class GamePane {
         gc.strokeRect(object.getAABB().getX(), object.getAABB().getY(), object.getAABB().getWidth(), object.getAABB().getHeight());
     }
 
-    public static boolean isCollided(Rectangle obj1, Rectangle obj2) {
-        double obj1Top = obj1.getY();
-        double obj1Bottom = obj1Top + obj1.getHeight();
-        double obj1Left = obj1.getX();
-        double obj1Right = obj1Left + obj1.getWidth();
-
-        double obj2Top = obj2.getY();
-        double obj2Bottom = obj2Top + obj2.getHeight();
-        double obj2Left = obj2.getX();
-        double obj2Right = obj2Left + obj2.getWidth();
-
-        boolean comp1 = obj1Bottom > obj2Top;
-        boolean comp2 = obj1Top < obj2Bottom;
-        boolean comp3 = obj1Right > obj2Left;
-        boolean comp4 = obj1Left < obj2Right;
-
-        return comp1 && comp2 && comp3 && comp4;
-    }
-
     public Canvas getCanvas() { return canvas; }
 
-    public static Player getPlayer() { return player; }
-
     public ArrayList<Timer> getTimers() { return timers; }
+
+    public static Player getPlayer() { return player; }
 
     public static int getLevelNum() { return levelNum; }
 
