@@ -1,5 +1,5 @@
 /**
- * Authors: Camila Grubb, Federico Fernandez, Kateyln Rohrer, Lydia Dufek
+ * Authors: Camila Grubb, Federico Fernandez, Katelyn Rohrer, Lydia Dufek
  * Purpose: This main purpose is to store the game's main mechanics. It handles the game loop,
  *          collision detection, key presses, and animation states. This class also draws all objects
  *          on to the screen adn deals with the interactions with each object. There is also next level
@@ -42,9 +42,7 @@ public class GamePane {
     private static StartScreen home;
     private static GameScreen gameScreen;
     private static Player player;
-
     private static int levelNum;
-    private static int shotInterval;
 
     // sounds
     private static final SoundEffect shootSound = new SoundEffect("shipShoot.mp3");
@@ -56,7 +54,6 @@ public class GamePane {
     private final ArrayList<Sprite> objects;
     private final Alien[][] aliens;
     private final ArrayList<Timer> timers;
-    private final String shipImage;
 
     private final Canvas canvas;
     private final GraphicsContext gc;
@@ -67,8 +64,6 @@ public class GamePane {
 
     private int coordTrack;
 
-    private int borderRight;
-    private int borderLeft;
     private int alienVelocity;
 
     private long lastShotTime;
@@ -104,8 +99,6 @@ public class GamePane {
         setupKeypress();
 
         alienVelocity = 4;
-        borderRight = 80;
-        borderLeft = 65;
 
         notStarted = true;
         transitioning = false;
@@ -119,7 +112,7 @@ public class GamePane {
         timers = new ArrayList<>();
 
         coordTrack = WW / 2;
-        shipImage = home.getShipImage();
+        String shipImage = home.getShipImage();
 
         switch (shipImage) {
             case "purpleShip.png" ->
@@ -153,7 +146,7 @@ public class GamePane {
         timers = new ArrayList<>();
 
         coordTrack = WW/2;
-        shipImage = home.getShipImage();
+        String shipImage = home.getShipImage();
 
         drawPlayer();
         drawAliens();
@@ -282,8 +275,7 @@ public class GamePane {
 
     private void startTimers() {
         Timer alienShootingTimer = new Timer();
-        GamePane.shotInterval = Utils.generateShotInterval();
-        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, shotInterval);
+        alienShootingTimer.scheduleAtFixedRate(new RandomAlienShots(), 1000, Utils.generateShotInterval());
         timers.add(alienShootingTimer);
 
         alienShipTimer = new Timer();
@@ -429,8 +421,6 @@ public class GamePane {
     private class RandomAlienShots extends TimerTask {
         @Override
         public void run() {
-            GamePane.shotInterval = Utils.generateShotInterval();
-
             // getting the bottom row of aliens (the ones that can shoot)
             ArrayList<Alien> bottomRowAliens = new ArrayList<>();
             ArrayList<Alien> boss = new ArrayList<>();
@@ -472,11 +462,11 @@ public class GamePane {
                     updateAlienSprites(alien);
                     alien.changeVelocity(alienVelocity, 10);
 
-	    			if (coordTrack > (WW/2 + borderRight)) {
+	    			if (coordTrack > (WW/2 + 80)) {
 	    				alien.moveDown(gc);
                         alienTravelDirection = 'l';
                     }
-	    			else if (coordTrack < (WW/2 - borderLeft)) {
+	    			else if (coordTrack < (WW/2 - 65)) {
 	    				alien.moveDown(gc);
                         alienTravelDirection = 'r';
                     }
@@ -499,8 +489,6 @@ public class GamePane {
     private class RandomBossShots extends TimerTask {
         @Override
         public void run() {
-            GamePane.shotInterval = Utils.generateShotInterval();
-
             ArrayList<Alien> boss = new ArrayList<>();
             for (int i = 0; i < aliens[0].length; i++) {
                 for (int j = aliens.length - 1; j >= 0; j--) {
@@ -550,6 +538,7 @@ public class GamePane {
     public void shoot() {
         if (!player.isDead()) {
             long currentTime = System.nanoTime();
+            System.out.println(lastShotTime);
             long elapsedSinceLastShot = currentTime - lastShotTime;
 
             if (elapsedSinceLastShot > player.getDelay()) {
