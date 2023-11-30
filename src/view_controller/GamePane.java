@@ -638,16 +638,16 @@ public class GamePane {
     }
 
     private void drawBarriers() {
-        totalBarrier1 = new Barrier(150, 80, canvas, objects, gc);
+        totalBarrier1 = new Barrier(135, 80, canvas, objects, gc);
         totalBarrier1.draw();
 
         totalBarrier2 = new Barrier(300, 80, canvas, objects, gc);
         totalBarrier2.draw();
 
-        totalBarrier3 = new Barrier(-75, 80, canvas, objects, gc);
+        totalBarrier3 = new Barrier(-70, 80, canvas, objects, gc);
         totalBarrier3.draw();
 
-        totalBarrier4 = new Barrier(-245, 80, canvas, objects, gc);
+        totalBarrier4 = new Barrier(-235, 80, canvas, objects, gc);
         totalBarrier4.draw();
     }
 
